@@ -1,0 +1,18 @@
+
+// 文字颜色
+
+
+html {
+  --primary-danger-color: #e04943;
+  --primary-warning-color: #e6a23c;
+  --primary-success-color: #17baa1;
+  --primary-info-color: #69b9ff;
+}
+
+
+html.dark {
+  --primary-danger-color: #e04943;
+  --primary-warning-color: #e6a23c;
+  --primary-success-color: #17baa1;
+  --primary-info-color: #69b9ff;
+}
