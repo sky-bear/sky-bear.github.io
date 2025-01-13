@@ -6,7 +6,10 @@
 ## this
 参考书籍《你不知道的javascript上》
 
-<img src="../images/你不知道的javascript上.jpg">  
+<script setup>
+import Image from "../components/Image/index.vue"
+</script>
+<Image  src="../images/你不知道的javascript上.jpg" />
 
 
 
