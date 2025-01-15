@@ -104,11 +104,11 @@ console.log(foo.constructor);
 >
 > ::: warning
 > 每个执行上下文中都有三个重要属性
-
-- 变量对象(Variable object, 缩写为 VO)
-- 作用域链(Scope chain)
-- this
-  :::
+>
+> - 变量对象(Variable object, 缩写为 VO)
+> - 作用域链(Scope chain)
+> - this
+>   :::
 
 ### 可执行代码
 
@@ -284,7 +284,7 @@ globalVO = {
 - 普通函数
   - this 在任何情况下都不指向函数的词法作用域
   - this 实际上是在函数被调用时发生的绑定， 它指向什么完全取决于函数在哪里被调用
-    > this执行为当前执行环境（执行上下文）的ThisBinding。ThisBinding就是this的值。
+    > this 执行为当前执行环境（执行上下文）的 ThisBinding。ThisBinding 就是 this 的值。
 - 箭头函数
   - 箭头函数体内的 this 对象就是定义时所在的对象，而不是使用时所在的对象
   - 是箭头函数根本没有自己的 this，导致内部的 this 就是外层代码块的 this
@@ -330,8 +330,6 @@ Reference Type
 
 引用：https://blog.csdn.net/fishmemory7sec/article/details/140799426
 
-
-
 ```js
 var foo = 1;
 fooReference = {
@@ -360,12 +358,14 @@ barReference = {
 
 - 计算 MemberExpression 的结果赋值给 ref；
 - 判断 ref 是不是一个 Reference 类型；
+
   - 如果 ref 是 Reference，并且 IsPropertyReference(ref) 是 true( base value 是一个对象，就返回 true)，那么 this 的值为 GetBase(ref)；
   - 如果 ref 是 Reference，并且 base value 值是 Environment Record，那么 this 的值为 ImplicitThisValue(ref)；
   - 如果 ref 不是 Reference，那么 this 的值为 undefined；
 
   ::: info
   MemberExpression: 简单理解就是括号左侧的内容**取的是表达式， 不是表达式的执行结果**
+
   ```js
   function foo() {
     return function () {
@@ -373,8 +373,7 @@ barReference = {
     };
   }
 
-  foo()() // MemberExpression是 foo()
-
+  foo()(); // MemberExpression是 foo()
 
   var foo = {
     bar: function () {
@@ -391,31 +390,27 @@ barReference = {
     bar: function () {
       return this.value;
     },
-  }
-  console.log(foo.bar());  // 2 MemberExpression是  foo.bar
+  };
+  console.log(foo.bar()); // 2 MemberExpression是  foo.bar
 
   reference = {
     base: foo,
     propertyName: "bar",
     strict: false,
-  }
+  };
 
   // this => GetBase(reference) => foo
 
-  console.log((foo.bar)()); // 2
+  console.log(foo.bar()); // 2
 
   console.log((foo.bar = foo.bar)()); // 1 undefined => window
 
   console.log((false || foo.bar)()); // 1
 
   console.log((foo.bar, foo.bar)()); // 1
-
   ```
 
   :::
-
-
-
 
 ## 作用域
 
@@ -522,11 +517,104 @@ checkscopeContext= {
  // 这里没有写 globalContext.VO 中 scope的未写
 ```
 
-
 ### 闭包
+
 <Image  src="./images/闭包.jpg" />
 闭包 = 函数 + 函数能够访问函数外的变量
 > MDN:闭包是由函数以及函数声明所在的词法环境组合而成的。该环境包含了这个闭包创建时作用域内的任何局部变量
+
+## 函数的参数传递
+
+ECMAScript 中所有的函数的参数都是按值传递的， 也就是说，把函数外部的值复制给函数内部的参数，基本类型如同变量的复制一样，<font color='red'>引用类型同基本类型的复制一样（指针）</font>
+
+```js
+var value = 1;
+function fn(v) {
+  v = 2;
+  console.log(v);
+}
+fn(value);
+console.log(value);
+```
+
+```js
+var obj = {
+  value: 1,
+};
+function fn(obj) {
+  obj.value = 2;
+  console.log(obj); // { value: 2 }
+}
+fn(obj);
+console.log(obj); // { value: 2 }
+```
+
+```js
+var obj = {
+  value: 1,
+};
+function fn(obj) {
+  obj = 2;
+  console.log(obj); // 2
+}
+fn(obj);
+console.log(obj); // { value: 2 }
+```
+
+## call, apply bind
+
+介绍 this 的时候已经介绍过， 直接上代码
+
+### call 实现
+
+#### 人家的
+
+```js
+function fn() {
+  console.log(this);
+}
+fn.call({ name: "test" }); // {name: 'test'}
+fn.call(1); // [Number: 1]
+fn.call(null); // undefined / window /global 就是不生效的意思
+fn.call(undefined); // undefined / window /global 就不生效的意思
+fn.call(false); // [Boolean: false]
+```
+
+#### 自己的
+
+```js
+Function.prototype.call = function (context, ...args) {
+  // null 和 undefined 不处理
+  if (context === null || context === undefined) return this(...args);
+  // 基本类型
+  if (typeof context !== "object") {
+    context = Object(context);
+  }
+  context.fn = this;
+  const result = context.fn(...args);
+  delete context.fn;
+  return result;
+};
+```
+
+### apply 实现
+
+```js
+Function.prototype.apply = function(context, args) {
+    // null 和 undefined 不处理
+  const arrayArgs = Array.isArray(args) ? args : [args]
+  if(context === null || context === undefined)  return this(...arrayArgs);
+  // 基本类型
+  if(typeof context !== 'object') {
+    context =  Object(context)
+  };
+  context.fn = this;
+  const result = context.fn(...arrayArgs);
+  delete context.fn;
+  return result;
+}
+```
+···
 
 
 
@@ -534,5 +622,6 @@ checkscopeContext= {
 
 <a href="https://www.cnblogs.com/justinw/archive/2010/04/23/1718733.html" target="_blank"  style="display: block">变量对象</a>
 <a href="https://zh.javascript.info/" target="_blank"  style="display: block">学习地址</a>
-<a href="http://yanhaijing.com/es5/#null" target="_blank"  style="display: block">ECMAScript5.1中文版</a>
+<a href="http://yanhaijing.com/es5/#null" target="_blank"  style="display: block">ECMAScript5.1 中文版</a>
 <a href="https://developer.mozilla.org/zh-CN/docs/Web/JavaScript" target="_blank"  style="display: block">MDN</a>
+```
