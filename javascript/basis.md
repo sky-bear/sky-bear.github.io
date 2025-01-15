@@ -284,6 +284,7 @@ globalVO = {
 - 普通函数
   - this 在任何情况下都不指向函数的词法作用域
   - this 实际上是在函数被调用时发生的绑定， 它指向什么完全取决于函数在哪里被调用
+    > this执行为当前执行环境（执行上下文）的ThisBinding。ThisBinding就是this的值。
 - 箭头函数
   - 箭头函数体内的 this 对象就是定义时所在的对象，而不是使用时所在的对象
   - 是箭头函数根本没有自己的 this，导致内部的 this 就是外层代码块的 this
@@ -363,8 +364,58 @@ barReference = {
   - 如果 ref 是 Reference，并且 base value 值是 Environment Record，那么 this 的值为 ImplicitThisValue(ref)；
   - 如果 ref 不是 Reference，那么 this 的值为 undefined；
 
+  ::: info
+  MemberExpression: 简单理解就是括号左侧的内容**取的是表达式， 不是表达式的执行结果**
+  ```js
+  function foo() {
+    return function () {
+      return this;
+    };
+  }
 
-<!-- https://zhuanlan.zhihu.com/p/589534188 -->
+  foo()() // MemberExpression是 foo()
+
+
+  var foo = {
+    bar: function () {
+      return this;
+    },
+  };
+  foo.bar(); // MemberExpression是 foo.bar
+  ```
+
+  ```js
+  var value = 1;
+  var foo = {
+    value: 2,
+    bar: function () {
+      return this.value;
+    },
+  }
+  console.log(foo.bar());  // 2 MemberExpression是  foo.bar
+
+  reference = {
+    base: foo,
+    propertyName: "bar",
+    strict: false,
+  }
+
+  // this => GetBase(reference) => foo
+
+  console.log((foo.bar)()); // 2
+
+  console.log((foo.bar = foo.bar)()); // 1 undefined => window
+
+  console.log((false || foo.bar)()); // 1
+
+  console.log((foo.bar, foo.bar)()); // 1
+
+  ```
+
+  :::
+
+
+
 
 ## 作用域
 
@@ -471,7 +522,17 @@ checkscopeContext= {
  // 这里没有写 globalContext.VO 中 scope的未写
 ```
 
+
+### 闭包
+<Image  src="./images/闭包.jpg" />
+闭包 = 函数 + 函数能够访问函数外的变量
+> MDN:闭包是由函数以及函数声明所在的词法环境组合而成的。该环境包含了这个闭包创建时作用域内的任何局部变量
+
+
+
 ## 资料引用：
 
 <a href="https://www.cnblogs.com/justinw/archive/2010/04/23/1718733.html" target="_blank"  style="display: block">变量对象</a>
 <a href="https://zh.javascript.info/" target="_blank"  style="display: block">学习地址</a>
+<a href="http://yanhaijing.com/es5/#null" target="_blank"  style="display: block">ECMAScript5.1中文版</a>
+<a href="https://developer.mozilla.org/zh-CN/docs/Web/JavaScript" target="_blank"  style="display: block">MDN</a>

@@ -70,26 +70,39 @@
 // var a = 20;
 
 
-function fn1() {
-  console.log(a);
-  a = 1
-}
+// function fn1() {
+//   console.log(a);
+//   a = 1
+// }
 
-fn1()
+// fn1()
 
-function fn2() {
-  a = 2
-  console.log(a);
+// function fn2() {
+//   a = 2
+//   console.log(a);
  
+// }
+
+// fn2()
+
+
+// function fn3() {
+//   console.log(a);
+//   a = 3
+// }
+
+// fn3()
+
+
+var value = 1;
+var foo = {
+  value: 2,
+  bar: function () {
+    console.log("测试", this.value);
+    return this.value;
+  },
 }
-
-fn2()
-
-
-function fn3() {
-  console.log(a);
-  a = 3
-}
-
-fn3()
-
+console.log((foo.bar)())
+console.log((foo.bar = foo.bar)())
+console.log((false || foo.bar)());
+console.log((foo.bar, foo.bar)());
