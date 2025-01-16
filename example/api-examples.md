@@ -47,3 +47,5 @@ const { site, theme, page, frontmatter } = useData()
 ## More
 
 Check out the documentation for the [full list of runtime APIs](https://vitepress.dev/reference/runtime-api#usedata).
+
+<!-- https://vitepress.qzxdp.cn/reference/default-theme-badge.html#%E8%87%AA%E5%AE%9A%E4%B9%89%E7%B1%BB%E5%9E%8B%E9%A2%9C%E8%89%B2 -->

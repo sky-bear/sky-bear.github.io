@@ -7,6 +7,7 @@ import Image from "../components/Image/index.vue"
 </script>
 
 ## 原型
+> 【ECMAScript5】为其他对象提供共享属性的对象
 
 参考书籍《你不知道的 javascript 上》
 
@@ -16,6 +17,7 @@ import Image from "../components/Image/index.vue"
 
 - [[Prototype]]
   - javaScript 中的对象有一个特殊的[[Prototype]]内置属性， 其实就是对其他对象的引用
+    >【ECMAScript5】 每个由构造器创建的对象，都有一个隐式引用 ( 叫做对象的原型 ) 链接到构造器的“prototype”属性值
   - 所有普通的[[Prototype]]链最终都会指向内置的 Object.prototype, Object.prototype 对象包含[[Prototype]]属性，但其[[Prototype]]指向 null
   - for ... in  遍历对象原理和[[Prototype]]链类似， 任何可以通过原型链可以访问到并且是 enumerable 的属性都会被枚举
   - 使用 in 操作符检查属性在对象中是否存在， 同样会查找对象的整条原型链（无论属性是否可枚举）
@@ -578,12 +580,25 @@ fn.call(1); // [Number: 1]
 fn.call(null); // undefined / window /global 就是不生效的意思
 fn.call(undefined); // undefined / window /global 就不生效的意思
 fn.call(false); // [Boolean: false]
+
+var foo = {
+  value:1,
+  bar(){
+    console.log(this);
+    return this.value;
+  }
+}
+foo.bar(); // 1
+foo.bar.call(null);  // undefined / window /global 就不生效的意思
 ```
 
 #### 自己的
 
 ```js
 Function.prototype.call = function (context, ...args) {
+  if(typeof this !== 'function')  {
+    throw new TypeError('this is not a function');
+  }
   // null 和 undefined 不处理
   if (context === null || context === undefined) return this(...args);
   // 基本类型
@@ -601,6 +616,9 @@ Function.prototype.call = function (context, ...args) {
 
 ```js
 Function.prototype.apply = function(context, args) {
+  if(typeof this !== 'function')  {
+    throw new TypeError('this is not a function');
+  }
     // null 和 undefined 不处理
   const arrayArgs = Array.isArray(args) ? args : [args]
   if(context === null || context === undefined)  return this(...arrayArgs);
@@ -614,7 +632,146 @@ Function.prototype.apply = function(context, args) {
   return result;
 }
 ```
-···
+
+### bind 实现
+
+#### 人家的
+```js
+var foo = {
+  value:1,
+  bar(...args){
+    console.log(this, ...args); // [undefined / window /global ]  1,2,3,4
+    return this.value;
+  }
+}
+let bar = foo.bar.bind(null, 1, 2);
+bar(3,4)
+
+```
+
+#### 自己的
+```js
+Function.prototype.bind = function(context, ...args) {
+  if(typeof this !== 'function')  {
+    throw new TypeError('this is not a function');
+  }
+  const self = this;
+  return function(...args2) {
+    return self.apply(context, args.concat(args2));
+  }
+}
+
+```
+
+new绑定this的优先级高于bind绑定this的优先级， 所以new的时候， bind的this会被忽略
+```js
+var value= 2
+var foo = {
+  value:1
+}
+function bar(name, age) {
+  this.a = 1;
+  console.log(this.value);
+  console.log(name);
+  console.log(age);
+  
+}
+bar.prototype.b = "b"
+var bindFoo = bar.bind(foo, "c")
+var obj =  new bindFoo("d")
+
+console.log(obj.a)
+console.log(obj.b)
+
+// undefined  [this.value] // 这里的this并没有指向foo
+// c
+// d
+// 1
+// b
+```
+调整后的
+```js
+Function.prototype.bind = function(context, ...args) {
+  if(typeof this !== 'function')  {
+    throw new TypeError('this is not a function');
+  }
+  const self = this;
+  function Fn(){}
+  const _bind  = function(...args2) {
+    // 判断当前是否当作构造函数使用
+    // 这里的this 指向的是创建的实例
+    return self.apply( this instanceof Fn ? this : context, args.concat(args2));
+  }
+  // 这里考虑bind返回的函数当作构造函数使用
+  Fn.prototype = this.prototype;
+  _bind.prototype = new Fn();
+  return _bind;
+}
+```
+
+
+
+### new 实现
+new 可以获取构造函数中this指向的属性 与原型的方法
+```js
+function objectFactory() {
+  const obj  = new Object();
+  const Constructor = [].shift.call(arguments);
+  obj.__proto__ = Constructor.prototype;
+  const result = Constructor.apply(obj, arguments); // 将构造函数的this指向obj
+  // 对象且不为null则返回对应构造函数的值
+  return typeof obj  === "object" && obj !== null ? result : obj;
+}
+```
+
+
+## 类数组对象和arguments
+### 基础
+类数组（Array-like object）是JavaScript中的一种特殊对象，它具有某些类似于数组的特性，但并不是真正的数组。以下是类数组的一些特点：
+
+- 索引访问：类数组对象的元素可以通过数字索引进行访问，就像在数组中一样。
+- length 属性：通常类数组对象会有一个 length 属性，表示可枚举属性的最大整数索引加一。
+- 非负整数键：类数组对象的键通常是连续的非负整数，从0开始。
+- 不是实例：类数组对象不是 Array 的实例，因此不能直接使用数组的方法，如 push, pop, map 等等。
+
+```js
+const arrLikes = {
+  0: 'a',
+  1: 'b',
+  2: 'c',
+  length: 3
+}
+```
+
+```js
+function foo() {
+  console.log(arguments)
+}
+
+foo(1,2,3) // Arguments(3) [1, 2, 3, callee: (...), Symbol(Symbol.iterator): ƒ]
+```
+
+### 转换方法
+- Array.from()
+- 使用扩展运算符（spread operator）（ES6+）
+- Array.prototype.slice.call()
+
+```JS
+  var arrayLike = {0: 'name', 1: 'age', 2: 'sex', length: 3 }
+  // 1. slice
+  Array.prototype.slice.call(arrayLike); // ["name", "age", "sex"] 
+  // 2. splice
+  Array.prototype.splice.call(arrayLike, 0); // ["name", "age", "sex"] 
+  // 3. ES6 Array.from
+  Array.from(arrayLike); // ["name", "age", "sex"] 
+  // 4. apply
+  Array.prototype.concat.apply([], arrayLike)
+```
+
+### 常见的类数组
+- 函数的 arguments 对象
+- DOM 元素的集合，如 document.getElementsByTagName() 返回的 NodeList
+
 
 
 
@@ -624,4 +781,4 @@ Function.prototype.apply = function(context, args) {
 <a href="https://zh.javascript.info/" target="_blank"  style="display: block">学习地址</a>
 <a href="http://yanhaijing.com/es5/#null" target="_blank"  style="display: block">ECMAScript5.1 中文版</a>
 <a href="https://developer.mozilla.org/zh-CN/docs/Web/JavaScript" target="_blank"  style="display: block">MDN</a>
-```
+<a href="https://nwy3y7fy8w5.feishu.cn/docx/SH4wd5cRSopC1XxDVPScxz3Fnoc" target="_blank"  style="display: block">澄怀-面向对象编程/原型及原型链</a>
