@@ -773,6 +773,29 @@ foo(1,2,3) // Arguments(3) [1, 2, 3, callee: (...), Symbol(Symbol.iterator): ƒ]
 - DOM 元素的集合，如 document.getElementsByTagName() 返回的 NodeList
 
 
+## 异步编程
+
+### Promise
+基础
+<a href="https://es6.ruanyifeng.com/#docs/promise" target="_blank"  style="display: block">Promise</a>
+
+#### 特点
+- 状态不受外界影响,只有异步操作的结果
+  - pedding
+  - fulfilled
+  - rejected
+- 一旦状态改变，就不会再变，任何时候都可以得到这个结果**状态不可逆**
+  - pedding =》 fulfilled
+  - pedding =》 rejected
+- throw 可以触发 rejected
+- then方法返回的是一个新的Promise实例，因此可以采用链式写法
+  - then方法接受两个参数，第一个是resolved状态的回调函数，第二个是rejected状态的回调函数
+  - then方法返回的Promise实例，会等待回调函数执行完，才会执行下一个then方法指定的回调函数
+- 
+
+
+
+### async/await
 
 
 ## 资料引用：
@@ -782,3 +805,6 @@ foo(1,2,3) // Arguments(3) [1, 2, 3, callee: (...), Symbol(Symbol.iterator): ƒ]
 <a href="http://yanhaijing.com/es5/#null" target="_blank"  style="display: block">ECMAScript5.1 中文版</a>
 <a href="https://developer.mozilla.org/zh-CN/docs/Web/JavaScript" target="_blank"  style="display: block">MDN</a>
 <a href="https://nwy3y7fy8w5.feishu.cn/docx/SH4wd5cRSopC1XxDVPScxz3Fnoc" target="_blank"  style="display: block">澄怀-面向对象编程/原型及原型链</a>
+<a href="https://x1mnl9knbjp.feishu.cn/docx/KOISdGpg1orK7sxQ4CKcnzJYnHg" target="_blank"  style="display: block">九思-前端异步编程规范</a>
+<a href="https://x1mnl9knbjp.feishu.cn/drive/folder/PV2Tfhdbsl7ZfIdO24fcCZ38nZd" target="_blank"  style="display: block">内功修炼</a>
+

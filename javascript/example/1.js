@@ -1,42 +1,69 @@
+/**
+ * pedding
+ * fulfilled
+ * rejected
+ */
 
-// Function.prototype.myCall = function (context, ...args) {
-//   if(typeof this !== 'function') throw new TypeError('Error')
-//   if(context === undefined || context === null)  return this(...args)
-//   if(typeof context !== 'object') context =  Object(context)
-//   context.fn = this
-//   const result = context.fn(...args)
-//   delete context.fn
-//   return result
-// }
-
-// Function.prototype.myApply = function (context, args) {
-//   if(typeof this !== 'function') throw new TypeError('Error')
-//   if(context === undefined || context === null)  return this(...args)
-//   if(typeof context !== 'object') context =  Object(context)
-//   context.fn = this
-//   const result = context.fn(...args)
-//   delete context.fn
-//   return result
-// }
-
-// Function.prototype.myBind = function (context, ...args) {
-//   if(typeof this !== 'function') throw new TypeError('Error')
-//   if(context === undefined || context === null)  return this(...args)
-//   if(typeof context !== 'object') context =  Object(context)
-//   const self = this;
-//   function fn(){}
-//   const _bind = function (...args2) {
-//     self.myApply(this instanceof fn ? this : context, [...args, ...args2])
-//   }
-//   fn.prototype = this.prototype
-//   _bind.prototype = new fn()
+class MyPromise {
+  constructor(executor) {
+    this.initValue();
+    this.initBindings();
+    try {
+      executor(this.resolve, this.reject);
+    } catch (error) {
+      this.reject(error)
+    }
     
-//   return _bind
-// }
-
-
-function foo() {
-  console.log(arguments)
+  }
+  initValue() {
+    this.PromiseState = "pending";
+    this.PromiseResult = null;
+    this.onFulfilledCallbacks = [];
+    this.onRejectedCallbacks = [];
+  }
+  initBindings() {
+    this.resolve = this.resolve.bind(this);
+    this.reject = this.reject.bind(this);
+  }
+  resolve(value) {
+    if(this.PromiseState !== "pending") return;
+    this.PromiseResult = value;
+    this.PromiseState = "fulfilled";
+    while(this.onFulfilledCallbacks.length) {
+      this.onFulfilledCallbacks.shift()(this.PromiseResult);
+    }
+  }
+  reject(reason) {
+    if(this.PromiseState !== "pending") return;
+    this.PromiseResult = reason;
+    this.PromiseState = "rejected";
+    while(this.onRejectedCallbacks.length) {
+      this.onRejectedCallbacks.shift()(this.PromiseResult);
+    }
+  }
+  then(onFulfilled, onRejected) {
+    onFulfilled = typeof onFulfilled === "function" ? onFulfilled  :   value => value;
+    onRejected =  typeof onRejected === "function" ? onRejected  :   reason => reason;
+    if(this.PromiseState === "fulfilled") {
+      onFulfilled(this.PromiseResult);
+    }
+    if(this.PromiseState === "rejected") {
+      onRejected(this.PromiseResult);
+    }
+    if(this.PromiseState === "pending") {
+      this.onFulfilledCallbacks.push(onFulfilled.bind(this));
+      this.onRejectedCallbacks.push(onRejected.bind(this));
+    }
+    return this
+  }
 }
 
-foo(1,2,3)
+
+let p = new MyPromise((resolve, reject) => {
+ setTimeout(() => {
+  resolve(1)
+ }, 2000)
+}).then((value) => {
+  console.log("3333", value)
+})
+console.log(p)
