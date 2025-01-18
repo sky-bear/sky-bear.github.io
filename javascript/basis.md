@@ -1084,6 +1084,10 @@ next1.value.then((res) => {
   });
 });
 ```
+- [后续参考 九思-前端异步编程规范](https://x1mnl9knbjp.feishu.cn/docx/KOISdGpg1orK7sxQ4CKcnzJYnHg)
+
+
+
 
 ## 资料引用：
 
