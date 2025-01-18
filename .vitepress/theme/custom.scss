@@ -1,4 +1,5 @@
 @import './color.scss';
+@import "./variable.scss";
 
 
 // 字体相关
@@ -11,4 +12,14 @@
 
 .fb {
   font-weight: bold;
+}
+
+
+
+
+// Badge 组件
+.badge-sucess {
+  color:#17baa1 !important;
+  background-color: #cce3dc !important;
+  border-color: #cce3dc !important;
 }

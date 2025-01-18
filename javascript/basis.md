@@ -7,6 +7,7 @@ import Image from "../components/Image/index.vue"
 </script>
 
 ## 原型
+
 > 【ECMAScript5】为其他对象提供共享属性的对象
 
 参考书籍《你不知道的 javascript 上》
@@ -17,7 +18,7 @@ import Image from "../components/Image/index.vue"
 
 - [[Prototype]]
   - javaScript 中的对象有一个特殊的[[Prototype]]内置属性， 其实就是对其他对象的引用
-    >【ECMAScript5】 每个由构造器创建的对象，都有一个隐式引用 ( 叫做对象的原型 ) 链接到构造器的“prototype”属性值
+    > 【ECMAScript5】 每个由构造器创建的对象，都有一个隐式引用 ( 叫做对象的原型 ) 链接到构造器的“prototype”属性值
   - 所有普通的[[Prototype]]链最终都会指向内置的 Object.prototype, Object.prototype 对象包含[[Prototype]]属性，但其[[Prototype]]指向 null
   - for ... in  遍历对象原理和[[Prototype]]链类似， 任何可以通过原型链可以访问到并且是 enumerable 的属性都会被枚举
   - 使用 in 操作符检查属性在对象中是否存在， 同样会查找对象的整条原型链（无论属性是否可枚举）
@@ -582,22 +583,22 @@ fn.call(undefined); // undefined / window /global 就不生效的意思
 fn.call(false); // [Boolean: false]
 
 var foo = {
-  value:1,
-  bar(){
+  value: 1,
+  bar() {
     console.log(this);
     return this.value;
-  }
-}
+  },
+};
 foo.bar(); // 1
-foo.bar.call(null);  // undefined / window /global 就不生效的意思
+foo.bar.call(null); // undefined / window /global 就不生效的意思
 ```
 
 #### 自己的
 
 ```js
 Function.prototype.call = function (context, ...args) {
-  if(typeof this !== 'function')  {
-    throw new TypeError('this is not a function');
+  if (typeof this !== "function") {
+    throw new TypeError("this is not a function");
   }
   // null 和 undefined 不处理
   if (context === null || context === undefined) return this(...args);
@@ -615,73 +616,73 @@ Function.prototype.call = function (context, ...args) {
 ### apply 实现
 
 ```js
-Function.prototype.apply = function(context, args) {
-  if(typeof this !== 'function')  {
-    throw new TypeError('this is not a function');
+Function.prototype.apply = function (context, args) {
+  if (typeof this !== "function") {
+    throw new TypeError("this is not a function");
   }
-    // null 和 undefined 不处理
-  const arrayArgs = Array.isArray(args) ? args : [args]
-  if(context === null || context === undefined)  return this(...arrayArgs);
+  // null 和 undefined 不处理
+  const arrayArgs = Array.isArray(args) ? args : [args];
+  if (context === null || context === undefined) return this(...arrayArgs);
   // 基本类型
-  if(typeof context !== 'object') {
-    context =  Object(context)
-  };
+  if (typeof context !== "object") {
+    context = Object(context);
+  }
   context.fn = this;
   const result = context.fn(...arrayArgs);
   delete context.fn;
   return result;
-}
+};
 ```
 
 ### bind 实现
 
 #### 人家的
+
 ```js
 var foo = {
-  value:1,
-  bar(...args){
+  value: 1,
+  bar(...args) {
     console.log(this, ...args); // [undefined / window /global ]  1,2,3,4
     return this.value;
-  }
-}
+  },
+};
 let bar = foo.bar.bind(null, 1, 2);
-bar(3,4)
-
+bar(3, 4);
 ```
 
 #### 自己的
+
 ```js
-Function.prototype.bind = function(context, ...args) {
-  if(typeof this !== 'function')  {
-    throw new TypeError('this is not a function');
+Function.prototype.bind = function (context, ...args) {
+  if (typeof this !== "function") {
+    throw new TypeError("this is not a function");
   }
   const self = this;
-  return function(...args2) {
+  return function (...args2) {
     return self.apply(context, args.concat(args2));
-  }
-}
-
+  };
+};
 ```
 
-new绑定this的优先级高于bind绑定this的优先级， 所以new的时候， bind的this会被忽略
+new 绑定 this 的优先级高于 bind 绑定 this 的优先级， 所以 new 的时候， bind 的 this 会被忽略
+
 ```js
-var value= 2
+var value = 2;
 var foo = {
-  value:1
-}
+  value: 1,
+};
 function bar(name, age) {
   this.a = 1;
   console.log(this.value);
   console.log(name);
   console.log(age);
-  
 }
-bar.prototype.b = "b"
-var bindFoo = bar.bind(foo, "c")
-var obj =  new bindFoo("d")
+bar.prototype.b = "b";
+var bindFoo = bar.bind(foo, "c");
+var obj = new bindFoo("d");
 
-console.log(obj.a)
-console.log(obj.b)
+console.log(obj.a);
+console.log(obj.b);
 
 // undefined  [this.value] // 这里的this并没有指向foo
 // c
@@ -689,69 +690,73 @@ console.log(obj.b)
 // 1
 // b
 ```
+
 调整后的
+
 ```js
-Function.prototype.bind = function(context, ...args) {
-  if(typeof this !== 'function')  {
-    throw new TypeError('this is not a function');
+Function.prototype.bind = function (context, ...args) {
+  if (typeof this !== "function") {
+    throw new TypeError("this is not a function");
   }
   const self = this;
-  function Fn(){}
-  const _bind  = function(...args2) {
+  function Fn() {}
+  const _bind = function (...args2) {
     // 判断当前是否当作构造函数使用
     // 这里的this 指向的是创建的实例
-    return self.apply( this instanceof Fn ? this : context, args.concat(args2));
-  }
+    return self.apply(this instanceof Fn ? this : context, args.concat(args2));
+  };
   // 这里考虑bind返回的函数当作构造函数使用
   Fn.prototype = this.prototype;
   _bind.prototype = new Fn();
   return _bind;
-}
+};
 ```
 
-
-
 ### new 实现
-new 可以获取构造函数中this指向的属性 与原型的方法
+
+new 可以获取构造函数中 this 指向的属性 与原型的方法
+
 ```js
 function objectFactory() {
-  const obj  = new Object();
+  const obj = new Object();
   const Constructor = [].shift.call(arguments);
   obj.__proto__ = Constructor.prototype;
   const result = Constructor.apply(obj, arguments); // 将构造函数的this指向obj
   // 对象且不为null则返回对应构造函数的值
-  return typeof obj  === "object" && obj !== null ? result : obj;
+  return typeof obj === "object" && obj !== null ? result : obj;
 }
 ```
 
+## 类数组对象和 arguments
 
-## 类数组对象和arguments
 ### 基础
-类数组（Array-like object）是JavaScript中的一种特殊对象，它具有某些类似于数组的特性，但并不是真正的数组。以下是类数组的一些特点：
+
+类数组（Array-like object）是 JavaScript 中的一种特殊对象，它具有某些类似于数组的特性，但并不是真正的数组。以下是类数组的一些特点：
 
 - 索引访问：类数组对象的元素可以通过数字索引进行访问，就像在数组中一样。
 - length 属性：通常类数组对象会有一个 length 属性，表示可枚举属性的最大整数索引加一。
-- 非负整数键：类数组对象的键通常是连续的非负整数，从0开始。
+- 非负整数键：类数组对象的键通常是连续的非负整数，从 0 开始。
 - 不是实例：类数组对象不是 Array 的实例，因此不能直接使用数组的方法，如 push, pop, map 等等。
 
 ```js
 const arrLikes = {
-  0: 'a',
-  1: 'b',
-  2: 'c',
-  length: 3
-}
+  0: "a",
+  1: "b",
+  2: "c",
+  length: 3,
+};
 ```
 
 ```js
 function foo() {
-  console.log(arguments)
+  console.log(arguments);
 }
 
-foo(1,2,3) // Arguments(3) [1, 2, 3, callee: (...), Symbol(Symbol.iterator): ƒ]
+foo(1, 2, 3); // Arguments(3) [1, 2, 3, callee: (...), Symbol(Symbol.iterator): ƒ]
 ```
 
 ### 转换方法
+
 - Array.from()
 - 使用扩展运算符（spread operator）（ES6+）
 - Array.prototype.slice.call()
@@ -759,27 +764,30 @@ foo(1,2,3) // Arguments(3) [1, 2, 3, callee: (...), Symbol(Symbol.iterator): ƒ]
 ```JS
   var arrayLike = {0: 'name', 1: 'age', 2: 'sex', length: 3 }
   // 1. slice
-  Array.prototype.slice.call(arrayLike); // ["name", "age", "sex"] 
+  Array.prototype.slice.call(arrayLike); // ["name", "age", "sex"]
   // 2. splice
-  Array.prototype.splice.call(arrayLike, 0); // ["name", "age", "sex"] 
+  Array.prototype.splice.call(arrayLike, 0); // ["name", "age", "sex"]
   // 3. ES6 Array.from
-  Array.from(arrayLike); // ["name", "age", "sex"] 
+  Array.from(arrayLike); // ["name", "age", "sex"]
   // 4. apply
   Array.prototype.concat.apply([], arrayLike)
 ```
 
 ### 常见的类数组
+
 - 函数的 arguments 对象
 - DOM 元素的集合，如 document.getElementsByTagName() 返回的 NodeList
 
-
-## 异步编程
+## [异步编程](https://x1mnl9knbjp.feishu.cn/docx/KOISdGpg1orK7sxQ4CKcnzJYnHg)
 
 ### Promise
-基础
+
+#### 基础
+
 <a href="https://es6.ruanyifeng.com/#docs/promise" target="_blank"  style="display: block">Promise</a>
 
 #### 特点
+
 - 状态不受外界影响,只有异步操作的结果
   - pedding
   - fulfilled
@@ -788,15 +796,294 @@ foo(1,2,3) // Arguments(3) [1, 2, 3, callee: (...), Symbol(Symbol.iterator): ƒ]
   - pedding =》 fulfilled
   - pedding =》 rejected
 - throw 可以触发 rejected
-- then方法返回的是一个新的Promise实例，因此可以采用链式写法
-  - then方法接受两个参数，第一个是resolved状态的回调函数，第二个是rejected状态的回调函数
-  - then方法返回的Promise实例，会等待回调函数执行完，才会执行下一个then方法指定的回调函数
-- 
+- then 方法返回的是一个新的 Promise 实例，因此可以采用链式写法
+  - then 方法接受两个参数，第一个是 resolved 状态的回调函数，第二个是 rejected 状态的回调函数
+  - then 方法返回的 Promise 实例，会等待回调函数执行完，才会执行下一个 then 方法指定的回调函数
 
+#### 实现
 
+```js
+class MyPromise {
+  // 构造方法
+  constructor(executor) {
+    // 初始化值
+    this.initValue();
+    // 初始化this指向
+    this.initBind();
+    try {
+      // 执行传进来的函数
+      executor(this.resolve, this.reject);
+    } catch (e) {
+      // 捕捉到错误直接执行reject
+      this.reject(e);
+    }
+  }
+
+  initBind() {
+    // 初始化this
+    this.resolve = this.resolve.bind(this);
+    this.reject = this.reject.bind(this);
+  }
+
+  initValue() {
+    // 初始化值
+    this.PromiseResult = null; // 终值
+    this.PromiseState = "pending"; // 状态
+    this.onFulfilledCallbacks = []; // 保存成功回调
+    this.onRejectedCallbacks = []; // 保存失败回调
+  }
+
+  resolve(value) {
+    // state是不可变的
+    if (this.PromiseState !== "pending") return;
+    // 如果执行resolve，状态变为fulfilled
+    this.PromiseState = "fulfilled";
+    // 终值为传进来的值
+    this.PromiseResult = value;
+    // 执行保存的成功回调
+    while (this.onFulfilledCallbacks.length) {
+      this.onFulfilledCallbacks.shift()(this.PromiseResult);
+    }
+  }
+
+  reject(reason) {
+    // state是不可变的
+    if (this.PromiseState !== "pending") return;
+    // 如果执行reject，状态变为rejected
+    this.PromiseState = "rejected";
+    // 终值为传进来的reason
+    this.PromiseResult = reason;
+    // 执行保存的失败回调
+    while (this.onRejectedCallbacks.length) {
+      this.onRejectedCallbacks.shift()(this.PromiseResult);
+    }
+  }
+
+  then(onFulfilled, onRejected) {
+    // 接收两个回调 onFulfilled, onRejected
+
+    // 参数校验，确保一定是函数
+    onFulfilled =
+      typeof onFulfilled === "function" ? onFulfilled : (val) => val;
+    onRejected =
+      typeof onRejected === "function"
+        ? onRejected
+        : (reason) => {
+            throw reason;
+          };
+
+    var thenPromise = new MyPromise((resolve, reject) => {
+      const resolvePromise = (cb) => {
+        setTimeout(() => {
+          try {
+            const x = cb(this.PromiseResult);
+            if (x === thenPromise) {
+              // 不能返回自身哦
+              throw new Error("不能返回自身。。。");
+            }
+            if (x instanceof MyPromise) {
+              // 如果返回值是Promise
+              // 如果返回值是promise对象，返回值为成功，新promise就是成功
+              // 如果返回值是promise对象，返回值为失败，新promise就是失败
+              // 谁知道返回的promise是失败成功？只有then知道
+              x.then(resolve, reject);
+            } else {
+              // 非Promise就直接成功
+              resolve(x);
+            }
+          } catch (err) {
+            // 处理报错
+            reject(err);
+            throw new Error(err);
+          }
+        });
+      };
+
+      if (this.PromiseState === "fulfilled") {
+        // 如果当前为成功状态，执行第一个回调
+        resolvePromise(onFulfilled);
+      } else if (this.PromiseState === "rejected") {
+        // 如果当前为失败状态，执行第二个回调
+        resolvePromise(onRejected);
+      } else if (this.PromiseState === "pending") {
+        // 如果状态为待定状态，暂时保存两个回调
+        // 如果状态为待定状态，暂时保存两个回调
+        this.onFulfilledCallbacks.push(resolvePromise.bind(this, onFulfilled));
+        this.onRejectedCallbacks.push(resolvePromise.bind(this, onRejected));
+      }
+    });
+
+    // 返回这个包装的Promise
+    return thenPromise;
+  }
+
+  static all(promises) {
+    const result = [];
+    let count = 0;
+    return new MyPromise((resolve, reject) => {
+      const addData = (index, value) => {
+        result[index] = value;
+        count++;
+        if (count === promises.length) resolve(result);
+      };
+      promises.forEach((promise, index) => {
+        if (promise instanceof MyPromise) {
+          promise.then(
+            (res) => {
+              addData(index, res);
+            },
+            (err) => reject(err)
+          );
+        } else {
+          addData(index, promise);
+        }
+      });
+    });
+  }
+
+  static race(promises) {
+    return new MyPromise((resolve, reject) => {
+      promises.forEach((promise) => {
+        if (promise instanceof MyPromise) {
+          promise.then(
+            (res) => {
+              resolve(res);
+            },
+            (err) => {
+              reject(err);
+            }
+          );
+        } else {
+          resolve(promise);
+        }
+      });
+    });
+  }
+}
+```
+
+### generator
+
+#### 基础
+
+<a href="https://es6.ruanyifeng.com/#docs/generator" target="_blank"  style="display: block">generator</a>
 
 ### async/await
 
+用同步方式执行异步操作
+
+#### 基础
+
+<a href="https://es6.ruanyifeng.com/#docs/async" target="_blank"  style="display: block">async</a>
+
+#### 注意点
+
+> for 循环 和 reduce 配合使用
+
+错误用法<Badge type="danger" text="错误" />
+
+```js
+function dbFuc(db) {
+  //这里不需要 async
+  let docs = [{}, {}, {}];
+
+  // 可能得到错误结果
+  docs.forEach(async function (doc) {
+    await db.post(doc);
+  });
+}
+```
+
+正确用法<Badge type="tip" text="重要" class="badge-sucess" />
+
+```js
+async function dbFuc(db) {
+  let docs = [{}, {}, {}];
+
+  for (let doc of docs) {
+    await db.post(doc);
+  }
+}
+
+// 或者
+
+async function dbFuc(db) {
+  let docs = [{}, {}, {}];
+
+  await docs.reduce(async (_, doc) => {
+    await _;
+    await db.post(doc);
+  }, undefined);
+}
+```
+
+#### 按顺序执行 <Badge type="warning" text="重要" />
+
+- 使用 for of + async await 遍历
+  ```js
+  async function logInOrder(urls) {
+    for (const url of urls) {
+      const response = await fetch(url);
+      console.log(await response.text());
+    }
+  }
+  ```
+- 使用 reduce 遍历
+
+  ```js
+  function logInOrder(urls) {
+    // 远程读取所有URL
+    const textPromises = urls.map((url) => {
+      return fetch(url).then((response) => response.text());
+    });
+
+    // 按次序输出
+    textPromises.reduce((chain, textPromise) => {
+      return chain.then(() => textPromise).then((text) => console.log(text));
+    }, Promise.resolve());
+  }
+  ```
+
+#### 实现
+
+async/await 是一种语法糖：用到的是 ES6 里的迭代函数——generator 函数。 Generator 函数和自动执行器，包装在一个函数里。
+
+- Generator 函数 yield 接 promise
+
+```js
+function fn(num) {
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      resolve(num);
+    }, 1000);
+  });
+}
+function* gen() {
+  yield fn(1);
+  yield fn(2);
+  return 3;
+}
+const g = gen();
+console.log(g.next()); // { value: Promise { <pending> }, done: false }
+console.log(g.next()); // { value: Promise { <pending> }, done: false }
+console.log(g.next()); // { value: 3, done: true }
+```
+
+- 获取 promise 的值
+
+```js
+const g = gen();
+next1 = g.next();
+next1.value.then((res) => {
+  console.log(res); // 1
+  const next2 = g.next(res);
+  next2.value.then((res) => {
+    console.log(res); // 2
+    const next3 = g.next(res);
+    console.log(next3); // { value: 3, done: true }
+  });
+});
+```
 
 ## 资料引用：
 
@@ -807,4 +1094,3 @@ foo(1,2,3) // Arguments(3) [1, 2, 3, callee: (...), Symbol(Symbol.iterator): ƒ]
 <a href="https://nwy3y7fy8w5.feishu.cn/docx/SH4wd5cRSopC1XxDVPScxz3Fnoc" target="_blank"  style="display: block">澄怀-面向对象编程/原型及原型链</a>
 <a href="https://x1mnl9knbjp.feishu.cn/docx/KOISdGpg1orK7sxQ4CKcnzJYnHg" target="_blank"  style="display: block">九思-前端异步编程规范</a>
 <a href="https://x1mnl9knbjp.feishu.cn/drive/folder/PV2Tfhdbsl7ZfIdO24fcCZ38nZd" target="_blank"  style="display: block">内功修炼</a>
-
