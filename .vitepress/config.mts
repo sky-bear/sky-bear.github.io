@@ -9,7 +9,8 @@ export default defineConfig({
     nav: [
       { text: 'Home', link: '/' },
       { text: 'Examples', link: '/example/markdown-examples' },
-      { text: 'Javascript', link: '/javascript/index' }
+      { text: 'Javascript', link: '/javascript/index' },
+      { text: 'browser', link: '/browser/index' }
     ],
 
     sidebar:{
