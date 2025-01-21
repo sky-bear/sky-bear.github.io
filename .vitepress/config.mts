@@ -40,6 +40,7 @@ export default defineConfig({
                 { text: '执行上下文', link: '/javascript/basis/context' },
                 { text: '异步编程', link: '/javascript/basis/promise' },
                 { text: '模块化', link: '/javascript/basis/module' },
+                { text: '垃圾回收 & 运行机制', link: '/javascript/basis/GCAndEventLoop' },
               ] },
               // { text: 'ES6', link: '/javascript/es6' },
             ]
