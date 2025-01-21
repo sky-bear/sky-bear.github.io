@@ -5,6 +5,9 @@ export default defineConfig({
   title: "My Awesome Project",
   description: "A VitePress Site",
   themeConfig: {
+    search: {
+      provider: 'local'
+    },
     // https://vitepress.dev/reference/default-theme-config
     nav: [
       { text: 'Home', link: '/' },
@@ -26,9 +29,19 @@ export default defineConfig({
         "/javascript/":[
           {
             text: 'Javascript',
+            link: '/javascript/index',
             items: [
-              { text: '基础专栏', link: '/javascript/basis' },
-              { text: 'ES6', link: '/javascript/es6' },
+              { text: '基础专栏', 
+                link: '/javascript/basis/basis',
+                collapsed: false,
+                items:[
+                { text: 'this指向', link: '/javascript/basis/this' },
+                { text: '原型', link: '/javascript/basis/prototype' },
+                { text: '执行上下文', link: '/javascript/basis/context' },
+                { text: '异步编程', link: '/javascript/basis/promise' },
+                { text: '模块化', link: '/javascript/basis/module' },
+              ] },
+              // { text: 'ES6', link: '/javascript/es6' },
             ]
           }
         ]
