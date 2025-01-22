@@ -30,6 +30,418 @@ for (let i = 0; i < 1000; i++) {
 - Interpreter 逐行将源代码转换为等效的机器代码。
 - Compiler 在一开始就将所有源代码转换为机器代码。
 
-### 资料引用
+## JavaScript 引擎
+
+JavaScript 其实有众多引擎，只不过 v8 是我们最为熟知的。
+
+- V8 (Google)，用 C++编写，开放源代码，由 Google 丹麦开发，是 Google Chrome 的一部分，也用于 Node.js。
+- JavaScriptCore (Apple)，开放源代码，用于 webkit 型浏览器，如 Safari ，2008 年实现了编译器和字节码解释器，升级为了 SquirrelFish。苹果内部代号为“Nitro”的 JavaScript 引擎也是基于 JavaScriptCore 引擎的。
+- Rhino，由 Mozilla 基金会管理，开放源代码，完全以 Java 编写，用于 HTMLUnit
+- SpiderMonkey (Mozilla)，第一款 JavaScript 引擎，早期用于 Netscape Navigator，现时用于 Mozilla Firefox。
+
+<br />
+Node.js 架构
+<Image  src="./images/node.jpg" />
+
+::: warning
+谷歌的 Chrome 使用 V8，Safari 使用 JavaScriptCore，Firefox 使用 SpiderMonkey。
+:::
+
+简单看一下 V8 的处理过程。
+<Image  src="./images/v8.png" />
+
+1. 始于从网络中获取 JavaScript 代码。
+2. V8 解析源代码并将其转化为抽象语法树（AST）。
+3. 基于该 AST，Ignition 解释器可以开始做它的事情，并产生字节码。
+4. 在这一点上，引擎开始运行代码并收集类型反馈。
+5. 为了使它运行得更快，字节码可以和反馈数据一起被发送到优化编译器。优化编译器在此基础上做出某些假设，然后产生高度优化的机器代码。
+6. 如果在某些时候，其中一个假设被证明是不正确的，优化编译器就会取消优化，并回到解释器中。
+
+## 垃圾回收
+
+GC（garbage collection）
+
+### 引用计数算法
+
+它的策略是跟踪记录每个变量值被使用的次数
+
+- 当声明了一个变量并且将一个引用类型赋值给该变量的时候这个值的引用次数就为 1
+- 如果同一个值又被赋给另一个变量，那么引用数加 1
+- 如果该变量的值被其他的值覆盖了，则引用次数减 1
+- 当这个值的引用次数变为 0 的时候，说明没有变量在使用，这个值没法被访问了，回收空间，垃圾回收器会在运行的时候清理掉引用次数为 0 的值占用的内存
+
+#### 优点
+
+引用计数算法的优点我们对比标记清除来看就会清晰很多，首先引用计数在引用值为 0 时，也就是在变成垃圾的那一刻就会被回收，所以它可以立即回收垃圾
+而标记清除算法需要每隔一段时间进行一次，那在应用程序（JS 脚本）运行过程中线程就必须要暂停去执行一段时间的 GC，另外，标记清除算法需要遍历堆里的活动以及非活动对象来清除，而引用计数则只需要在引用时计数就可以了
+
+#### 缺点
+
+引用计数的缺点想必大家也都很明朗了，首先它需要一个计数器，而此计数器需要占很大的位置，因为我们也不知道被引用数量的上限，还有就是无法解决循环引用无法回收的问题，这也是最严重的
+
+### 标记清除（mark-sweep）算法
+
+标记清除（Mark-Sweep），目前在 JavaScript 引擎 里这种算法是最常用的，到目前为止的大多数浏览器的 JavaScript 引擎 都在采用标记清除算法，各大浏览器厂商还对此算法进行了优化加工，且不同浏览器的 JavaScript 引擎 在运行垃圾回收的频率上有所差异。
+
+整个标记清除算法大致过程就像下面这样
+
+1. 垃圾收集器在运行时会给内存中的所有变量都加上一个标记，假设内存中所有对象都是垃圾，全标记为 0
+2. 然后从各个根对象开始遍历，把不是垃圾的节点改成 1
+3. 清理所有标记为 0 的垃圾，销毁并回收它们所占用的内存空间
+4. 最后，把所有内存中对象标记修改为 0，等待下一轮垃圾回收
+
+#### 优点
+
+标记清除算法的优点只有一个，那就是实现比较简单，打标记也无非打与不打两种情况，这使得一位二进制位（0 和 1）就可以为其标记，非常简单
+
+#### 缺点
+
+标记清除算法有一个很大的缺点，就是在清除之后，剩余的对象内存位置是不变的，也会导致空闲内存空间是不连续的，出现了 内存碎片（如下图），并且由于剩余空闲内存不是一整块，它是由不同大小内存组成的内存列表，这就牵扯出了内存分配的问题
+<Image  src="./images/mark-sweep.jpg" />
+假设我们新建对象分配内存时需要大小为 size，由于空闲内存是间断的、不连续的，则需要对空闲内存列表进行一次单向遍历找出大于等于 size 的块才能为其分配（如下图）
+<Image  src="./images/fit.jpg" />
+那如何找到合适的块呢？我们可以采取下面三种分配策略
+
+- First-fit，找到大于等于 size 的块立即返回
+- Best-fit，遍历整个空闲列表，返回大于等于 size 的最小分块
+- Worst-fit，遍历整个空闲列表，找到最大的分块，然后切成两部分，一部分 size 大小，并将该部分返回
+  这三种策略里面 Worst-fit 的空间利用率看起来是最合理，但实际上切分之后会造成更多的小块，形成内存碎片，所以不推荐使用，对于 First-fit 和 Best-fit 来说，考虑到分配的速度和效率 First-fit 是更为明智的选择
+  综上所述，标记清除算法或者说策略就有两个很明显的缺点
+- **内存碎片化**，空闲内存块是不连续的，容易出现很多空闲内存块，还可能会出现分配所需内存过大的对象时找不到合适的块
+- 分配速度慢，因为即便是使用 First-fit 策略，其操作仍是一个 O(n) 的操作，最坏情况是每次都要遍历到最后，同时因为碎片化，大对象的分配效率会更慢
+
+而 **标记整理（Mark-Compact）算法** 就可以有效地解决，它的标记阶段和标记清除算法没有什么不同，只是标记结束后，标记整理算法会将活着的对象（即不需要清理的对象）向内存的一端移动，最后清理掉边界的内存
+
+## 内存管理
+
+::: warning
+V8 的垃圾回收策略主要基于分代式垃圾回收机制，V8 中将堆内存分为新生代和老生代两区域，采用不同的垃圾回收器也就是不同的策略管理垃圾回收
+:::
+
+<Image  src="./images/v8-gc.jpg" />
+
+### 新生代
+
+<Image  src="./images/v8-gc-1.jpg" />
+当新加入对象时，它们会被存储在使用区。然而，当使用区快要被写满时，垃圾清理操作就需要执行。在开始垃圾回收之前，新生代垃圾回收器会对使用区中的活动对象进行标记。标记完成后，活动对象将会被复制到空闲区并进行排序。然后，垃圾清理阶段开始，即将非活动对象占用的空间清理掉。最后，进行角色互换，将原来的使用区变成空闲区，将原来的空闲区变成使用区。
+
+如果一个对象经过多次复制后依然存活，那么它将被认为是生命周期较长的对象，且会被移动到老生代中进行管理。除此之外，还有一种情况，如果复制一个对象到空闲区时，空闲区的空间占用超过了 25%，那么这个对象会被直接晋升到老生代空间中。25%比例的设置是为了避免影响后续内存分配，因为当按照 Scavenge 算法回收完成后，空闲区将翻转成使用区，继续进行对象内存分配。
+
+### 老生代
+
+不同于新生代，老生代中存储的内容是相对使用频繁并且短时间无需清理回收的内容。这部分我们可以使用标记整理进行处理。
+从一组根元素开始，递归遍历这组根元素，遍历过程中能到达的元素称为活动对象，没有到达的元素就可以判断为非活动对象
+清除阶段老生代垃圾回收器会直接将非活动对象进行清除。
+
+### 并行回收
+
+- 全停顿标记： **阻塞**进程
+- 切片标记： 增量就是将一次 GC 标记的过程，分成了很多小步，每执行完一小步就让应用逻辑执行一会儿，这样交替多次后完成一轮 GC 标记
+
+::: danger
+
+1. 怎么理解内存泄漏
+2. 怎么解决内存泄漏，代码层面如何优化？
+   :::
+
+3. 减少查找
+
+```js
+var i,
+  str = "";
+function packageDomGlobal() {
+  for (i = 0; i < 1000; i++) {
+    str += i;
+  }
+}
+
+// 第二种情况。我们采用局部变量来保存保存相关数据
+function packageDomLocal() {
+  let str = "";
+  for (let i = 0; i < 1000; i++) {
+    str += i;
+  }
+}
+```
+
+2. 减少变量声明
+
+```js
+// 第一种情况，循环体中没有抽离出值不变的数据
+var test = () => {
+  let arr = ["czs", 25, "I love FrontEnd"];
+  for (let i = 0; i < arr.length; i++) {
+    console.log(arr[i]);
+  }
+};
+
+// 第二种情况，循环体中抽离出值不变的数据
+var test = () => {
+  let arr = ["czs", 25, "I love FrontEnd"];
+  const length = arr.length;
+  for (let i = 0; i < length; i++) {
+    console.log(arr[i]);
+  }
+};
+```
+
+3. 使用 Performance + Memory 分析内存与性能
+
+## 运行机制
+
+浏览器主进程
+
+- 协调控制其他子进程（创建、销毁）
+- 浏览器界面显示，用户交互，前进、后退、收藏
+- 将渲染进程得到的内存中的 Bitmap，绘制到用户界面上
+- 存储功能等
+
+第三方插件进程
+
+- 每种类型的插件对应一个进程，仅当使用该插件时才创建
+  GPU 进程
+- 用于 3D 绘制等
+  渲染进程，就是我们说的浏览器内核
+- 排版引擎 Blink 和 JavaScript 引擎 V8 都是运行在该进程中，将 HTML、CSS 和 JavaScript 转换为用户可以与之交互的网页，
+- 负责页面渲染，脚本执行，事件处理等
+- 每个 tab 页一个渲染进程
+- 出于安全考虑，渲染进程都是运行在沙箱模式下
+  网络进程
+- 负责页面的网络资源加载，之前作为一个模块运行在浏览器主进程里面，最近才独立成为一个单独的进程
+
+### 事件循环
+
+<Image  src="./images/event-loop.jpg" />
+- 执行宏任务：从宏任务队列中取出一个任务并执行。
+- 处理所有微任务：在一个宏任务完成后，浏览器会检查微任务队列，并依次执行所有可用的微任务，直到微任务队列为空。
+- 渲染：如果此时有需要更新的内容，且已经到了显示器的刷新时间点，浏览器将进行一次渲染更新。
+- 重复：回到第一步，继续处理下一个宏任务。
+
+<Badge type="danger" text="非常重要" />
+::: danger
+如果未到渲染时间
+当显示器的刷新时间点未到时，浏览器会按照以下方式运作：
+
+- 继续处理宏任务：只要宏任务队列中有待处理的任务，浏览器就会继续执行这些任务，而不会等待渲染时间的到来。
+- 处理新产生的微任务：每个宏任务结束后，浏览器都会处理所有在此期间产生的微任务。因此，即使没有立即渲染的需求，新的微任务也会被及时处理。
+- 准备下一轮渲染：虽然当前没有渲染，但浏览器仍然会在后台为即将到来的渲染做准备，比如计算样式、布局等，以便在下一帧开始时可以迅速完成绘制。
+  :::
+
+宏任务
+可以将每次执行栈执行的代码当做是一个宏任务
+
+- I/O
+- setTimeout
+- setInterval
+- setImmediate
+  微任务
+  当宏任务执行完，会在渲染前，将执行期间所产生的所有微任务都执行完
+- process.nextTick
+- MutationObserver
+- Promise.then catch finally
+
+渲染相关回调任务
+
+- requestAnimationFrame
+  它不是严格意义上的任务队列的一部分，而是与渲染紧密关联。<br />
+  在每个事件循环周期结束时，如果存在待处理的 rAF 回调，浏览器会在执行完所有微任务之后、开始绘制下一帧之前调用它们。<br />
+  当你需要确保某些操作（如获取元素尺寸、位置或应用样式）是在DOM更新并渲染之后执行时，可以将这些操作放在 requestAnimationFrame 的回调中。这样可以确保你的代码在浏览器完成所有必要的布局和绘制操作后执行<br />
+  如果没有新的宏任务或微任务需要处理，浏览器可能会尽快执行 rAF 回调；**但如果还有其他任务，则 rAF 回调会等待直到那些任务完成**<br />
+
+整体流程
+
+- 执行一个宏任务（栈中没有就从事件队列中获取）
+- 执行过程中如果遇到微任务，就将它添加到微任务的任务队列中
+- 宏任务执行完毕后，立即执行当前微任务队列中的所有微任务（依次执行）
+- 当前微任务执行完毕，开始检查渲染，然后 GUI 线程接管渲染
+- 渲染完毕后，JS 线程继续接管，开始下一个宏任务（从事件队列中获取）
+
+```js
+console.log(1);
+
+queueMicrotask(() => {
+  console.log(2);
+});
+
+Promise.resolve().then(() => console.log(3));
+
+setTimeout(() => {
+  console.log(4);
+});
+```
+
+```js
+console.log(1);
+
+setTimeout(() => console.log(2));
+
+Promise.resolve().then(() => console.log(3));
+
+Promise.resolve().then(() => setTimeout(() => console.log(4)));
+
+Promise.resolve().then(() => console.log(5));
+
+setTimeout(() => console.log(6));
+
+console.log(7);
+
+// 结果
+/*
+1 7 3 5 2 6 4
+*/
+```
+
+```js
+Promise.resolve().then(() => {
+  // 微任务1
+  console.log("Promise1");
+  setTimeout(() => {
+    // 宏任务2
+    console.log("setTimeout2");
+  }, 0);
+});
+setTimeout(() => {
+  // 宏任务1
+  console.log("setTimeout1");
+  Promise.resolve().then(() => {
+    // 微任务2
+    console.log("Promise2");
+  });
+}, 0);
+
+// Promise1
+// setTimeout1
+// Promise2
+// setTimeout2
+```
+
+```js
+console.log("stack [1]");
+setTimeout(() => console.log("macro [2]"), 0);
+setTimeout(() => console.log("macro [3]"), 1);
+
+const p = Promise.resolve();
+for (let i = 0; i < 3; i++) {
+  p.then(() => {
+    setTimeout(() => {
+      console.log("stack [4]");
+      setTimeout(() => console.log("macro [5]"), 0);
+      p.then(() => console.log("micro [6]"));
+    }, 0);
+    console.log("stack [7]");
+  });
+}
+
+console.log("macro [8]");
+// stack [1]
+// macro [8]
+// stack [7]
+// stack [7]
+// stack [7]
+// macro [2]
+// macro [3]
+// stack [4]
+// micro [6]
+// stack [4]
+// micro [6]
+// stack [4]
+// micro [6]
+// macro [5]
+// macro [5]
+// macro [5]
+```
+
+<Badge type="danger" text="重要" />
+
+```js
+const $inner = document.querySelector("#inner");
+const $outer = document.querySelector("#outer");
+
+function handler() {
+  console.log("click"); // 直接输出
+
+  Promise.resolve().then((_) => console.log("promise")); // 注册微任务
+
+  setTimeout(() => console.log("timeout")); // 注册宏任务
+
+  requestAnimationFrame((_) => console.log("animationFrame")); // 注册宏任务
+
+  $outer.setAttribute("data-random", Math.random()); // DOM属性修改，触发微任务
+}
+
+new MutationObserver((_) => {
+  console.log("observer");
+}).observe($outer, {
+  attributes: true,
+});
+
+$inner.addEventListener("click", handler);
+// click
+// promise
+// observer
+// animationFrame  这里浏览器执行时可能先打印  timeout 后 打印 animationFrame【出现次数极少】
+// timeout
+```
+
+```js
+const $inner = document.querySelector("#inner");
+const $outer = document.querySelector("#outer");
+
+function handler() {
+  console.log("click"); // 直接输出
+
+  Promise.resolve().then((_) => console.log("promise")); // 注册微任务
+
+  setTimeout(() => console.log("timeout")); // 注册宏任务
+
+  requestAnimationFrame((_) => console.log("animationFrame")); // 注册宏任务
+
+  $outer.setAttribute("data-random", Math.random()); // DOM属性修改，触发微任务
+}
+
+new MutationObserver((_) => {
+  console.log("observer");
+}).observe($outer, {
+  attributes: true,
+});
+
+$inner.addEventListener("click", handler);
+$outer.addEventListener("click", handler); // 冒泡触发
+// inner 内的
+// click
+// promise
+// observer
+// 此时还没有到渲染节点 继续事件循环
+// outer 
+// click  为啥是click呢， 原因如下
+// promise
+// observer
+// 渲染之前
+// animationFrame  inner 
+// animationFrame  outer
+// timeout  inner
+// timeout  outer
+
+
+```
+如在一个宏任务内部同时注册了点击事件监听器和设置了 setTimeout，那么点击事件通常会比 setTimeout 先执行。这是因为点击事件被视为用户交互，具有较高的优先级，并且会立即加入宏任务队列；而 setTimeout 的回调则需要等待当前同步代码和所有微任务完成后才会被调度。
+
+总结来说，在大多数情况下，点击事件会比 setTimeout(fn, 0) 更早执行，因为它属于用户交互类的宏任务，而 setTimeout 则是在指定时间延迟后才被加入宏任务队列
+
+::: warning
+我们知道渲染是在微任务之后，宏任务之前进行的， 那为啥vue.$nextTick可以通过promise.then来执行呢？<br />
+
+- Vue 的 nextTick 函数是用于在下次 DOM 更新循环结束之后执行延迟回调。它利用了 JavaScript 的事件循环机制，通过将回调函数注册到微任务队列中，确保在 DOM 更新完成后执行。
+- DOM 更新 是直接对内存中的DOM对象进行的操作，因此你可以立即通过JavaScript获取到最新的值。
+- 渲染流程 是异步的，它会在当前同步任务和所有微任务完成后才进行，因此视觉上的更新可能会被延迟。
+为了确保获取到渲染后的DOM信息，可以使用 requestAnimationFrame 或其他方法来等待渲染完成后再执行相关代码。
+:::
+
+
+### Node 事件循环机制
+
+<Image  src="./images/node-event-loop.jpg" />
+
+## 资料引用
 
 <a href="https://y03l2iufsbl.feishu.cn/docx/XnOtdJySUoSHPjxPVAGc6LwgnIc" target="_blank"  style="display: block">垃圾回收 & 运行机制</a>
