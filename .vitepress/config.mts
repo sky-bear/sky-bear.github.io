@@ -35,12 +35,17 @@ export default defineConfig({
                 link: '/javascript/basis/basis',
                 collapsed: false,
                 items:[
+                { text: '常见知识', link: '/javascript/basis/common' },
                 { text: 'this指向', link: '/javascript/basis/this' },
                 { text: '原型', link: '/javascript/basis/prototype' },
                 { text: '执行上下文', link: '/javascript/basis/context' },
                 { text: '异步编程', link: '/javascript/basis/promise' },
                 { text: '模块化', link: '/javascript/basis/module' },
+                { text: '作用域', link: '/javascript/basis/scope' },
                 { text: '垃圾回收 & 运行机制', link: '/javascript/basis/GCAndEventLoop' },
+                { text: '函数式编程', link: '/javascript/basis/FP' },
+                { text: 'javascript 的深浅复制', link: '/javascript/basis/copy' },
+                { text: '防抖和节流', link: '/javascript/basis/debounceAndThrottle' },
               ] },
               // { text: 'ES6', link: '/javascript/es6' },
             ]
