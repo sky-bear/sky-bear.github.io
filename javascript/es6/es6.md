@@ -65,3 +65,13 @@ let a;
 
 #### 不允许重复声明
 let 不允许在相同作用域内重复声明同一个变量
+
+
+
+
+## 资料引用
+
+
+<a href="https://y03l2iufsbl.feishu.cn/drive/folder/LWpVfwcxTlVDXJdJRHWcihbznch" target="_blank"  style="display: block">ES6</a>
+
+

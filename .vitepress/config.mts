@@ -4,6 +4,7 @@ import { defineConfig } from 'vitepress'
 export default defineConfig({
   title: "My Awesome Project",
   description: "A VitePress Site",
+  head: [['link', { rel: 'icon', href: '/public/icon.png' }]],
   themeConfig: {
     search: {
       provider: 'local'
@@ -47,7 +48,7 @@ export default defineConfig({
                 { text: 'javascript 的深浅复制', link: '/javascript/basis/copy' },
                 { text: '防抖和节流', link: '/javascript/basis/debounceAndThrottle' },
               ] },
-              // { text: 'ES6', link: '/javascript/es6' },
+              { text: 'ES6', link: '/javascript/es6/es6' },
             ]
           }
         ]
