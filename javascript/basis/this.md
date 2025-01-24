@@ -17,8 +17,52 @@ import Image from "../../components/Image/index.vue"
   - this 实际上是在函数被调用时发生的绑定， 它指向什么完全取决于函数在哪里被调用
     > this 执行为当前执行环境（执行上下文）的 ThisBinding。ThisBinding 就是 this 的值。
 - 箭头函数
-  - 箭头函数体内的 this 对象就是定义时所在的对象，而不是使用时所在的对象
-  - 是箭头函数根本没有自己的 this，导致内部的 this 就是外层代码块的 this
+  - 静态绑定
+    -  箭头函数不会创建自己的 this 上下文；它们会使用定义时所在的外部作用域中的 this。 
+    - 这意味着一旦箭头函数被定义，它的 this 就已经确定了，即使之后该函数在不同的上下文中被调用，this 的值也不会改变
+  - 继承自最近的非箭头函数
+    - 如果箭头函数位于另一个普通函数内部，那么它将继承该普通函数的 this
+    - 如果不在任何普通函数内部，则 this 通常是全局对象（在浏览器环境中为 window 或严格模式下的 undefined）
+  
+  ```js
+  const obj1 = {
+    a: 1,
+    fn() {
+      console.log("this-obj1", this);
+    },
+  };
+  const obj2 = {
+    a: 1,
+    fn: () => {
+      console.log("this", this);
+    },
+    fn2: function () {
+      (() => {
+        console.log("this-obj2", this);
+      })();
+    },
+  };
+  const obj3 = {
+    a: 2,
+    fn(fn) {
+      console.log("this---obj3", this);
+      fn();
+    },
+  };
+  // 这里先只考虑浏览器的
+  obj1.fn(); // obj1
+
+  obj2.fn(); // window 
+
+  obj2.fn2(); // obj2
+
+  const fn2 = obj2.fn2;
+
+  fn2(); // window
+
+  obj3.fn(fn2); // obj3 window
+
+  ```
 
 ## 解析
 
@@ -291,7 +335,7 @@ Function.prototype.bind = function (context, ...args) {
 };
 ```
 
-### new 实现
+## new 实现
 
 new 可以获取构造函数中 this 指向的属性 与原型的方法
 
@@ -307,6 +351,13 @@ function objectFactory() {
 ```
 
 
+
+## 箭头函数和普通函数的区别
+
+1. this 指向，箭头函数不能定义构造器
+2. 不能 new
+3. 内部无 arguments 对象
+4. this 绑定方法失效，比如：call apply bind
 
 ## 类数组对象和 arguments
 
