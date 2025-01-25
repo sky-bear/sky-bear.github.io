@@ -34,3 +34,6 @@ const fn2 = obj2.fn2;
 fn2();
 
 obj3.fn(fn2);
+
+
+

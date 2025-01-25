@@ -67,6 +67,10 @@ export default defineConfig({
                 { text: "let & const", link: "/javascript/es6/letAndConst" },
               ],
             },
+            {
+              text: "typescript",
+              link: "/javascript/typescript/typescript",
+            },
           ],
         },
       ],
