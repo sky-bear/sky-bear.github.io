@@ -17,6 +17,7 @@ export default defineConfig({
       { text: "browser", link: "/browser/index" },
       { text: "设计模式", link: "/designPattern/index" },
       { text: "vue", link: "/vue/index" },
+      { text: "react", link: "/react/index" },
     ],
 
     sidebar: {
@@ -84,9 +85,21 @@ export default defineConfig({
               link: "/vue/vue2/vue2",
               items: [
                 { text: "vue2的高级用法", link: "/vue/vue2/advancedUsage", },
+                { text: "vuex", link: "/vue/vue2/vuex", },
               ],
             },
             { text: "vue3", link: "/vue/vue3/vue3" },
+          ],
+        },
+      ],
+      "/react/": [
+        {
+          text: "react",
+          items: [
+            {
+              text: "服务端渲染",
+              link: "/react/serve/serve",
+            },
           ],
         },
       ],

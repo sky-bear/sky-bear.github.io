@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ref和reactive</title>
+  <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+</head>
+<body>
+  <div id="app">{{ obj.age }}</div>
+
+  <script>
+    const { createApp, ref, reactive } = Vue
+  
+    createApp({
+      setup() {
+        const count = ref(15);
+        const obj = reactive({
+          name: '张三',
+          age: count
+        })
+        count.value = 10;
+        console.log( count.value)
+        console.log( count.value === obj.age)
+        obj.age = 20
+        console.log( obj.age)
+        console.log( count.value === obj.age)
+        return {
+          obj
+        }
+      }
+    }).mount('#app')
+  </script>
+</body>
+</html>

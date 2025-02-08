@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>响应式原理</title>
+</head>
+<body>
+  <div class="vue2"></div>
+  <div class="vue3"></div>
+
+  <script>
+    // vue2 
+    const vue2Data = {count:1, list:[]};
+    Object.keys(vue2Data).forEach((key) => {
+      Object.defineProperty(vue2Data, key, {
+        get() {
+          console.log('vue2 get', key);
+          return vue2Data[key];
+        },
+        set(value) {
+          console.log('vue2 set', key, value);
+          vue2Data[key] = value;
+        }
+     })
+    })
+    
+
+
+  </script>
+</body>
+</html>
+

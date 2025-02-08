@@ -20,6 +20,7 @@
 动画的实现就是通过在 DOM 元素上添加/移除 CSS 类再结合 requestAnimationFrame 实现的, 通过监听 animationend 事件，在动画结束后移除类名
 
 <a href="https://animatecss.node.org.cn/" target="_blank"  style="display: block">animatecss</a>
+<a href="https://gsap.com/" target="_blank"  style="display: block">gsap</a>
 
 ## 插槽
 
