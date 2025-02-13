@@ -84,11 +84,18 @@ export default defineConfig({
               text: "vue2",
               link: "/vue/vue2/vue2",
               items: [
-                { text: "vue2的高级用法", link: "/vue/vue2/advancedUsage", },
-                { text: "vuex", link: "/vue/vue2/vuex", },
+                { text: "vue2的高级用法", link: "/vue/vue2/advancedUsage" },
+                { text: "vuex", link: "/vue/vue2/vuex" },
               ],
             },
-            { text: "vue3", link: "/vue/vue3/vue3" },
+            {
+              text: "vue3",
+              link: "/vue/vue3/vue3",
+              items: [
+                // { text: "vue2的高级用法", link: "/vue/vue2/advancedUsage" },
+                { text: "vuex", link: "/vue/vue3/vuex" },
+              ],
+            },
           ],
         },
       ],
