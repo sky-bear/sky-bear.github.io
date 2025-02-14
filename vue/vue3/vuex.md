@@ -81,6 +81,7 @@ export class Store {
     installModule(this, rootState, [], this._modules.root);
 
     resetStoreState(this, options.state);
+    plugins.forEach((plugin) => plugin(this));
   }
   install(app, injectKey) {
     console.log("app, injectKey", app, injectKey);
@@ -336,8 +337,10 @@ export class Store {
     const rootState = this._modules.root.state;
     console.log("rootState", rootState);
     installModule(this, rootState, [], this._modules.root);
-
+    // 添加响应式
     resetStoreState(this, options.state);
+    // 安装插件
+    plugins.forEach((plugin) => plugin(this));
   }
   install(app, injectKey) {
     console.log("app, injectKey", app, injectKey);
@@ -870,6 +873,11 @@ export function resetStore(store, hot) {
   // reset state
   resetStoreState(store, state, hot)
 }
+```
+
+插件就更简单了
+```js
+plugins.forEach((plugin) => plugin(this));
 ```
 
 安装后就是响应式了, 一开始就贴过代码了， 这里就不重复了
