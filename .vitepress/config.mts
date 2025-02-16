@@ -73,6 +73,10 @@ export default defineConfig({
               text: "typescript",
               link: "/javascript/typescript/typescript",
             },
+            {
+              text: "AST",
+              link: "/javascript/ast/ast",
+            },
           ],
         },
       ],
