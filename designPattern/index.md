@@ -4,7 +4,6 @@
 import Image from "../components/Image/index.vue"
 </script>
 
-
 ## 面向对象编程
 
 **面向对象编程**： 就是将你的需求抽象成一个对象，然后针对这个对象分析其特征（属性）与动作（方法），这个对象我们称之为类
@@ -15,8 +14,8 @@ import Image from "../components/Image/index.vue"
 - 继承 ： 是对原有对象的封装，从中创建私有属性、私有方法、特权方法、共有属性、共有方法等。主要是类继承， 构造函数继承， 组合继承， 其余的都是在这三种基础延申的
 - 多态： 同一个方法多种调用方式
 
-
 ## 继承
+
 - 类式继承（原型链继承）
 
   ```js
@@ -103,8 +102,6 @@ import Image from "../components/Image/index.vue"
   **缺点**
 
   - 子类实例不能继承父类的构造属性和方法（原型上的方法和属性）
-
-
 
 - 组合继承
 
@@ -200,8 +197,49 @@ function inheritPrototype(subclass, superclass) {
 }
 ```
 
-
 组合式继承中，通过构造函数继承的属性和方法是没有问题的，所以这里我们主要探究通过寄生式继承重新继承父类的原型。我们需要继承的仅仅是父类的原型，不再需要调用父类的构造函数，换句话说，在构造函数继承中我们己经调用了父类的构造函数。因此我们需要的就是父类的原型对象的一个副本，而这个副本我们通过原型继承便可得到，但是这么直接赋值给子类会有问题的，因为对父类原型对象复制得到的复制对象 p 中的 constructor 指向的不是 subClass 子类对象，因此在寄生式继承中要对复制对象 p 做一次增强，修复其 constructor 属性指向不正确的问题，最后将得到的复制对象 p 赋值给子类的原型，这样子类的原型就继承了父类的原型并且没有执行父类的构造函数
 
+```js
+// 定义父类
+function SuperClass(name) {
+  this.name = name;
+  this.colors = ["red", "blue", "green"];
 
-### 类似继承
+}
+// 定义父类原型方法
+SuperClass.prototype.getName = function(){console.log(this.name)}:
+// 定义子类
+function SubClass(name, time) {
+  //构造函数式继承
+  SuperClass.call(this, name);
+  //子类新增属性
+  this.time = time;
+}
+//寄生式继承父类原型
+inheritPrototype(SubClass, SuperClass);
+//子类新增原型方法
+SubClass.prototype.getTime = function () {
+  console.log(this.time);
+};
+```
+
+## 创建型设计模式
+
+### 简单工厂模式
+
+创建对象时不用再关注创建这些对象到底依赖于哪个基类，只要知道这个函数就可以了
+
+```js
+var PopFactory = function (name) {
+  switch (name) {
+    case "alert":
+      return new LoginAlert();
+    case "confirm":
+      return new oginConfirm();
+    case "prompt":
+      return new LoginPrompt();
+  }
+};
+```
+
+你不需要知道内部具体的操作， 只要传入参数就能获得想要的函数
