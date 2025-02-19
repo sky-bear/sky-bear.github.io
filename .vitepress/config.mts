@@ -98,6 +98,7 @@ export default defineConfig({
               items: [
                 // { text: "vue2的高级用法", link: "/vue/vue2/advancedUsage" },
                 { text: "vuex", link: "/vue/vue3/vuex" },
+                { text: "vueRouter", link: "/vue/vue3/vueRouter" },
               ],
             },
           ],

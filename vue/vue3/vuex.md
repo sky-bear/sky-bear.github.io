@@ -53,7 +53,7 @@ app.use(store);
 vuex4 主要借助的是方法 provide 和 inject，通过 provide 将 store 实例注入到根组件中，然后通过 inject 在子组件中获取 store 实例
 <br />
 
-`install`中就是store的注入，`provide`方法将 store 实例注入到根组件中，`app.config.globalProperties.$store = this;`则是将 store 实例挂载到全局属性上，这样就可以在组件中通过`this.$store`来访问 store 实例了
+`install`中就是 store 的注入，`provide`方法将 store 实例注入到根组件中，`app.config.globalProperties.$store = this;`则是将 store 实例挂载到全局属性上，这样就可以在组件中通过`this.$store`来访问 store 实例了
 
 ```js:line-numbers{27-31}
 // store.js
@@ -224,20 +224,19 @@ export function createStore(options) {
   return new Store(options);
 }
 ```
-当使用`useStore`时, 实际上获取的就是通过inject获取的store实例
-```js
-import { inject } from 'vue'
-export const storeKey = 'store';
-export function useStore(injectKey = storeKey) {
-  return inject(injectKey)
-}
 
+当使用`useStore`时, 实际上获取的就是通过 inject 获取的 store 实例
+
+```js
+import { inject } from "vue";
+export const storeKey = "store";
+export function useStore(injectKey = storeKey) {
+  return inject(injectKey);
+}
 ```
 
-
-
 那响应式是怎么来的呢?<br />
-getters 使用computed包装，state 使用reactive包装 这样就都可以响应式了
+getters 使用 computed 包装，state 使用 reactive 包装 这样就都可以响应式了
 
 ```js:line-numbers{31-33,17-26}
 export function resetStoreState(store, state, hot) {
@@ -296,8 +295,7 @@ export function resetStoreState(store, state, hot) {
 }
 ```
 
-
-其余的过程和vue3差不多， 整个过程主要是三步
+其余的过程和 vue3 差不多， 整个过程主要是三步
 
 - 格式化传入的模块化数据
 - 挂载处理好后的模块化数据
@@ -328,7 +326,7 @@ export class Store {
     this._actions = Object.create(null);
     // 临时存放getters 注册完成后清除
     this._makeLocalGettersCache = Object.create(null);
-    // 执行committing 的状态 
+    // 执行committing 的状态
     this._committing = false;
 
     this.strict = strict;
@@ -483,60 +481,57 @@ export class Store {
 `ModuleCollection`格式化模块数据
 
 ```js
-export default class ModuleCollection  {
+export default class ModuleCollection {
   constructor(rawRootModule) {
-    this.register([], rawRootModule)
+    this.register([], rawRootModule);
   }
   // 获取当前路径的的父级模块
   get(path) {
     return path.reduce((module, key) => {
-      return module.getChild(key)
-    }, this.root)
+      return module.getChild(key);
+    }, this.root);
   }
 
   getNamespace(path) {
     // this 指向 store._modules 就是ModuleCollection实例
     let module = this.root;
     return path.reduce((namespace, key) => {
-      module = module.getChild(key)
-      return namespace + (module.namespaced ? key + "/" : "")
-    }, "")
-
+      module = module.getChild(key);
+      return namespace + (module.namespaced ? key + "/" : "");
+    }, "");
   }
   register(path, rawModule) {
-    const newModule = new Module(rawModule)
+    const newModule = new Module(rawModule);
     if (path.length === 0) {
-      this.root = newModule
+      this.root = newModule;
     } else {
       // 找当当前模块的父级模块 [a,b,c]  找到c的父级b , 并把c 添加到b 上
-      const parent = this.get(path.slice(0, -1))
-      parent.addChild(path[path.length - 1], newModule)
+      const parent = this.get(path.slice(0, -1));
+      parent.addChild(path[path.length - 1], newModule);
     }
 
     // 递归处理所有modules
     if (rawModule.modules) {
       forEachValue(rawModule.modules, (rawChildModule, key) => {
-        this.register(path.concat(key), rawChildModule)
-      })
+        this.register(path.concat(key), rawChildModule);
+      });
     }
   }
   unregister(path) {
-    const parent = this.get(path.slice(0, -1))
-    const key = path[path.length - 1]
-    parent.removeChild(key)
+    const parent = this.get(path.slice(0, -1));
+    const key = path[path.length - 1];
+    parent.removeChild(key);
   }
   isRegistered(path) {
-    const parent = this.get(path.slice(0, -1))
-    const key = path[path.length - 1]
+    const parent = this.get(path.slice(0, -1));
+    const key = path[path.length - 1];
     if (parent) {
-      return parent.hasChild(key)
+      return parent.hasChild(key);
     }
 
-    return false
+    return false;
   }
-
 }
-
 ```
 
 对应的`Module`类
@@ -563,12 +558,12 @@ export default class Module {
   addChild(key, module) {
     this._children[key] = module;
   }
-  hasChild (key) {
-    return key in this._children
+  hasChild(key) {
+    return key in this._children;
   }
 
-  removeChild (key) {
-    delete this._children[key]
+  removeChild(key) {
+    delete this._children[key];
   }
 
   forEachChild(fn) {
@@ -591,9 +586,10 @@ export default class Module {
     }
   }
 }
-
 ```
+
 安装格式化后的`module`
+
 ```js:line-numbers {88-128}
 // store-util.js
 export function resetStoreState(store, state, hot) {
@@ -876,13 +872,12 @@ export function resetStore(store, hot) {
 ```
 
 插件就更简单了
+
 ```js
 plugins.forEach((plugin) => plugin(this));
 ```
 
 安装后就是响应式了, 一开始就贴过代码了， 这里就不重复了
-
-
 
 ## 资料引用
 
