@@ -243,3 +243,30 @@ var PopFactory = function (name) {
 ```
 
 你不需要知道内部具体的操作， 只要传入参数就能获得想要的函数
+
+### 工厂方法模式
+
+工厂方法模式:通过对产品类的抽象使其创建业务主要负责用于创建多类产品的实例。
+
+```js
+//安全模式创建的工厂类
+var Factory = function (type, content) {
+  if (this instanceof Factory) {
+    var s = new this[type](content);
+    return s;
+  } else {
+    returnnewFactory(type, content);
+  }
+};
+// 工厂原型中设置创建所有类型数据对象的基类
+Factory.prototype = {
+  Java: function (content) {},
+  JavaScript: function (content) {},
+  UI: function (content) {},
+  php: function (content) {},
+};
+
+```
+
+### 抽象工厂模式
+抽象工厂模式(AbstractFactory):通过对类的工厂抽象使其业务用于对产品类簇的创建而不负责创建某一类产品的实例。
