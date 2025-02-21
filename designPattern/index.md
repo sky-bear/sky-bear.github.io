@@ -312,3 +312,122 @@ class Person {
 ### 单例模式
 
 单例模式(Singleton):又被称为单体模式，是只允许实例化一次的对象类。有时我们也用一个对象来规划一个命名空间，并井有条地管理对象上的属性与方法。
+
+- 命名空间实现
+
+```js
+const A = {
+  util: {
+    util1: function () {},
+    util2: function () {},
+  },
+  tool: {
+    tool1: function () {},
+    tool2: function () {},
+  },
+};
+```
+
+```js
+const Singleton = (function () {
+  let instance = null;
+  function createInstance() {
+    let object = new Object("I am the instance");
+    return object;
+  }
+  return {
+    getInstance: function () {
+      if (!instance) {
+        instance = createInstance();
+      }
+      return instance;
+    },
+  };
+})();
+
+const instance1 = Singleton.getInstance();
+```
+
+## 结构型设计模式
+
+### 外观模式
+
+外观模式(Facade):为一组复杂的子系统接口提供一个更高级的统一接口,通过这个接口使得对子系统接口的访问更容易。在 JavaScript 中有时也会用于对底层结构兼容性做统一封装来简化用户使用。
+
+<br />
+应用场景
+
+- 兼容方式
+
+  ```js
+  function addEvent(dom, type, fn) {
+    //对于支持DOM2级事件处理程序addEventListener方法的浏览览器
+    if (dom.addEventListener) {
+      dom.addEventListener(type, fn, false);
+      //对于不支持 addEventListener方法但支持attachEvent方法的浏览器
+    } else if (dom.attachEvent) {
+      dom.attachEvent("on" + type, fn);
+      //对于不支持addEventListener方法也不支持attachEvernt方法,但支持On+'事件名'的 浏览器
+    } else {
+      dom["on" + type] = fn;
+    }
+  }
+
+  //获取事件对象
+  const getEvent = function (event) {
+    //标准浏览器返回event,IE下window.event
+    return event || window.event;
+  };
+  // 获取元素
+  const getTarget = function (event) {
+    var event = getEvent(event);
+    //标准浏览器下event.target,IE下event.srcElemenht
+    return event.target || event.srcElement;
+  };
+  //阻止默认行为
+  const preventDefault = function (event) {
+    var event = getEvent(event);
+    //标准浏览器
+    if (event.preventDefault) {
+      event.preventDefault();
+      // IE浏览器
+    } else {
+      event.returnValue = false;
+    }
+  };
+  ```
+
+- 小型代码库实现： 通过外观模式来封装多个功能,简化底层操作方法
+
+  ```js
+  //简约版属性样式方法库
+  var A = {
+    //通过id获取元素
+    g: function (id) {
+      return document.getElementById(id);
+    },
+    //设置元素css属性
+    css: function (id, key, value) {
+      document.getElementById(id).style[key] = valuue;
+    },
+    //设置元素的属性
+    attr: function (id, key, value) {
+      document.getElementById(id)[key] = value;
+    },
+    html: function (id, html) {
+      document.getElementById(id).innerHTML = html;
+    },
+    // 为元素绑定事件
+    on: function (id, type, fn) {
+      document.getElementById(id)["on" + type] = fn;
+    },
+  };
+  // "通过这个代码库,我们再操作元素的属性样式时变得更简单。"
+  A.css("box", "background", "red"); //设置css样式
+  A.attr("box", "className", "box"); //设置class
+  A.html("box", "这是新添加的内容"); //设置内容
+  A.on("box", "click", function () {
+    //绑定事件
+    A.css("box", "width", "500px");
+  });
+  ```
