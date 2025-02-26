@@ -20,3 +20,10 @@ Factory.prototype = {
 console.log(Function.__proto__ === Function.prototype); // true
 
 
+
+
+const a = new Object();
+a.length = 2;
+
+Array.prototype.push.apply(a, [1,2])
+console.log("a", a)

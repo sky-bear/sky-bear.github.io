@@ -16,6 +16,23 @@ function inheritPrototype(subclass, superclass) {
   subclass.prototype = p;
 }
 
+var News = function () {
+  //子组件容器
+  this.children = [];
+  //当前组件元素
+  this.element = null;
+};
+News.prototype = {
+  init: function () {
+    thrownewError("请重写你的方法");
+  },
+  add: function () {
+    thrownewError("请重写你的方法");
+  },
+  getElement: function () {
+    thrownewError("请重写你的方法");
+  },
+};
 //容器类构造函数
 var Container = function (id, parent) {
   //构造函数继承父类

@@ -6,6 +6,7 @@ export default defineConfig({
   description: "A VitePress Site",
   head: [["link", { rel: "icon", href: "/public/icon.png" }]],
   themeConfig: {
+    outline: "deep",
     search: {
       provider: "local",
     },
