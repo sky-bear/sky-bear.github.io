@@ -10,4 +10,31 @@ A.fn = A.prototype = {
   },
 };
 
-A().a().a();
+// A().a().a();
+// new A().a().a();
+
+
+
+
+
+
+
+const B = function (selector) {
+  return new B.fn.init(selector)
+}
+B.fn = B.prototype = {
+  init: function (selector) {
+    console.log(selector);
+    return this;
+  }
+  ,
+  b() {
+    console.log("b");
+    return this;
+  }
+}
+B.fn.init.prototype = B.fn;
+B("b").b()
+
+
+

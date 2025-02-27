@@ -711,4 +711,298 @@ A.fn = A.prototype = {
 };
 
 A().a().a();
+new A().a().a();
 ```
+
+jquery 的链式调用
+
+```js
+const B = function (selector) {
+  return new B.fn.init(selector);
+};
+B.fn = B.prototype = {
+  constructor: B,
+  // 当使用new 调用init时， 此时this 指向的是init， 这里为了实现链式调用，B.fn.init.prototype = B.fn;
+  init: function (selector) {
+    console.log(selector);
+    return this;
+  },
+  b() {
+    console.log("b");
+    return this;
+  },
+};
+B.fn.init.prototype = B.fn;
+B("b").b();
+```
+
+### 委托模式
+
+委托模式(Entrust):多个对象接收并处理同一请求,他们将请求委托给另一个对象统一处理请求。
+
+- 事件委托
+- 防止内存泄漏
+
+### 数据访问对象模式
+
+数据访问对象模式(Data access object-DAO):抽象和封装对数据源的访问与存储,DAO 通过对数据源链接的管理方便对数据的访问与存储。
+
+- 本地存储
+
+### 节流模式
+
+节流模式(Throttler):对重复的业务逻辑进行节流控制,执行最后一次操作并取消其他操作,以提高性能。
+
+- 优化交互体验：延迟出现鼠标移除事件
+- 优化图片加载
+
+### 简单模板模式
+
+简单模板模式(Simpletemplate):通过格式化字符串拼凑出视图送避免创建视图时大量节点操作。优化内存开销。
+
+```js
+// Simpletemplate 简单模板方式
+//模板渲染方法
+A.formateString = function (str, data) {
+  return str.replace(/\{#(\w+)#\}/g, function (matchh, key) {
+    return typeof data[key] === undefined ? "" : data[key];
+  });
+};
+
+const listPart = function (data) {
+  var s = document.createElement("div"),
+    //模块容器
+    ul = "",
+    //列表字符串
+    //列表数据
+    ldata = data.data.li,
+    //模块模板
+    tpl = ["<h2>{#h2#}</h2>", "<p>{#p#}</p>", "<ul>{#ul#}</ul>"].join(""),
+    //列表项模板
+    liTpl = [
+      "<li>",
+      "<strong>{#strong#}</strong>",
+      "<span>{#span#}</span>",
+      "</li>",
+    ].join("");
+  //有id设置模块id
+  data.id && (s.id = data.id);
+  //遍历列表数据
+  for (var i = 0, len = ldata.length; i < len; i++) {
+    //如果有列表项数据
+    if (ldata[i].em || ldata[i].span) {
+      //列表字符串追加一项列表项
+      ul += A.formateString(liTpl, ldata[i]);
+    }
+  }
+  // 装饰列表数据
+  data.data.ul = ul;
+  //渲染模块并插入模块中
+  s.innerHTML = A.formateString(tpl, data.data);
+  //渲染模块
+  A.root.appendChild(s);
+};
+```
+
+简单模板模式意在解决运用 DOM 操作创建视图时造成资源源消耗大、性能低下、操作复杂等问题。用正则匹配方式去格式化字符串的执行的性能要远高于 DOM 操作拼接视图的执行性能,因此这种方式常备用于大型框架(如 MVC 等)创建视图操作中。
+<br/>
+简单模板模式主要包含三部分,字符串模板库,格式化方法,字符串拼接操作。
+
+### 惰性模式
+
+惰性模式(layier):减少每次代码执行时的重复性的分支判断,通过对对象重定义来屏蔽原对象中的分支判断。
+
+- 加载即执行
+
+```js
+//添加绑定事件方法on
+const A = {};
+A.on = (function (dom, type, fn) {
+  //如果支持 addEventListener方法
+  if (document.addEventListener) {
+    //返回新定义方法
+    return function (dom, type, fn) {
+      dom.addEventListener(type, fn, false);
+    };
+    //如果支持attachEvent方法(IE)
+  } else if (document.attachEvent) {
+    //返回新定义方法
+    return function (dom, type, fn) {
+      dom.attachEvent("on" + type, fn);
+    };
+    //定义on方法
+  } else {
+    //返回新定义方法
+    return function (dom, type, fn) {
+      dom["on" + type] = fn;
+    };
+  }
+})();
+```
+
+- 惰性执行
+
+```js
+const A = {};
+A.on = function (dom, type, fn) {
+  //如果支持addEventListener方法
+  if (document.addEventListener) {
+    //重定义on方法
+    A.on = function (dom, type, fn) {
+      dom.addEventListener(type, fn, false);
+    };
+    //如果支持attachEvent方法(IE)
+  } else if (document.attachEvent) {
+    //重定义on方法
+    A.on = function (dom, type, fn) {
+      dom.attachEvent("on" + type, fn);
+    };
+  } else {
+    A.on = function (dom, type, fn) {
+      dom["on" + type] = fn;
+    };
+  }
+  A.on(dom, type, fn);
+};
+```
+
+### 参与者模式
+
+参与者(participator):在特定的作用域中执行给定的函数,并将参数原封不动地传递。
+
+```js
+const A = { event: {} };
+// 这种无法移除已经添加的函数
+A.event.on = function (dom, type, fn, data) {
+  //w3c标准事件绑定
+  if (dom.addEventListener) {
+    dom.addEventListener(
+      type,
+      function (e) {
+        //在dom环境中调用fn,并传入事件对象与data数据参数
+        fn.call(dom, e, data);
+      },
+      false
+    );
+  }
+};
+```
+
+新的方式, 既使用了外部变量,又避免了事件处理函数的重复创建,同时也可以移除事件处理函数。
+
+```js
+function fn() {
+  console.log(...arguments);
+}
+function bindFn(fn, ...args) {
+  return function () {
+    return fn.apply(this, [...arguments, ...args]);
+  };
+}
+const fn1 = bindFn(fn, 6, 7, 8);
+fn1(1, 2, 3, 4, 5); // 1 2 3 4 5 6 7 8
+```
+
+### 等待者模式
+
+等待者模式(waiter):通过对多个异步进程监听,来触发未来发生的动作。
+
+## 架构型设计模式
+
+### 同步模块模式
+
+模块化:将复杂的系统分解成高内聚、低耦合的模块,使系统开发变得可控、可维护、可拓展,提高模块的复用率。
+<br />
+同步模块模式-SMD(Synchronous Module Definition):请求发出后,无论模块是否存在,立即执行后续的逻辑,实现模块开发中对模块的立即引前。
+
+```js
+// 同步模块模式-SMD(Synchronous Module Definition)
+
+// 同步模块模式-SMD(Synchronous Module Definition)
+
+
+const F = {};
+F.define = function (str,fn) {
+  const parts = str.split('.')
+  let old = parent = this
+  let i = 0; // 记录当前模块的层级
+  // 如果第一个模式是模块管理器单体对象， 则移除
+  if(parts[0] === 'F') {
+    parts = parts.slice(1)
+  }
+  // 屏蔽对于define和module的重写
+  if(parts[0] === 'define' || parts[0] === 'module') {
+    return
+  }
+  // 模块层级长度
+  let len = parts.length
+  for(i<len; i++;) {
+    if(typeof parent[parts[i]] === 'undefined') {
+      parent[parts[i]] = {}
+    }
+    old = parent
+    parent = parent[parts[i]]
+  }
+  // 如果已经给出了模块定义函数，则调用
+  if(fn) {
+    // --i 循环完成后 i=len，所以需要减1
+    old[parts[--i]] = fn()
+  }
+  return this
+}
+
+F.define('string', function() {
+  return {
+    a(){console.log("a")}
+  }
+})
+F.define('dom', function() {
+  return function(id) {
+    console.log(id)
+  }
+})
+
+
+
+F.module = function(){
+  const args = Array.prototype.slice.call(arguments)
+  // 获取回调函数
+  const fn = args.pop()
+  // 获取依赖模块
+  const parts = args[0] && args[0] instanceof Array ? args[0] : args
+  // 依赖模块列表
+  const modules = []
+  // 模块路由
+  let modIds =""
+  // 依赖模块长度
+  const len = parts.length
+  // 依赖模块层级
+  let i = 0
+  let parent,j ,k;
+  while(i < len) {
+    if(typeof parts[i] ==="string") {
+      parent = this;
+      modIds = parts[i].replace(/^F\./,'').split('.');
+      for(j = 0,k = modIds.length; j < k; j++) {
+        parent = parent[modIds[j]] || false
+      }
+      modules.push(parent)
+    } else {
+      modules.push(parts[i])
+    }
+    i++;
+  }
+  fn.apply(null,modules)
+}
+
+F.string.a()
+F.dom(123)
+
+F.module(['string.a', "dom"], function(a,dom) {
+  a();
+  dom(456)
+})
+```
+
+### 异步模块模式
+异步模块模式--AMD(Asynchronous Module Definition):请求发出后,继续其他业务逻辑,知道模块加载完成执行后续的逻辑,实现模块开发中对模块加载完成后的引用。
