@@ -2,9 +2,9 @@ import { defineConfig } from "vitepress";
 
 // https://vitepress.dev/reference/site-config
 export default defineConfig({
-  title: "My Awesome Project",
-  description: "A VitePress Site",
-  head: [["link", { rel: "icon", href: "/public/icon.png" }]],
+  title: "sky bear",
+  description: "sky bear 的学习历程",
+  head: [["link", { rel: "icon", href: "/icon.png" }]],
   themeConfig: {
     outline: "deep",
     search: {

@@ -920,89 +920,154 @@ fn1(1, 2, 3, 4, 5); // 1 2 3 4 5 6 7 8
 
 // 同步模块模式-SMD(Synchronous Module Definition)
 
-
 const F = {};
-F.define = function (str,fn) {
-  const parts = str.split('.')
-  let old = parent = this
+F.define = function (str, fn) {
+  const parts = str.split(".");
+  let old = (parent = this);
   let i = 0; // 记录当前模块的层级
   // 如果第一个模式是模块管理器单体对象， 则移除
-  if(parts[0] === 'F') {
-    parts = parts.slice(1)
+  if (parts[0] === "F") {
+    parts = parts.slice(1);
   }
   // 屏蔽对于define和module的重写
-  if(parts[0] === 'define' || parts[0] === 'module') {
-    return
+  if (parts[0] === "define" || parts[0] === "module") {
+    return;
   }
   // 模块层级长度
-  let len = parts.length
-  for(i<len; i++;) {
-    if(typeof parent[parts[i]] === 'undefined') {
-      parent[parts[i]] = {}
+  let len = parts.length;
+  for (i < len; i++; ) {
+    if (typeof parent[parts[i]] === "undefined") {
+      parent[parts[i]] = {};
     }
-    old = parent
-    parent = parent[parts[i]]
+    old = parent;
+    parent = parent[parts[i]];
   }
   // 如果已经给出了模块定义函数，则调用
-  if(fn) {
+  if (fn) {
     // --i 循环完成后 i=len，所以需要减1
-    old[parts[--i]] = fn()
+    old[parts[--i]] = fn();
   }
-  return this
-}
+  return this;
+};
 
-F.define('string', function() {
+F.define("string", function () {
   return {
-    a(){console.log("a")}
-  }
-})
-F.define('dom', function() {
-  return function(id) {
-    console.log(id)
-  }
-})
+    a() {
+      console.log("a");
+    },
+  };
+});
+F.define("dom", function () {
+  return function (id) {
+    console.log(id);
+  };
+});
 
-
-
-F.module = function(){
-  const args = Array.prototype.slice.call(arguments)
+F.module = function () {
+  const args = Array.prototype.slice.call(arguments);
   // 获取回调函数
-  const fn = args.pop()
+  const fn = args.pop();
   // 获取依赖模块
-  const parts = args[0] && args[0] instanceof Array ? args[0] : args
+  const parts = args[0] && args[0] instanceof Array ? args[0] : args;
   // 依赖模块列表
-  const modules = []
+  const modules = [];
   // 模块路由
-  let modIds =""
+  let modIds = "";
   // 依赖模块长度
-  const len = parts.length
+  const len = parts.length;
   // 依赖模块层级
-  let i = 0
-  let parent,j ,k;
-  while(i < len) {
-    if(typeof parts[i] ==="string") {
+  let i = 0;
+  let parent, j, k;
+  while (i < len) {
+    if (typeof parts[i] === "string") {
       parent = this;
-      modIds = parts[i].replace(/^F\./,'').split('.');
-      for(j = 0,k = modIds.length; j < k; j++) {
-        parent = parent[modIds[j]] || false
+      modIds = parts[i].replace(/^F\./, "").split(".");
+      for (j = 0, k = modIds.length; j < k; j++) {
+        parent = parent[modIds[j]] || false;
       }
-      modules.push(parent)
+      modules.push(parent);
     } else {
-      modules.push(parts[i])
+      modules.push(parts[i]);
     }
     i++;
   }
-  fn.apply(null,modules)
-}
+  fn.apply(null, modules);
+};
 
-F.string.a()
-F.dom(123)
+F.string.a();
+F.dom(123);
 
-F.module(['string.a', "dom"], function(a,dom) {
+F.module(["string.a", "dom"], function (a, dom) {
   a();
-  dom(456)
-})
+  dom(456);
+});
 ```
 
 ### 异步模块模式
+
 异步模块模式--AMD(Asynchronous Module Definition):请求发出后,继续其他业务逻辑,知道模块加载完成执行后续的逻辑,实现模块开发中对模块加载完成后的引用。
+
+### Widget
+
+Widget:(WebWidget 指的是一块可以在任意页面中执行的代码块)Widget 模式是指借用 WebWidget 思想将页面分解成部件,针对部件开发,最终组合成完整的页面
+
+### MVC
+
+MVC 即模型(model)一视图(view)一控制器(controller),用一种将业务逻辑、数据、数据、视图分离的方式组织架构代码。
+
+> 数据层部分、视图层部分、控制器层
+
+```js
+const MVC = {};
+// 数据
+MVC.Model = function () {};
+// 视图
+MVC.View = function () {};
+// 控制器
+MVC.Controller = function () {};
+```
+MVC架构模式很好地解决了页面中数据层、视图层、业务逻辑辑层(控制器)之间的耦合关系,使它们得到显性的区分,这也使得层次之间的耦合度降低。我们在开发中可以不用顾忌所有需求而专注于某一层次开发,降低了开发与维护成本,提升了开发效率。如果页面系统足够复杂,某些视图要共享同一组数据,或者某些需求的实现引用用类似视图,此时MVC模式便可提高某些视图与数据的复用率。
+<br/>
+因此对于大型页面系统的开发,三个层次各司其职。每一层次专专注于自己的事情,有利于工程化、模式化开发并管理代码;便于大型页面系统的可持续开发与维护;也是降低层次耦合提升代码复用的良好实践。
+<br/>
+在复杂组件的开发中,运用MVC思想管理组件内部的层次也是一种不错的选择。
+
+
+::: tip
+Model 层只存储数据
+View 直接拿数据进行渲染
+Controller 负责处理事件
+:::
+
+
+
+
+### MVP模式
+MVP即模型(Model)一视图(View)一管理器(Presenter):View层不直接引用Model层内的数据,而是通过Presenter层实现对Model层内的数据访问。即所有层次的交互都发生
+在Presenter层中。
+<br/>
+Presenter层负责管理数据、UI视图创建、交互逻辑、动画特效等等一切事务。这样数据层只负责存储数据,视图层只负责创建视图模板。
+<br/>
+MVP与MVC相比最重要的特征就是MVP中将视图层与数据层完全解耦,使得对视图层的修改不会影响到数据层,数据层内的数据改动又不会影响到视图层。因此,我们在管理器中对数据或者视图灵活地调用就可使数据层内的数据与视图层为的视图得到更高效的复用。因此,MVP模式也可以实现一个管理器,可以调用多个数据,已或者创建多种视图,而且是不受限制的。因而管理器有更高的操作权限,因此对于业务逻辑与需求的实现只需专注于管理器的开发即可,当然管理器内过多的逻辑也使得其开发与维护成本提高。
+
+
+::: tip
+Model 层只存储数据
+View 模板【不直接引用Model层内的数据】
+Controller 负责管理数据、UI视图创建、交互逻辑、动画特效等等一切事务
+:::
+
+
+
+### MVVM模式
+MVVM模式,模型(Model)-视图(View)-视图模型(ViewModel):为视图层(View)量身定做一套视图模型(ViewModel),并在视图模型(VieewModel)中创建属性和方法,为视图层(View)绑定数据(Model)并实现交互。
+
+小知识
+```js
+demo1 = {
+  a: 1
+}
+const data1 = "type: 'JavaScript', data: demo1"
+const data = new Function("return ({"+ data1 +"})")
+console.log(data())
+```

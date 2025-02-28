@@ -3,23 +3,30 @@
 layout: home
 
 hero:
-  name: "My Awesome Project"
-  text: "A VitePress Site"
-  tagline: My great project tagline
-  actions:
-    - theme: brand
-      text: Markdown Examples
-      link: /example/markdown-examples
-    - theme: alt
-      text: API Examples
-      link: /example/api-examples
+  name: "sky bear 的学习历程"
+  # text: "1"
+  # tagline: ""
+  # image:
+  #   src: /icon.png
+  #   alt: sky bear
+  # actions:
+  #   - theme: brand
+  #     text: Markdown Examples
+  #     link: /example/markdown-examples
+  #   - theme: alt
+  #     text: API Examples
+  #     link: /example/api-examples
+
 
 features:
-  - title: Feature A
-    details: Lorem ipsum dolor sit amet, consectetur adipiscing elit
-  - title: Feature B
-    details: Lorem ipsum dolor sit amet, consectetur adipiscing elit
-  - title: Feature C
-    details: Lorem ipsum dolor sit amet, consectetur adipiscing elit
+  - title: javascript
+    details: 涉及一些基础和常用的JavaScript知识
+    link: /javascript/
+  - title: browser
+    details: 涉及浏览器原理和相关知识
+    link: /browser/
+  - title: Vue
+    details: vue相关知识和部分源码介绍
+    link: /vue/
 ---
 
