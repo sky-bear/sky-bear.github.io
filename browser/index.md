@@ -71,15 +71,16 @@ DOMContentLoaded 和 load 区别 <br />
 
 ## 浏览器渲染流程
 
-- 解析 HTML 文件,构建 DOM 树,同时浏览器主进程负责下载 CSS 文件
+- 浏览器通过请求得到一个HTML文本；
+-  渲染进程解析HTML文本，构建DOM树；
+- 解析HTML的同时，如果遇到内联样式或者样式脚本，则下载并构建样式规则（stytle rules），若遇到JavaScript脚本，则会下载执行脚本；
+- DOM树和样式规则构建完成之后，渲染进程将两者合并成渲染树（render tree）；
+- 渲染进程开始对渲染树进行布局，生成布局树（layout tree）；
+- 渲染进程对布局树进行绘制，生成绘制记录；
+- 渲染进程的对布局树进行分层，分别栅格化每一层，并得到合成帧；
+-  渲染进程将合成帧信息发送给GPU进程显示到页面中；
 
-- CSS 文件下载完成,解析 CSS 文件成树形的数据结构,然后结合 DOM 树合并成 RenderObject 树
-
-- 布局 RenderObject 树 （Layout/reflow）,负责 RenderObject 树中的元素的尺寸,位置等计算
-
-- 绘制 RenderObject 树 （paint）,绘制页面的像素信息
-
-- 浏览器主进程将默认的图层和复合图层交给 GPU 进程,GPU 进程再将各个图层合成（composite）,最后显示出页面
+<Image  src="./images/rendering.png" />
 
 ## JS 阻碍页面加载
 

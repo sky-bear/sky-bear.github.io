@@ -421,3 +421,10 @@ foo(1, 2, 3); // Arguments(3) [1, 2, 3, callee: (...), Symbol(Symbol.iterator): 
 
 - 函数的 arguments 对象
 - DOM 元素的集合，如 document.getElementsByTagName() 返回的 NodeList
+
+
+
+
+## 资料引用：
+
+<a href="https://nwy3y7fy8w5.feishu.cn/docx/P4RQdXuJqoEyOIxVxeCcs26gnhb" target="_blank"  style="display: block">this指针/闭包/作用域</a>
