@@ -5,6 +5,9 @@ export default defineConfig({
   title: "sky bear",
   description: "sky bear 的学习历程",
   head: [["link", { rel: "icon", href: "/icon.png" }]],
+  markdown: {
+    lineNumbers: true
+  },
   themeConfig: {
     outline: "deep",
     search: {
