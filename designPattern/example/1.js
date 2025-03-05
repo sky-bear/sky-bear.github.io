@@ -15,12 +15,7 @@ Factory.prototype = {
   php: function (content) {},
 };
 
-
-
 console.log(Function.__proto__ === Function.prototype); // true
-
-
-
 
 // const a = new Object();
 // a.length = 2;
@@ -28,15 +23,10 @@ console.log(Function.__proto__ === Function.prototype); // true
 // Array.prototype.push.apply(a, [1,2])
 // console.log("a", a)
 
-
-
-
-
-
-
 demo1 = {
-  a: 1
-}
-const data1 = "type: 'JavaScript', data: demo1"
-const data = new Function("return ({"+ data1 +"})")
-console.log(data())
+  a: 1,
+};
+const data1 = "type: 'JavaScript', data: demo1";
+const data = new Function("return ({" + data1 + "})");
+console.log(data());
+
