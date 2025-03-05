@@ -1,0 +1,1 @@
+import{_ as e,c as t,o as a}from"./chunks/framework.BAVNBlau.js";const m=JSON.parse('{"title":"","description":"","frontmatter":{},"headers":[],"relativePath":"react/index.md","filePath":"react/index.md"}'),r={name:"react/index.md"};function n(c,o,s,d,i,p){return a(),t("div")}const f=e(r,[["render",n]]);export{m as __pageData,f as default};
