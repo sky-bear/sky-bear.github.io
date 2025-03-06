@@ -22,6 +22,7 @@ export default defineConfig({
       { text: "设计模式", link: "/designPattern/index" },
       { text: "vue", link: "/vue/index" },
       { text: "react", link: "/react/index" },
+      { text: "数据结构和算法", link: "/algorithms/algorithms" },
     ],
 
     sidebar: {
