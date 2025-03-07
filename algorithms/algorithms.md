@@ -1,5 +1,9 @@
 # javascript 中的数据结构和算法
 
+<script setup>
+import Image from "../components/Image/index.vue"
+</script>
+
 ## 复杂度
 
 算法的执行时间与每行代码的执行次数成正比，用 T(n) = O(f(n)) 表示，其中 T(n) 表示算法执行总时间，f(n) 表示每行代码执行总次数，而 n 往往表示数据的规模。这就是大 O 时间复杂度表示法
@@ -240,11 +244,68 @@ function fn(n) {
 
 包括 O(2(n))（指数阶）、O(n!)（阶乘阶）。
 
+O(2(n))（指数阶）例子：
+
+```js
+aFunc( n ) {
+    if (n <= 1) {
+        return 1;
+    } else {
+        return aFunc(n - 1) + aFunc(n - 2);
+    }
+}
+```
+
+#### 时间复杂度分类
+
+- 最好情况时间复杂度（best case time complexity）：在最理想的情况下，执行这段代码的时间复杂度。
+- 最坏情况时间复杂度（worst case time complexity）：在最糟糕的情况下，执行这段代码的时间复杂度。
+- 平均情况时间复杂度（average case time complexity），用代码在所有情况下执行的次数的加权平均值表示。也叫 加权平均时间复杂度 或者 期望时间复杂度。
+- 均摊时间复杂度（amortized time complexity）: 在代码执行的所有复杂度情况中绝大部分是低级别的复杂度，个别情况是高级别复杂度且发生具有时序关系时，可以将个别高级别复杂度均摊到低级别复杂度上。基本上均摊结果就等于低级别复杂度。
+
+  ```js
+  // n 表示数组 array 的长度
+  function find(array, n, x) {
+    let i = 0;
+    let pos = -1;
+    for (; i < n; ++i) {
+      if (array[i] == x) {
+        pos = i;
+        break;
+      }
+    }
+    return pos;
+  }
+  ```
+
+  find 函数实现的功能是在一个数组中找到值等于 x 的项，并返回索引值，如果没找到就返回 -1 。
+  <br />
+  **最好情况时间复杂度，最坏情况时间复杂度**
+  <br />
+  如果数组中第一个值就等于 x，那么时间复杂度为 O(1)，如果数组中不存在变量 x，那我们就需要把整个数组都遍历一遍，时间复杂度就成了 O(n)。所以，不同的情况下，这段代码的时间复杂度是不一样的。
+  所以上面代码的 `最好情况时间复杂度`为 O(1)，`最坏情况时间复杂度`为 O(n)。
+  **平均情况时间复杂度**
+  如何分析平均时间复杂度 ？代码在不同情况下复杂度出现量级差别，则用代码所有可能情况下执行次数的加权平均值表示。
+  要查找的变量 x 在数组中的位置，有 n+1 种情况：在数组的 0 ～ n-1 位置中和不在数组中。我们把每种情况下，查找需要遍历的元素个数累加起来，然后再除以 n+1，就可以得到需要遍历的元素个数的平均值，即：
+
+    <Image  src="./images/1.png" />
+    省略掉系数、低阶、常量，所以，这个公式简化之后，得到的平均时间复杂度就是 O(n)。
+    我们知道，要查找的变量 x，要么在数组里，要么就不在数组里。这两种情况对应的概率统计起来很麻烦，我们假设在数组中与不在数组中的概率都为 1/2。另外，要查找的数据出现在 0～n-1 这 n 个位置的概率也是一样的，为 1/n。所以，根据概率乘法法则，要查找的数据出现在 0～n-1 中任意位置的概率就是 1/(2n)。
+    因此，前面的推导过程中存在的最大问题就是，没有将各种情况发生的概率考虑进去。如果我们把每种情况发生的概率也考虑进去，那平均时间复杂度的计算过程就变成了这样
+    <Image  src="./images/2.png" />
+    这个值就是概率论中的 **加权平均值**，也叫 **期望值**，所以平均时间复杂度的全称应该叫 **加权平均时间复杂**度 或者 **期望时间复杂度**。
+  所以，根据上面结论推导出，得到的 平均时间复杂度 仍然是 O(n)
+
 ::: warning
 排序：O(1) < O(lgn) < O(n) < O(nlgn) < O(n^2) < O(n^3) < O(2^n) < O(n!)
 :::
 
+<Image  src="./images/3.png" />
+
 ### 空间复杂度[引用](http://t.zoukankan.com/GarfieldEr007-p-12251700.html)
+
+时间复杂度的全称是 **渐进时间复杂度**，表示 **算法的执行时间与数据规模之间的增长关系** 。
+类比一下，空间复杂度全称就是 **渐进空间复杂度**（asymptotic space complexity），表示 **算法的存储空间与数据规模之间的增长关系** 。
 
 - 定义： 算法运行时所占用的临时存储空间
   一个算法执行期间所占用的存储量分为三部分：
@@ -259,6 +320,25 @@ function fn(n) {
 
 S(n) = O(g(n))
 其中 g(n) 是一个关于 n 的函数，如：g(n) = n、g(n) = n^2、g(n) = log2N 等等
+
+```js
+function print(n) {
+  const newArr = []; // 第 2 行
+  newArr.length = n; // 第 3 行
+  for (let i = 0; i < n; ++i) {
+    newArr[i] = i * i;
+  }
+
+  for (let j = n - 1; j >= 0; --j) {
+    console.log(newArr[i]);
+  }
+}
+```
+
+跟时间复杂度分析一样，我们可以看到，第 2 行代码中，我们申请了一个空间存储变量 newArr ，是个空数组。第 3 行把 newArr 的长度修改为 n 的长度的数组，每项的值为 undefined ，除此之外，剩下的代码都没有占用更多的空间，所以整段代码的空间复杂度就是 O(n)。
+我们常见的空间复杂度就是 O(1)、O(n)、O(n(2))，像 O(logn)、O(nlogn) 这样的对数阶复杂度平时都用不到。
+
+
 
 ## 数组
 
@@ -384,7 +464,7 @@ splice() 方法为数组添加元素，需提供如下参数：
 
 ### 操作
 
-- 定义：栈是一种特殊的列表，栈内的元素只能通过列表的一端访问，是一种后入先出（LIFO，last-in-first-out）的数据结构
+- 定义：栈是一种特殊的列表，栈内的元素只能通过列表的一端访问，是一种**先进后出，后入先出**（LIFO，last-in-first-out）的数据结构
 
 ### js 实现
 
@@ -435,14 +515,12 @@ module.exports = Stack;
 【此算法只针对基数为 2~9 的情况】
 
 ```js
-const Stack = require("./stack.js");
 function mulBase(num, base) {
   const stack = new Stack();
-  do {
+  while (num > 0) {
     stack.push(num % base);
-    num = Math.floor((num /= base));
-  } while (num > 0);
-  console.log(stack.getStack());
+    num = Math.floor((num / base));
+  }
   let converted = "";
   while (stack.length() > 0) {
     converted += stack.pop();
@@ -540,7 +618,7 @@ console.log(isPalindrome(121)); // true
 
 ## 队列
 
-队列是一种先进先出（First-In-First-Out，FIFO）的数据结构，只能在队尾插入元素，在队首删除元素
+队列是一种**先进先出**（First-In-First-Out，FIFO）的数据结构，只能在队尾插入元素，在队首删除元素
 
 ### js 实现
 
@@ -605,7 +683,7 @@ function distribute(nums, queues, digit) {
     if (digit === 1) {
       queues[nums[i] % 10].enqueue(nums[i]);
     } else {
-      queues[Math.floor(nums[i] / 10)].enqueue(nums[i]);
+      queues[Math.floor(nums[i] / digit)].enqueue(nums[i]);
     }
   }
 }
@@ -621,8 +699,11 @@ function collect(queues, nums) {
 }
 
 console.log("排序前", list.join(" "));
+// 把个位数上的数据放到个位数对应的队列中
 distribute(list, queues, 1);
+// 收集个位数排序好的数据
 collect(queues, list);
+// 把十位数上的数据放到十位数对应的队列中
 distribute(list, queues, 10);
 collect(queues, list);
 console.log("排序后", list.join(" "));
@@ -989,5 +1070,6 @@ cities.findPrevious("Russellville");
 
 ## 资料引用：
 
+<a href="./pdf/数据结构与算法JavaScript.pdf" target="_blank"  style="display: block">数据结构与算法 JavaScript</a>
 <a href="https://github.com/trekhleb/javascript-algorithms/blob/master/README.zh-CN.md" target="_blank"  style="display: block">JavaScript 算法与数据结构</a>
 <a href="https://nwy3y7fy8w5.feishu.cn/docx/MUZndda3koTzTtxNnE6ccsRYnjb" target="_blank"  style="display: block">资料</a>
