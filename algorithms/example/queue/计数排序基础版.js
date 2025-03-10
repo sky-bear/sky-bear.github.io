@@ -47,3 +47,4 @@ collect(queues, temList);
 distribute(temList, queues, 10);
 collect(queues, list);
 console.log("排序后", list.join(" "));
+

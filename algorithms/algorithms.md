@@ -338,8 +338,6 @@ function print(n) {
 跟时间复杂度分析一样，我们可以看到，第 2 行代码中，我们申请了一个空间存储变量 newArr ，是个空数组。第 3 行把 newArr 的长度修改为 n 的长度的数组，每项的值为 undefined ，除此之外，剩下的代码都没有占用更多的空间，所以整段代码的空间复杂度就是 O(n)。
 我们常见的空间复杂度就是 O(1)、O(n)、O(n(2))，像 O(logn)、O(nlogn) 这样的对数阶复杂度平时都用不到。
 
-
-
 ## 数组
 
 ### JavaScript 中对数组的定义
@@ -519,7 +517,7 @@ function mulBase(num, base) {
   const stack = new Stack();
   while (num > 0) {
     stack.push(num % base);
-    num = Math.floor((num / base));
+    num = Math.floor(num / base);
   }
   let converted = "";
   while (stack.length() > 0) {
@@ -806,6 +804,8 @@ Eggs   --> Null
 
 ### 设计一个基于对象的单向链表
 
+<Image  src="./images/4.png" />
+
 ```js
 //  实现一个链表，要有 插入节点，删除节点，显示列表元素的方法
 
@@ -833,6 +833,19 @@ function LinkList() {
   };
   this.insert = function (newElement, item) {
     const newNode = new Node(newElement);
+    let currentNode = this.head;
+    // 不存在item，则插入到最后
+    if (!item) {
+      if (!currentNode.next) {
+        currentNode.next = newNode;
+      } else {
+        while (currentNode.next) {
+          currentNode = currentNode.next;
+        }
+        currentNode.next = newNode;
+      }
+      return;
+    }
     const current = this.find(item);
     newNode.next = current.next;
     current.next = newNode;
@@ -884,7 +897,7 @@ cities.display();
 ### 双向链表
 
 前后可以同时遍历的链表
-![](~@image/arithmetic/bothList.png)
+<Image  src="./images/6.png" />
 
 ```js
 /**
@@ -977,6 +990,7 @@ cities.dispReverse();
 ### 循环列表
 
 循环列表只是在创建节点时将 next 属性指向它本身
+<Image  src="./images/7.png" />
 
 ```mermaid
 graph LR
@@ -1058,6 +1072,66 @@ cities.findPrevious("Conway");
 cities.findPrevious("Russellville");
 ```
 
+### 面试题
+
+#### 判断一个链表是否有环
+
+- 缓存
+  ```js
+  function isCircularLList(cities) {
+    const map = new WeakMap();
+    let currNode = cities.head;
+    while (currNode && currNode.next) {
+      map.set(currNode, currNode);
+      if (map.has(currNode.next)) {
+        return true;
+      } else {
+        currNode = currNode.next;
+      }
+    }
+    return false;
+  }
+  ```
+- 标记法
+  ```js
+  let hasCycle = function (head) {
+    while (head) {
+      if (head.flag) return true;
+      head.flag = true;
+      head = head.next;
+    }
+    return false;
+  };
+  ```
+- 利用 JSON.stringify() 不能序列化含有循环引用的结构
+  ```js
+  let hasCycle = function (head) {
+    try {
+      JSON.stringify(head);
+      return false;
+    } catch (err) {
+      return true;
+    }
+  };
+  ```
+- 快慢指针
+
+```js
+let hasCycle = function (head) {
+  if (!head || !head.next) {
+    return false;
+  }
+  let fast = head.next.next,
+    slow = head.next;
+  while (fast !== slow) {
+    if (!fast || !fast.next) return false;
+    fast = fast.next.next;
+    slow = slow.next;
+  }
+  return true;
+};
+```
+
 ## 字典
 
 > 字典是一种以键 - 值对形式存储数据的数据结构
@@ -1068,8 +1142,78 @@ cities.findPrevious("Russellville");
 > 散列是一种常用的数据存储技术，散列后的数据可以快速地插入或取用。散列使用的数据
 > 结构叫做散列表
 
+## 集合
+
+集合（set）是一种包含不同元素的数据结构。集合中的元素称为成员。集合的两个最重要特性是：首先，集合中的成员是无序的；其次，集合中不允许相同成员存在
+
+## 高级算法
+
+### 动态规划
+
+动态规划解决方案从底部开始解决问题，将所有小问题解决掉，然后合并成一个整体解决方案，从而解决掉整个大问题
+使用动态规划设计的算法从它能解决的最简单的子问题开始，继而通过得到的解，去解决其他更复杂的子问题，直到整个问题都被解决。所有子问题的解通常被存储在一个数组里以便于访问
+
+
+
+#### 计算斐波那契数列
+
+  ```js
+  0, 1, 1, 2, 3, 5, 8;
+  ```
+
+  递归计算
+
+  ```js
+  function recurFib(n) {
+    if (n < 2) {
+      return n;
+    } else {
+      return recurFib(n - 1) + recurFib(n - 2);
+    }
+  }
+  ```
+
+  动态规划
+
+  ```js
+  function dynFib(n) {
+    let val = [];
+    for (let i = 0; i < n; i++) {
+      val[i] = 0;
+    }
+    if (n == 1 || n == 2) {
+      return 1;
+    } else {
+      val[1] = 1;
+      val[2] = 2;
+      for (let i = 3; i < n; i++) {
+        val[i] = val[i - 1] + val[i - 2];
+      }
+      return val[n - 1];
+    }
+  }
+
+  function dynFib1(n) {
+    let last = 1;
+    let nextLast = 1;
+    let result = 1;
+    for (let i = 2; i < n; i++) {
+      result = last + nextLast;
+      nextLast = last;
+      last = result;
+    }
+    return result;
+  }
+  ```
+
+#### 寻找最长公共子串
+
+
+
 ## 资料引用：
 
 <a href="./pdf/数据结构与算法JavaScript.pdf" target="_blank"  style="display: block">数据结构与算法 JavaScript</a>
 <a href="https://github.com/trekhleb/javascript-algorithms/blob/master/README.zh-CN.md" target="_blank"  style="display: block">JavaScript 算法与数据结构</a>
 <a href="https://nwy3y7fy8w5.feishu.cn/docx/MUZndda3koTzTtxNnE6ccsRYnjb" target="_blank"  style="display: block">资料</a>
+
+<a href="https://gitee.com/sky__bear/algorithm" target="_blank"  style="display: block">代码地址</a>
