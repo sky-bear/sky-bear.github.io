@@ -1153,67 +1153,446 @@ let hasCycle = function (head) {
 动态规划解决方案从底部开始解决问题，将所有小问题解决掉，然后合并成一个整体解决方案，从而解决掉整个大问题
 使用动态规划设计的算法从它能解决的最简单的子问题开始，继而通过得到的解，去解决其他更复杂的子问题，直到整个问题都被解决。所有子问题的解通常被存储在一个数组里以便于访问
 
-
-
 #### 计算斐波那契数列
 
-  ```js
-  0, 1, 1, 2, 3, 5, 8;
-  ```
+```js
+0, 1, 1, 2, 3, 5, 8;
+```
 
-  递归计算
+递归计算
 
-  ```js
-  function recurFib(n) {
-    if (n < 2) {
-      return n;
-    } else {
-      return recurFib(n - 1) + recurFib(n - 2);
-    }
+```js
+function recurFib(n) {
+  if (n < 2) {
+    return n;
+  } else {
+    return recurFib(n - 1) + recurFib(n - 2);
   }
-  ```
+}
+```
 
-  动态规划
+动态规划
 
-  ```js
-  function dynFib(n) {
-    let val = [];
-    for (let i = 0; i < n; i++) {
-      val[i] = 0;
-    }
-    if (n == 1 || n == 2) {
-      return 1;
-    } else {
-      val[1] = 1;
-      val[2] = 2;
-      for (let i = 3; i < n; i++) {
-        val[i] = val[i - 1] + val[i - 2];
-      }
-      return val[n - 1];
-    }
+```js
+function dynFib(n) {
+  let val = [];
+  for (let i = 0; i < n; i++) {
+    val[i] = 0;
   }
-
-  function dynFib1(n) {
-    let last = 1;
-    let nextLast = 1;
-    let result = 1;
-    for (let i = 2; i < n; i++) {
-      result = last + nextLast;
-      nextLast = last;
-      last = result;
+  if (n == 1 || n == 2) {
+    return 1;
+  } else {
+    val[1] = 1;
+    val[2] = 2;
+    for (let i = 3; i < n; i++) {
+      val[i] = val[i - 1] + val[i - 2];
     }
-    return result;
+    return val[n - 1];
   }
-  ```
+}
+
+function dynFib1(n) {
+  let last = 1;
+  let nextLast = 1;
+  let result = 1;
+  for (let i = 2; i < n; i++) {
+    result = last + nextLast;
+    nextLast = last;
+    last = result;
+  }
+  return result;
+}
+```
 
 #### 寻找最长公共子串
 
+- 暴力法
+  多层遍历
 
+  ```js
+  function longestCommonSubstring1(a1, a2) {
+    const length1 = a1.length;
+    const length2 = a2.length;
+    let max = [];
+    let i = 0;
+    while (i < length1) {
+      const st1 = a1[i];
+      let j = 0;
+
+      while (j < length2) {
+        let temList = [];
+        const st2 = a2[j];
+        if (st1 === st2) {
+          temList.push(st1);
+          let k = i + 1;
+          let f = j + 1;
+          while (k < length1 && f < length2) {
+            if (a1[k] === a2[f]) {
+              temList.push(a1[k]);
+              k++;
+              f++;
+            } else {
+              break;
+            }
+          }
+          max.push(temList.join(""));
+          j++;
+        } else {
+          j++;
+        }
+      }
+      i++;
+    }
+    return max.sort((a, b) => b.length - a.length)[0];
+  }
+  ```
+
+- 动态规划
+  实际上是吧对应字符串放到字符串长度+2 的二维数组中， 这样每一个字符都都有一个位置， 可以记录是否相等， 然后记录最大长度和位置， 最后根据位置截取字符串
+  ```js
+  function lcs(word1, word2) {
+    var max = 0;
+    var index = 0;
+    var lcsarr = new Array(word1.length + 1);
+    for (var i = 0; i <= word1.length + 1; ++i) {
+      lcsarr[i] = new Array(word2.length + 1);
+      for (var j = 0; j <= word2.length + 1; ++j) {
+        lcsarr[i][j] = 0;
+      }
+    }
+    for (var i = 0; i <= word1.length; ++i) {
+      for (var j = 0; j <= word2.length; ++j) {
+        if (i == 0 || j == 0) {
+          lcsarr[i][j] = 0;
+        } else {
+          if (word1[i - 1] == word2[j - 1]) {
+            lcsarr[i][j] = lcsarr[i - 1][j - 1] + 1;
+          } else {
+            lcsarr[i][j] = 0;
+          }
+        }
+        if (max < lcsarr[i][j]) {
+          max = lcsarr[i][j];
+          index = i;
+        }
+      }
+    }
+    var str = "";
+    if (max == 0) {
+      return "";
+    } else {
+      for (var i = index - max; i < index; ++i) {
+        str += word1[i];
+      }
+      return str;
+    }
+  }
+  ```
+
+## 排序算法
+
+### 冒泡排序
+
+冒泡排序是一种简单的排序算法。它重复地遍历要排序的数列,一次比较两个元素,如果顺序错误就把它们交换过来。遍历的最终结果是会把最大的数冒泡地沉到最底下,最小的数会像鱼泡一样被冒泡地推到最上面来。
+
+- 思想
+  - 冒泡排序只会操作相邻的两个数据。
+  - 每次冒泡操作都会对相邻的两个元素进行比较，看是否满足大小关系要求。如果不满足就让它俩互换。
+  - 一次冒泡会让至少一个元素移动到它应该在的位置，重复 n 次，就完成了 n 个数据的排序工作。
+- 特点
+
+  - 优点：排序算法的基础，简单实用易于理解。
+  - 缺点：比较次数多，效率较低
+
+- 实现
+
+  ```js
+  function bubbleSort(arr) {
+    const length = arr.length;
+    if (length <= 1) return arr;
+    for (let i = 0; i < length; i++) {
+      let isChanged = false;
+      for (let j = 0; j < length - 1 - i; j++) {
+        if (arr[j] > arr[j + 1]) {
+          [arr[j], arr[j + 1]] = [arr[j + 1], arr[j]];
+          isChanged = true;
+        }
+      }
+      if (!isChanged) {
+        return arr;
+      }
+    }
+  }
+  ```
+
+- 分析
+  1. 冒泡排序是原地排序算法吗 ?
+     冒泡的过程只涉及相邻数据的交换操作，只需要常量级的临时空间，所以它的空间复杂度为 O(1)，是一个原地排序算法。
+  2. 冒泡排序是稳定的排序算法吗 ？
+     在冒泡排序中，只有交换才可以改变两个元素的前后顺序。
+     为了保证冒泡排序算法的稳定性，当有相邻的两个元素大小相等的时候，我们不做交换，相同大小的数据在排序前后不会改变顺序。
+     所以冒泡排序是稳定的排序算法。
+  3. 冒泡排序的时间复杂度是多少 ？
+     最佳情况：T(n) = O(n)，当数据已经是正序时。
+     最差情况：T(n) = O(n(2))，当数据是反序时。
+     平均情况：T(n) = O(n(2))。
+- 动画
+
+  <Image  src="./images/bubble.gif" />
+
+### 插入排序
+
+插入排序又为分为 **直接插入排序** 和优化后的 **拆半插入排序** 与 **希尔排序**我们通常说的插入排序是指直接插入排序。
+
+#### 直接插入排序
+
+- 思想
+  一般人打扑克牌，整理牌的时候，都是按牌的大小（从小到大或者从大到小）整理牌的，那每摸一张新牌，就扫描自己的牌，把新牌插入到相应的位置。
+  插入排序的工作原理：通过构建有序序列，对于未排序数据，在已排序序列中从后向前扫描，找到相应位置并插入。
+- 步骤
+  - 从第一个元素开始，该元素可以认为已经被排序；
+  - 取出下一个元素，在已经排序的元素序列中从后向前扫描；
+  - 如果该元素（已排序）大于新元素，将该元素移到下一位置；
+  - 重复步骤 3，直到找到已排序的元素小于或者等于新元素的位置；
+  - 将新元素插入到该位置后；
+  - 重复步骤 2 ~ 5。
+- 实现
+
+  ```js
+  function insertionSort(arr) {
+    const length = arr.length;
+    if (length <= 1) return arr;
+    for (let i = 1; i < length; i++) {
+      let current = arr[i]; //当前元素
+      let j = i - 1; // 待比较的元素下标
+
+      while (j >= 0 && arr[j] > current) {
+        arr[j + 1] = arr[j]; //将待比较元素后移一位
+        j--;
+      }
+      // 只有有移动过元素才插入
+      if (j + 1 != i) {
+        arr[j + 1] = current; //将当前元素插入到正确的位置
+      }
+    }
+    return arr;
+  }
+  ```
+
+- 分析
+
+  1. 插入排序是原地排序算法吗
+     插入排序算法的运行并不需要额外的存储空间，所以空间复杂度是 O(1)，所以，这是一个原地排序算法。
+  2. 插入排序是稳定的排序算法吗 ？
+     在插入排序中，对于值相同的元素，我们可以选择将后面出现的元素，插入到前面出现元素的后面，这样就可以保持原有的前后顺序不变，所以插入排序是稳定的排序算法。
+  3. 插入排序的时间复杂度是多少 ？
+     最佳情况：T(n) = O(n)，当数据已经是正序时。
+     最差情况：T(n) = O(n(2))，当数据是反序时。
+     平均情况：T(n) = O(n(2))。
+
+- 动画
+  <Image  src="./images/insert.webp" />
+
+#### 拆半插入
+
+插入排序也有一种优化算法，叫做`拆半插入`。
+
+- 思想
+  折半插入排序是直接插入排序的升级版，鉴于插入排序第一部分为已排好序的数组，我们不必按顺序依次寻找插入点，只需比较它们的中间值与待插入元素的大小即可
+
+- 步骤
+
+  - 取 0 ~ i-1 的中间点 ( m = (i-1) >> 1 )，array[i] 与 array[m] 进行比较，若 array[i] < array[m]，则说明待插入的元素 array[i] 应该处于数组的 0 ~ m 索引之间；反之，则说明它应该处于数组的 m ~ i-1 索引之间。
+  - 重复步骤 1，每次缩小一半的查找范围，直至找到插入的位置。
+  - 将数组中插入位置之后的元素全部后移一位。
+  - 在指定位置插入第 i 个元素。
+    > 注：x >> 1 是位运算中的右移运算，表示右移一位，等同于 x 除以 2 再取整，即 x >> 1 == Math.floor(x/2)
+
+- 实现
+
+  ```js
+  const binaryInsertionSort = (array) => {
+    const len = array.length;
+    if (len <= 1) return;
+
+    let current, i, j, low, high, m;
+    for (i = 1; i < len; i++) {
+      low = 0;
+      high = i - 1;
+      current = array[i];
+
+      while (low <= high) {
+        //步骤 1 & 2 : 折半查找
+        m = (low + high) >> 1; // 注: x>>1 是位运算中的右移运算, 表示右移一位, 等同于 x 除以 2 再取整, 即 x>>1 == Math.floor(x/2) .
+        if (array[i] >= array[m]) {
+          //值相同时, 切换到高半区，保证稳定性
+          low = m + 1; //插入点在高半区
+        } else {
+          high = m - 1; //插入点在低半区
+        }
+      }
+      for (j = i; j > low; j--) {
+        //步骤 3: 插入位置之后的元素全部后移一位
+        array[j] = array[j - 1];
+      }
+
+      array[low] = current; //步骤 4: 插入该元素
+    }
+    return array;
+  };
+  ```
+
+  注意：和直接插入排序类似，折半插入排序每次交换的是相邻的且值为不同的元素，它并不会改变值相同的元素之间的顺序，因此它是稳定的
+
+### 选择排序
+
+- 思路
+  选择排序算法的实现思路有点类似插入排序，也分已排序区间和未排序区间。但是选择排序每次会从未排序区间中找到最小的元素，将其放到已排序区间的末尾。
+- 步骤
+
+1. 首先在未排序序列中找到最小（大）元素，存放到排序序列的起始位置。
+2. 再从剩余未排序元素中继续寻找最小（大）元素，然后放到已排序序列的末尾。
+3. 重复第二步，直到所有元素均排序完毕。
+
+- 实现
+  ```js
+  function selectionSort(arr) {
+    for (let i = 0; i < arr.length; i++) {
+      let min = i;
+      for (let j = i + 1; j < arr.length; j++) {
+        if (arr[j] < arr[min]) {
+          min = j;
+        }
+      }
+      [arr[i], arr[min]] = [arr[min], arr[i]];
+    }
+    return arr;
+  }
+  ```
+- 分析
+  1. 选择排序是原地排序算法吗 ？
+     选择排序空间复杂度为 O(1)，是一种原地排序算法。
+  2. 选择排序是稳定的排序算法吗 ？
+     选择排序每次都要找剩余未排序元素中的最小值，并和前面的元素交换位置，这样破坏了稳定性。所以，选择排序是一种不稳定的排序算法。
+  3. 选择排序的时间复杂度是多少 ？
+     无论是正序还是逆序，选择排序都会遍历 n(2) / 2 次来排序，所以，最佳、最差和平均的复杂度是一样的。
+     最佳情况：T(n) = O(n(2))。
+     最差情况：T(n) = O(n(2))。
+     平均情况：T(n) = O(n(2))。
+- 动画
+  <Image  src="./images/select.webp" />
+
+### 归并排序
+
+- 思路
+  排序一个数组，我们先把数组从中间分成前后两部分，然后对前后两部分分别排序，再将排好序的两部分合并在一起，这样整个数组就都有序了。
+  归并排序采用的是分治思想。
+  分治，顾名思义，就是分而治之，将一个大问题分解成小的子问题来解决。小的子问题解决了，大问题也就解决了。
+  <Image  src="./images/mergeSort.png" />
+
+> 注：x >> 1 是位运算中的右移运算，表示右移一位，等同于 x 除以 2 再取整，即 x >> 1 === Math.floor(x / 2)
+
+- 实现
+
+  ```js
+  const merge = (left, right) => {
+    let tem = [];
+    let leftIndex = 0;
+    let rightIndex = 0;
+    while (leftIndex < left.length && rightIndex < right.length) {
+      if (left[leftIndex] < right[rightIndex]) {
+        tem.push(left[leftIndex]);
+        leftIndex++;
+      } else {
+        tem.push(right[rightIndex]);
+        rightIndex++;
+      }
+    }
+    // 说明左侧还有剩余
+    if (leftIndex < left.length) {
+      tem.push(...left.slice(leftIndex));
+    }
+
+    if (rightIndex < right.length) {
+      tem.push(...right.slice(rightIndex));
+    }
+    return tem;
+  };
+
+  const mergeSort = (arr) => {
+    if (arr.length <= 1) return arr;
+    const middle = Math.floor(arr.length / 2);
+    const left = arr.slice(0, middle);
+    const right = arr.slice(middle);
+    return merge(mergeSort(left), mergeSort(right));
+  };
+  ```
+
+- 分析
+
+  1. 归并排序是原地排序算法吗 ？
+     这是因为归并排序的合并函数，在合并两个有序数组为一个有序数组时，需要借助额外的存储空间。
+     实际上，尽管每次合并操作都需要申请额外的内存空间，但在合并完成之后，临时开辟的内存空间就被释放掉了。在任意时刻，CPU 只会有一个函数在执行，也就只会有一个临时的内存空间在使用。临时内存空间最大也不会超过 n 个数据的大小，所以空间复杂度是 O(n)。
+     所以，归并排序不是原地排序算法。
+  2. 归并排序是稳定的排序算法吗 ？
+     merge 方法里面的 left[0] <= right[0] ，保证了值相同的元素，在合并前后的先后顺序不变。归并排序是稳定的排序方法。
+  3. 归并排序的时间复杂度是多少 ？
+     从效率上看，归并排序可算是排序算法中的佼佼者。假设数组长度为 n，那么拆分数组共需 logn 步，又每步都是一个普通的合并子数组的过程，时间复杂度为 O(n)，故其综合时间复杂度为 O(n log n)。
+     最佳情况：T(n) = O(n log n)。
+     最差情况：T(n) = O(n log n)。
+     平均情况：T(n) = O(n log n)。
+
+- 动画
+  <Image  src="./images/mergeSort.webp" />
+
+### 快速排序
+
+快速排序的特点就是快，而且效率高！它是处理大数据最快的排序算法之一
+
+- 思路
+  - 先找到一个基准点（一般指数组的中部），然后数组被该基准点分为两部分，依次与该基准点数据比较，如果比它小，放左边；反之，放右边。
+  - 左右分别用一个空数组去存储比较后的数据。
+  - 最后递归执行上述操作，直到数组长度 <= 1;
+    特点：快速，常用。
+    缺点：需要另外声明两个数组，浪费了内存空间资源
+- 实现
+
+  ```js
+  function quickSort(arr) {
+    let len = arr.length;
+    if (len < 2) {
+      return arr;
+    }
+    let pivot = arr[0];
+    let left = [];
+    let right = [];
+    for (let i = 1; i < len; i++) {
+      if (arr[i] < pivot) {
+        left.push(arr[i]);
+      } else {
+        right.push(arr[i]);
+      }
+    }
+    return quickSort(left).concat([pivot], quickSort(right));
+  }
+  ```
+
+- 分析
+  1. 快速排序是原地排序算法吗 ？
+     因为 partition() 函数进行分区时，不需要很多额外的内存空间，所以快排是原地排序算法。
+  2. 快速排序是稳定的排序算法吗 ？
+     和选择排序相似，快速排序每次交换的元素都有可能不是相邻的，因此它有可能打破原来值为相同的元素之间的顺序。因此，快速排序并不稳定。
+  3. 快速排序的时间复杂度是多少 ？
+     极端的例子：如果数组中的数据原来已经是有序的了，比如 1，3，5，6，8。如果我们每次选择最后一个元素作为 pivot，那每次分区得到的两个区间都是不均等的。我们需要进行大约 n 次分区操作，才能完成快排的整个过程。每次分区我们平均要扫描大约 n / 2 个元素，这种情况下，快排的时间复杂度就从 O(nlogn) 退化成了 O(n(2))。
+     最佳情况：T(n) = O(n log n)。
+     最差情况：T(n) = O(n(2))。
+     平均情况：T(n) = O(n log n)
 
 ## 资料引用：
 
 <a href="./pdf/数据结构与算法JavaScript.pdf" target="_blank"  style="display: block">数据结构与算法 JavaScript</a>
 <a href="https://github.com/trekhleb/javascript-algorithms/blob/master/README.zh-CN.md" target="_blank"  style="display: block">JavaScript 算法与数据结构</a>
-<a href="https://nwy3y7fy8w5.feishu.cn/docx/MUZndda3koTzTtxNnE6ccsRYnjb" target="_blank"  style="display: block">资料</a>
+<a href="https://nwy3y7fy8w5.feishu.cn/docx/MUZndda3koTzTtxNnE6ccsRYnjb" target="_blank"  style="display: block">资料-常见数据结构</a>
+<a href="https://nwy3y7fy8w5.feishu.cn/docx/Vp1odZwQtoGxtnxnhagcabsZnLf" target="_blank"  style="display: block">资料-常见算法</a>
 
 <a href="https://gitee.com/sky__bear/algorithm" target="_blank"  style="display: block">代码地址</a>
