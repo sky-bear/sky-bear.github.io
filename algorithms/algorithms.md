@@ -1289,6 +1289,108 @@ function dynFib1(n) {
   }
   ```
 
+#### 背包问题
+
+背包问题是算法研究中的一个经典问题。试想你是一个保险箱大盗，打开了一个装满奇珍异宝的保险箱，但是你必须将这些宝贝放入你的一个小背包中。保险箱中的物品规格和价值不同。你希望自己的背包装进的宝贝总价值最大。
+当然，暴力计算可以解决这个问题，但是动态规划会更为有效。使用动态规划来解决背包问题的关键思路是计算装入背包的每一个物品的最大价值，直到背包装满。
+如果在我们例子中的保险箱中有 5 件物品，它们的尺寸分别是 3、4、7、8、9，而它们的价值分别是 4、5、10、11、13，且背包的容积为 16，那么恰当的解决方案是选取第三件物品和第五件物品，他们的总尺寸是 16，总价值是 23。
+
+物品 A B C D E <br />
+价值 4 5 10 11 13 <br />
+尺寸 3 4 7 8 9 <br />
+
+- 递归解决
+
+  ```js
+  function knapsack(capacity, objectArr, order) {
+    if (order < 0 || capacity <= 0) {
+      return 0;
+    }
+    if (arr[order].size > capacity) {
+      return knapsack(capacity, objectArr, order - 1);
+    }
+    return Math.max(
+      arr[order].value +
+        knapsack(capacity - arr[order].size, objectArr, order - 1),
+      knapsack(capacity, objectArr, order - 1)
+    );
+  }
+
+  console.log(
+    knapsack(
+      16,
+      [
+        { value: 4, size: 3 },
+        { value: 5, size: 4 },
+        { value: 10, size: 7 },
+        { value: 11, size: 8 },
+        { value: 13, size: 9 },
+      ],
+      4
+    )
+  ); // 23
+  ```
+
+- 动态规划
+  0-1 背包问题子结构：选择一个给定第 i 件物品，则需要比较选择第 i 件物品的形成的子问题的最优解与不选择第 i 件物品的子问题的最优解。分成两个子问题，进行选择比较，选择最优的。
+  > 也就是一个物品不选,则取上一个子问题的最优解;一个物品选,则取上一个子问题剩余容量的最优解。
+
+  <Image  src="./images/8.jpg" />
+
+  ```js
+  f[i][w] = max{ f[i-1][w], f[i-1][w-w[i]]+v[i] }
+  ```
+  其中，w[i] 表示第 i 件物品的重量，v[i] 表示第 i 件物品的价值。
+  ```js
+  function knapsack(capacity, objectArr) {
+    var n = objectArr.length;
+    var f = [];
+    for (var i = 0; i <= n; i++) {
+      f[i] = [];
+      for (var w = 0; w <= capacity; w++) {
+        if (i === 0 || w === 0) {
+          f[i][w] = 0;
+        } else if (objectArr[i - 1].size <= w) {
+          var size = objectArr[i - 1].size,
+            value = objectArr[i - 1].value;
+          f[i][w] = Math.max(f[i - 1][w - size] + value, f[i - 1][w]);
+        } else {
+          f[i][w] = f[i - 1][w];
+        }
+      }
+    }
+    return f[n][capacity];
+  }
+  ```
+  以上方法空间复杂度和时间复杂度是 O(nm)，其中 n 为物品个数，m 为背包容量。时间复杂度没有优化的余地了，但是空间复杂我们可以优化到 O(m)。首先我们要改写状态转移方程
+  ```js
+  f[w] = max{ f[w], f[w-w[i]]+v[i] }
+  ```
+  ```js
+  function knapsack(capacity, objectArr) {
+    var n = objectArr.length;
+    var f = [];
+    for (var w = 0; w <= capacity; w++) {
+      for (var i = 0; i < n; i++) {
+        if (w === 0) {
+          f[w] = 0;
+        } else if (objectArr[i].size <= w) {
+          var size = objectArr[i].size,
+            value = objectArr[i].value;
+          f[w] = Math.max(f[w - size] + value, f[w] || 0);
+        } else {
+          f[w] = Math.max(f[w] || 0, f[w - 1]);
+        }
+      }
+    }
+    return f[capacity];
+  }
+  ```
+
+### 贪心算法
+贪心算法就是一种比较简单的算法。贪心算法总是会选择当下的最优解，而不去考虑这一次的选择会不会对未来的选择造成影响。使用贪心算法通常表明，实现者希望做出的这一系列局部“最优”选择能够带来最终的整体“最优”选择。如果是这样的话，该算法将会产生一个最优解，否则，则会得到一个次优解。然而，对很多问题来说，寻找最优解很麻烦，这么做不值得，所以使用贪心算法就足够了
+
+
 ## 排序算法
 
 ### 冒泡排序
