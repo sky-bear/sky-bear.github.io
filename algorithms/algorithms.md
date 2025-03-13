@@ -1333,14 +1333,17 @@ function dynFib1(n) {
 
 - 动态规划
   0-1 背包问题子结构：选择一个给定第 i 件物品，则需要比较选择第 i 件物品的形成的子问题的最优解与不选择第 i 件物品的子问题的最优解。分成两个子问题，进行选择比较，选择最优的。
+
   > 也就是一个物品不选,则取上一个子问题的最优解;一个物品选,则取上一个子问题剩余容量的最优解。
 
-  <Image  src="./images/8.jpg" />
+    <Image  src="./images/8.jpg" />
 
   ```js
   f[i][w] = max{ f[i-1][w], f[i-1][w-w[i]]+v[i] }
   ```
+
   其中，w[i] 表示第 i 件物品的重量，v[i] 表示第 i 件物品的价值。
+
   ```js
   function knapsack(capacity, objectArr) {
     var n = objectArr.length;
@@ -1362,10 +1365,13 @@ function dynFib1(n) {
     return f[n][capacity];
   }
   ```
+
   以上方法空间复杂度和时间复杂度是 O(nm)，其中 n 为物品个数，m 为背包容量。时间复杂度没有优化的余地了，但是空间复杂我们可以优化到 O(m)。首先我们要改写状态转移方程
+
   ```js
   f[w] = max{ f[w], f[w-w[i]]+v[i] }
   ```
+
   ```js
   function knapsack(capacity, objectArr) {
     var n = objectArr.length;
@@ -1385,11 +1391,35 @@ function dynFib1(n) {
     }
     return f[capacity];
   }
+  // 另一种实现方式
+  function knapsack(capacity, objectArr) {
+    let result = [];
+
+    // 计算第一个物品的值
+    for (let i = 0; i <= capacity; i++) {
+      result[i] = size[0] <= i ? value[0] : 0;
+    }
+    // 重下标1开始循环到物品最大下标
+    for (let i = 1; i <= objectArr.length; i++) {
+      const next = [];
+      for (let j = 0; j <= capacity; j++) {
+        const size = objectArr[i - 1].size;
+        const value = objectArr[i - 1].value;
+        if (j >= size) {
+          next[j] = Math.max(result[j], value + result[j - size]);
+        } else {
+          next[j] = result[j];
+        }
+      }
+      result = next;
+    }
+    return result[capacity];
+  }
   ```
 
 ### 贪心算法
-贪心算法就是一种比较简单的算法。贪心算法总是会选择当下的最优解，而不去考虑这一次的选择会不会对未来的选择造成影响。使用贪心算法通常表明，实现者希望做出的这一系列局部“最优”选择能够带来最终的整体“最优”选择。如果是这样的话，该算法将会产生一个最优解，否则，则会得到一个次优解。然而，对很多问题来说，寻找最优解很麻烦，这么做不值得，所以使用贪心算法就足够了
 
+贪心算法就是一种比较简单的算法。贪心算法总是会选择当下的最优解，而不去考虑这一次的选择会不会对未来的选择造成影响。使用贪心算法通常表明，实现者希望做出的这一系列局部“最优”选择能够带来最终的整体“最优”选择。如果是这样的话，该算法将会产生一个最优解，否则，则会得到一个次优解。然而，对很多问题来说，寻找最优解很麻烦，这么做不值得，所以使用贪心算法就足够了
 
 ## 排序算法
 
