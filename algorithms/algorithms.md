@@ -1146,6 +1146,194 @@ let hasCycle = function (head) {
 
 集合（set）是一种包含不同元素的数据结构。集合中的元素称为成员。集合的两个最重要特性是：首先，集合中的成员是无序的；其次，集合中不允许相同成员存在
 
+## 树
+
+树是计算机科学中经常用到的一种数据结构。树是一种非线性的数据结构，以分层的方式存储数据。
+
+<Image  src="./images/tree.png" />
+
+它遵循：
+
+- 仅有唯一一个根节点，没有节点则为空树
+- 除根节点外，每个节点都有并仅有唯一一个父节点
+- 节点间不能形成闭环
+
+树有几个概念：
+
+- 拥有相同父节点的节点，互称为兄弟节点
+- 节点的深度 ：从根节点到该节点所经历的边的个数
+- 节点的高度 ：节点到叶节点的最长路径
+- 树的高度：根节点的高度
+
+<Image  src="./images/tree1.png" />
+B、C、D就互称为兄弟节点，其中，节点B的高度为2，节点B的深度为 1，树的高度为3
+
+## 二叉树
+
+二叉树，故名思义，最多仅有两个子节点的树（最多能分两个叉的树）：
+<Image  src="./images/tree2.png" />
+
+## 平衡二叉树
+
+二叉树中，每一个节点的左右子树的高度相差不能大于 1，称为平衡二叉树
+<Image  src="./images/tree3.png" />
+
+- 满二叉树：除了叶结点外每一个结点都有左右子叶且叶子结点都处在最底层的二叉树
+
+- 完全二叉树：深度为 h，除第 h 层外，其它各层 (1 ～ h-1) 的结点数都达到最大个数，第 h 层所有的结点都连续集中在最左边
+  <Image  src="./images/tree4.jpg" />
+
+## 二叉树遍历
+
+- 前序遍历
+  对于二叉树中的任意一个节点，先打印该节点，然后是它的左子树，最后右子树
+  <Image  src="./images/tree5.png" />
+- 中序遍历
+  对于二叉树中的任意一个节点，先打印它的左子树，然后是该节点，最后右子树
+  <Image  src="./images/tree6.png" />
+- 后序遍历
+  对于二叉树中的任意一个节点，先打印它的左子树，然后是右子树，最后该节点
+  <Image  src="./images/tree7.png" />
+
+    <!-- 代码实现 -->
+
+  ```js
+  function tree(val) {
+    this.val = val;
+    // 左节点
+    this.left = null;
+    // 右节点
+    this.right = null;
+
+    this.show = show;
+  }
+
+  function show() {
+    return this.val;
+  }
+
+  function BST() {
+    this.root = null;
+    this.insert = insert;
+    // this.inOrder = inOrder;
+  }
+
+  // 中序遍历
+  function inOrder(node) {
+    if (node !== null) {
+      inOrder(node.left);
+      console.log(node.show());
+      inOrder(node.right);
+    }
+  }
+
+  function preOrder(node) {
+    if (node !== null) {
+      console.log(node.show());
+      preOrder(node.left);
+      preOrder(node.right);
+    }
+  }
+
+  function postOrder(node) {
+    if (node !== null) {
+      postOrder(node.left);
+      postOrder(node.right);
+      console.log(node.show());
+    }
+  }
+
+  function insert(val) {
+    const node = new tree(val);
+    if (this.root === null) {
+      this.root = node;
+    } else {
+      let current = this.root;
+      let parent;
+      while (true) {
+        parent = current;
+        if (val < current.val) {
+          current = parent.left;
+          if (current === null) {
+            parent.left = node;
+            break;
+          }
+        } else {
+          current = parent.right;
+          if (current === null) {
+            parent.right = node;
+            break;
+          }
+        }
+      }
+    }
+  }
+
+  var nums = new BST();
+  nums.insert(23);
+  nums.insert(45);
+  nums.insert(16);
+  nums.insert(37);
+  nums.insert(3);
+  nums.insert(99);
+  nums.insert(22);
+  console.log("Inorder traversal: ");
+  console.log("前");
+  preOrder(nums.root); // 23 16 3 22 45 37 99
+  console.log("中");
+  inOrder(nums.root); // 3 16 22 23 37 45 99
+  console.log("后");
+  postOrder(nums.root); // 3 22 16 37 99 45 23
+  ```
+
+  非递归版本
+
+  ```js
+  // 前序遍历
+  function preOrderStack(node) {
+    const stack = [];
+    const list = [];
+    stack.push(node);
+    while (stack.length) {
+      let current = stack.pop();
+      list.push(current.val);
+      // 先打印左侧， 所以先把右侧入队
+      if (current.right) {
+        stack.push(current.right);
+      }
+      if (current.left) {
+        stack.push(current.left);
+      }
+    }
+    return list;
+  }
+
+  // 中序遍历
+  function inOrderStack(node) {
+    const stack = [];
+    const list = [];
+    let current = node;
+    while (stack.length || current) {
+      while (current) {
+        stack.push(current);
+        current = current.left;
+      }
+
+      current = stack.pop();
+      list.push(current.val);
+
+      current = current.right;
+    }
+    console.log(list);
+    return list;
+  }
+  ```
+
+## DFS 和 BFS
+
+- DFS：深度优先遍历
+- BFS：广度优先遍历
+
 ## 高级算法
 
 ### 动态规划
@@ -1391,8 +1579,8 @@ function dynFib1(n) {
     }
     return f[capacity];
   }
-  // 另一种实现方式
-  function knapsack(capacity, objectArr) {
+  // 另一种写法和上面差不多
+  function knapsack3(capacity, objectArr) {
     let result = [];
 
     // 计算第一个物品的值
@@ -1417,9 +1605,9 @@ function dynFib1(n) {
   }
   ```
 
-### 贪心算法
+#### 背包问题
 
-贪心算法就是一种比较简单的算法。贪心算法总是会选择当下的最优解，而不去考虑这一次的选择会不会对未来的选择造成影响。使用贪心算法通常表明，实现者希望做出的这一系列局部“最优”选择能够带来最终的整体“最优”选择。如果是这样的话，该算法将会产生一个最优解，否则，则会得到一个次优解。然而，对很多问题来说，寻找最优解很麻烦，这么做不值得，所以使用贪心算法就足够了
+如果放入背包的物品从本质上说是连续的，那么就可以使用贪心算法来解决背包问题。换句话说，该物品必须是不能离散计数的，比如布匹和金粉。如果用到的物品是连续的，那么可以简单地通过物品的单价除以单位体积来确定物品的价值。在这种情况下的最优 是，先装价值最高的物品直到该物品装完或者将背包装满，接着装价值次高的物品，直到这种物品也装完或将背包装满，以此类推。我们把这种问题类型叫做 “部分背包问题”
 
 ## 排序算法
 
@@ -1719,6 +1907,13 @@ function dynFib1(n) {
      最佳情况：T(n) = O(n log n)。
      最差情况：T(n) = O(n(2))。
      平均情况：T(n) = O(n log n)
+
+## 算法真题
+
+### 双指针
+
+- 碰撞指针 -> <-
+- 快慢指针 -> -->
 
 ## 资料引用：
 
