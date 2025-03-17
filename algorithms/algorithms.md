@@ -1183,6 +1183,45 @@ B、C、D就互称为兄弟节点，其中，节点B的高度为2，节点B的�
 - 完全二叉树：深度为 h，除第 h 层外，其它各层 (1 ～ h-1) 的结点数都达到最大个数，第 h 层所有的结点都连续集中在最左边
   <Image  src="./images/tree4.jpg" />
 
+## 代码表示二叉树
+
+- 链式存储法
+  节点
+  ```js
+  function Node(val) {
+    // 保存当前节点 key 值
+    this.val = val;
+    // 指向左子节点
+    this.left = null;
+    // 指向右子节点
+    this.right = null;
+  }
+  ```
+  一棵二叉树可以由根节点通过左右指针连接起来形成一个树
+  ```js
+  function BinaryTree() {
+    let Node = function (val) {
+      this.val = val;
+      this.left = null;
+      this.right = null;
+    };
+    let root = null;
+  }
+  ```
+- 数组存储法(适用于完全二叉树)
+  <Image  src="./images/tree8.png" />
+
+  上图就是一棵完全二叉树，
+  如果我们把根节点存放在位置 i=1 的位置，则它的左子节点位置为 2i = 2 ，右子节点位置为 2i+1 = 3 。
+  如果我们选取 B 节点 i=2 ，则它父节点为 i/2 = 1 ，左子节点 2i=4 ，右子节点 2i+1=5 。
+  以此类推，我们发现所有的节点都满足这三种关系：
+
+  - 位置为 i 的节点，它的父节点位置为 i/2
+  - 它的左子节点 2i
+  - 它的右子节点 2i+1
+    因此，如果我们把完全二叉树存储在数组里（从下标为 1 开始存储），我们完全可以通过下标找到任意节点的父子节点。从而完整的构建出这个完全二叉树。这就是数组存储法。
+    数组存储法相对于链式存储法不需要为每个节点创建它的左右指针，更为节省内存。
+
 ## 二叉树遍历
 
 - 前序遍历
@@ -1912,8 +1951,273 @@ function dynFib1(n) {
 
 ### 双指针
 
-- 碰撞指针 -> <-
+- 碰撞指针 -> <- 要先排序
 - 快慢指针 -> -->
+
+#### 两数之和[leetcode-1]
+
+```js
+// 暴力解法
+var twoSum = function (nums, target) {
+  for (let i = 0; i < nums.length; i++) {
+    for (let j = i + 1; j < nums.length; j++) {
+      if (nums[i] + nums[j] === target) {
+        return [i, j];
+      }
+    }
+  }
+};
+// 双指针法
+var twoSum = function (nums, target) {
+  const newNums = [...nums].sort((a, b) => a - b);
+  let left = 0,
+    right = newNums.length - 1;
+  while (left < right) {
+    if (newNums[left] + newNums[right] === target) {
+      const leftIdx = nums.indexOf(newNums[left]);
+      const rightIdx = nums.lastIndexOf(newNums[right]);
+      return [leftIdx, rightIdx];
+    } else if (newNums[left] + newNums[right] < target) {
+      left++;
+    } else {
+      right--;
+    }
+  }
+};
+```
+
+#### 三数之和[leetcode-16]
+
+```js
+// 暴力解法
+var threeSumClosest = function (nums, target) {
+  let resultList = [];
+  let result = undefined;
+  for (let i = 0; i < nums.length; i++) {
+    const n1 = nums[i];
+    for (let k = i + 1; k < nums.length; k++) {
+      const n2 = nums[k];
+      for (let j = k + 1; j < nums.length; j++) {
+        const n3 = nums[j];
+        if (typeof result === "undefined") {
+          result = Math.abs(target - (n1 + n2 + n3));
+          resultList = [n1, n2, n3];
+        } else {
+          if (result > Math.abs(target - (n1 + n2 + n3))) {
+            result = Math.abs(target - (n1 + n2 + n3));
+            resultList = [n1, n2, n3];
+          }
+        }
+      }
+    }
+  }
+
+  return resultList.reduce((total, cur) => total + cur);
+};
+
+// 双指针
+var threeSumClosest = function (nums, target) {
+  const length = nums.length;
+  if (length === 3) {
+    return nums.reduce((total, cur) => total + cur);
+  }
+  nums = nums.sort((a, b) => a - b);
+
+  let min = Infinity;
+  let res;
+  for (let i = 0; i < length - 2; i++) {
+    let left = i + 1;
+    let right = length - 1;
+    const basic = nums[i];
+    while (left < right) {
+      let sum = basic + nums[left] + nums[right];
+      let diff = Math.abs(target - sum);
+      if (diff < min) {
+        min = diff;
+        res = sum;
+      }
+      if (sum < target) {
+        left++;
+      } else {
+        right--;
+      }
+    }
+  }
+  return res;
+};
+```
+
+#### 判断子序列[leetcode-392]
+
+```js
+var isSubsequence = function (s, t) {
+  let sl = s.length;
+  if (!sl) return true;
+  let i = 0;
+  let j = 0;
+  while (i < sl && j < t.length) {
+    if (s[i] === t[j]) {
+      i++;
+      j++;
+    } else {
+      j++;
+    }
+  }
+  if (i === sl) return true;
+  return false;
+};
+```
+
+#### 移动 0[leetcode-283]
+
+- 暴力法
+  先遍历一次，找出所有 0 的下标，然后把删除的 0 元素存储起来， 再 push 到末尾。
+  ```js
+  // 暴力法 借用数组的方法
+  var moveZeroes = function (nums) {
+    const length = nums.length;
+    if (length === 1) return nums;
+    let list = [];
+    let i = 0;
+    while (i + list.length < length) {
+      if (nums[i] === 0) {
+        list.push(...nums.splice(i, 1));
+      } else {
+        i++;
+      }
+    }
+    nums.push(...list);
+    return nums;
+  };
+  ```
+- 双指针
+  慢指针 j 从 0 开始，当快指针 i 遍历到非 0 元素的时候，i 和 j 位置的元素交换,然后把 j + 1。
+  也就是说，快指针 i 遍历完毕后, [0, j) 区间就存放着所有非 0 元素，而剩余的[j,
+  n]区间再遍历一次，用 0 填充满即可
+  ```js
+  // 找到不为0的放到前面。，剩下的全部换成0
+  var moveZeroes = function (nums) {
+    let j = 0;
+    for (let i = 0; i < nums.length; i++) {
+      // 找到所有不为0的数， 放到前面
+      if (nums[i] !== 0) {
+        nums[j] = nums[i];
+        j++;
+      }
+    }
+    // 将其他小标的数据换成0
+    while (j < nums.length) {
+      nums[j] = 0;
+      j++;
+    }
+    return nums;
+  };
+  ```
+- 双指针(交换位置)
+  在上面的算法里，快指针遍历完成后，还要遍历慢指针到末尾来填充 0。实际上这题只要遇
+  到非 0 元素，就把当前位置的值和慢指针位置 j 的值交换，然后只有此时 j 才 + 1，即
+  可完成
+
+  ```js
+  var moveZeroes = function (nums) {
+    let j = 0;
+    for (let i = 0; i < nums.length; i++) {
+      if (nums[i] !== 0) {
+        [nums[j], nums[i]] = [nums[i], nums[j]];
+        j++;
+      }
+    }
+    return nums;
+  };
+  ```
+
+#### 通过删除字母匹配到字典里最长单词 [leetcode-528]
+
+```js
+var findLongestWord = function (s, dictionary) {
+  let newList = dictionary.sort();
+  let resultList = [];
+  for (let i = 0; i < newList.length; i++) {
+    let j = 0; // 当前单词的指针
+    let k = 0; // 字符串的指针
+    let item = newList[i];
+    while (j < item.length && k < s.length) {
+      if (s[k] === item[j]) {
+        k++;
+        j++;
+      } else {
+        k++;
+      }
+    }
+    if (j === item.length) {
+      resultList.push(item);
+    }
+  }
+  // 不存在
+  if (resultList.length === 0) return "";
+  resultList = resultList.sort((a, b) => b.length - a.length);
+  // 找到和第一个长度一样的所有数据
+  resultList = resultList.filter((v) => v.length === resultList[0].length);
+  return resultList.sort()[0];
+};
+```
+
+### 滑动窗口
+
+- 定长滑动窗口
+- 不定长滑动窗口
+
+#### 滑动窗口最大值 [leetcode-239]
+
+```js
+// 数据多的时候时间不够
+var maxSlidingWindow = function (nums, k) {
+  let list = [];
+  for (let i = 0; i <= nums.length - k; i++) {
+    const maxItem = Math.max(...nums.slice(i, i + k));
+    list.push(maxItem);
+  }
+  return list;
+};
+
+// 优化后
+var maxSlidingWindow = function (nums, k) {
+  if (!nums.length || nums.length < k) return nums;
+  const window = new MonotonicQueuqe();
+  let res = [];
+  for (let i = 0; i < nums.length; i++) {
+    if (i < k - 1) {
+      window.push(nums[i]);
+    } else {
+      window.push(nums[i]);
+      res.push(window.max());
+      window.pop(nums[i - k + 1]);
+    }
+  }
+  return res;
+};
+
+function MonotonicQueuqe() {
+  let queue = [];
+  // 维护一个单调递减队列
+  this.push = function (n) {
+    while (queue.length && queue[queue.length - 1] < n) {
+      queue.pop();
+    }
+    queue.push(n);
+  };
+  this.max = function () {
+    return queue[0];
+  };
+  this.pop = function (n) {
+    if (n === queue[0]) {
+      queue.shift();
+    }
+  };
+}
+```
+
+### 二叉树
 
 ## 资料引用：
 
