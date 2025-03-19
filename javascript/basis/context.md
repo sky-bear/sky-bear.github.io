@@ -21,6 +21,10 @@ import Image from "../../components/Image/index.vue"
 > - this
 >   :::
 
+在 JavaScript 程序执行前，会先创建全局执行上下文（Global Execution Context），这个过程又分为两大阶段：**创建阶段**（又称变量环境/词法环境的初始化）和**执行阶段**。
+
+
+
 ## 可执行代码
 
 - 全局代码(global context)
@@ -183,3 +187,19 @@ globalVO = {
     fn3 : <reference to FunctionDeclaration "fn3">
 }
 ```
+
+
+
+
+
+
+## 预编译
+
+代码执行前
+ - 词法分析(词法单元)
+ - 语法分析(AST)
+ - 代码生成
+
+声明提升
+  - 在编译时，变量会提升到所在作用域的顶部
+  - 函数声明整体提升

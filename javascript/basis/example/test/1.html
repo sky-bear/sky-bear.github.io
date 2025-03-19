@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <div id="result"></div>
+    <button>1</button>
+    <button>2</button>
+    <button>3</button>
+    <button>4</button>
+    <button>5</button>
+    <button>6</button>
+  </body>
+
+  <script>
+    const getData =async () => {
+      return new Promise((resolve, reject) => {
+        setTimeout(() => {
+          resolve('data')
+        }, 1000)
+      })
+    }
+
+    // button.addEventListener('click', ( function  fn() {
+    //   // const data = await getData()
+    //   // console.log("data", data)
+    //   return function() {
+    //     result.textContent = 'index'+(idx +1);
+    //   }
+    // })(idx))
+
+    const result = document.querySelector("#result");
+    const buttons = document.querySelectorAll("button");
+    buttons.forEach((button, idx) => {
+      // console.log(typeof  (async function fn() {
+      //     return function () {
+      //       result.textContent = "index" + (idx + 1);
+      //     };
+      //   })(idx))  // 返回的是个Promise对象
+
+      // console.log(typeof (async () => {
+      //   try {
+      //     result.textContent = "index" + (idx + 1)
+      //   } catch (error) {
+      //     console.log(error);
+      //   }
+      // })) // 返回的是个函数
+
+      const fn = async function () {
+
+        return function () {
+          result.textContent = "index" + (idx + 1);
+        };
+
+      }
+
+      try {
+        button.onclick =  (function fn() {
+          const promise = getData();
+          return function () {
+            promise.then((res) => {
+              console.log(res)
+              result.textContent = "index" + (idx + 1) + res;
+            })
+            
+          };
+        })(idx);
+      } catch (error) {
+        console.log(error);
+      }
+      // button.onclick = async () => {
+      //   try {
+      //     // 假设这里是某些异步操作，比如fetch调用
+      //     // let response = await someAsyncFunction();
+      //     result.textContent = "index" + (idx + 1)
+      //   } catch (error) {
+      //     console.log(error);
+      //   }
+      // };
+    });
+  </script>
+</html>
