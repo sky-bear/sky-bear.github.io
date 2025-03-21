@@ -4,8 +4,6 @@
 import Image from "../../components/Image/index.vue"
 </script>
 
-
-
 ## Promise
 
 ### 基础
@@ -312,6 +310,60 @@ next1.value.then((res) => {
 ```
 
 - [后续参考 九思-前端异步编程规范](https://x1mnl9knbjp.feishu.cn/docx/KOISdGpg1orK7sxQ4CKcnzJYnHg)
+
+## 练习
+
+### 练习 1
+
+```js
+async function fn1() {
+  console.log("fn1");
+  return 1;
+}
+async function fn2() {
+  await fn1();
+  console.log(2);
+}
+
+fn2();
+console.log(1);
+// fn1
+// 1
+// 2
+```
+
+```js
+async function fn1() {
+  console.log("fn1");
+  return 1;
+}
+
+fn1().then((v) => console.log(v));
+```
+
+### 练习 2
+
+```js
+const promise = new Promise((resolve, reject) => {
+  console.log(1);
+  setTimeout(() => {
+    console.log("timerStart");
+    resolve("success");
+    console.log("timerEnd");
+  }, 0);
+  console.log(2);
+});
+promise.then((res) => {
+  console.log(res);
+});
+console.log(4);
+// 1
+// 2
+// 4
+// timerStart
+// timerEnd
+// success
+```
 
 ## 资料引用：
 
