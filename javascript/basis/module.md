@@ -4,9 +4,6 @@
 import Image from "../../components/Image/index.vue"
 </script>
 
-
-
-
 ## 基础
 
 ### 什么是模块
@@ -15,6 +12,8 @@ import Image from "../../components/Image/index.vue"
 - 块的内部数据与实现是私有的, 只是向外部暴露一些接口(方法)与外部其它模块通信
 
 ### 模块化解决的问题
+
+隔离作用域
 
 - 外部模块的管理；
 - 内部模块的组织；
@@ -136,13 +135,17 @@ import Image from "../../components/Image/index.vue"
   定义暴露模块：
 
   ```js
+  define(id, [depends], callBack);
+  ```
+
+  ```js
   //定义没有依赖的模块
   define(function () {
     return 模块;
   });
 
   //定义有依赖的模块
-  define(["module1", "module2"], function (m1, m2) {
+  define("appModule,"[("module1", "module2")], function (m1, m2) {
     return 模块;
   });
   ```
@@ -150,8 +153,8 @@ import Image from "../../components/Image/index.vue"
   引入使用模块：
 
   ```js
-  require(["module1", "module2"], function (m1, m2) {
-    使用m1 / m2;
+  require(["appModule"], function (appModule) {
+    使用appModule;
   });
   ```
 
@@ -231,132 +234,166 @@ import Image from "../../components/Image/index.vue"
        </body>
      </html>
      ```
-    - 在index.html引入
-    ```html
-    <script data-main="js/main" src="js/libs/require.js"></script>
-    ```
 
+  - 在 index.html 引入
+
+  ```html
+  <script data-main="js/main" src="js/libs/require.js"></script>
+  ```
+
+#### 面试
+
+兼容判断 AMD & CJS define => amd CJS => module.exports
+
+```js
+define(
+  "amdModule",
+  ["dependencyModule1", "dependencyModule2"],
+  (dependencyModule1, dependencyModule2) => {
+    // 业务逻辑
+    let count = 0;
+    const increase = () => ++count;
+    // ...dependencyModule1
+  }
+)(
+  typeof module === "Object" && module.exports && typeof define !== "function"
+    ? // 是CJS
+      (factory) => (module.exports = factory(require, exports, module))
+    : // 是AMD
+      define
+);
+```
 
 ### CMD(Common Module Definition)
+
 - **概念** <br />
-  CMD规范专门用于浏览器端，模块的加载是异步的，模块使用时才会加载执行。CMD规范整合了CommonJS和AMD规范的特点。在 Sea.js 中，所有 JavaScript 模块都遵循 CMD模块定义规范。
+  CMD 规范专门用于浏览器端，模块的加载是异步的，模块使用时才会加载执行。CMD 规范整合了 CommonJS 和 AMD 规范的特点。在 Sea.js 中，所有 JavaScript 模块都遵循 CMD 模块定义规范。
 - **基本语法** <br />
   ```js
-    //定义没有依赖的模块
-    define(function(require, exports, module){
-      exports.xxx = value
-      module.exports = value
-    })
+  //定义没有依赖的模块
+  define(function (require, exports, module) {
+    exports.xxx = value;
+    module.exports = value;
+  });
   ```
   ```js
   //定义有依赖的模块
-    define(function(require, exports, module){
-      //引入依赖模块(同步)
-      var module2 = require('./module2')
-      //引入依赖模块(异步)
-        require.async('./module3', function (m3) {
-        })
-      //暴露模块
-      exports.xxx = value
-    })
+  define(function (require, exports, module) {
+    //引入依赖模块(同步)
+    var module2 = require("./module2");
+    //引入依赖模块(异步)
+    require.async("./module3", function (m3) {});
+    //暴露模块
+    exports.xxx = value;
+  });
   ```
   ```js
   // 引入使用的模块
   define(function (require) {
-    var m1 = require('./module1')
-    var m4 = require('./module4')
-    m1.show()
-    m4.show()
-  })
+    var m1 = require("./module1");
+    var m4 = require("./module4");
+    m1.show();
+    m4.show();
+  });
   ```
 - **使用** <br />
-需要使用 sea.js
-1. 下载sea.js, 并引入
-  - 官网: http://seajs.org/
-  - github : https://github.com/seajs/seajs
-  然后将sea.js导入项目：js/libs/sea.js
-  1. 创建项目结构
-  ```js
-      |-js
-        |-libs
-          |-sea.js
-        |-modules
-          |-module1.js
-          |-module2.js
-          |-module3.js
-          |-module4.js
-          |-main.js
-      |-index.html
-  ```
-  1. 定义sea.js的模块代码
-  ```js
-      // module1.js文件
-    define(function (require, exports, module) {
-      //内部变量数据
-      var data = 'xianzao.com'
-      //内部函数
-      function show() {
-        console.log('module1 show() ' + data)
-      }
-      //向外暴露
-      exports.show = show
-    })
+  需要使用 sea.js
 
-    // module2.js文件
-    define(function (require, exports, module) {
-      module.exports = {
-        msg: 'I am xianzao'
-      }
-    })
+1. 下载 sea.js, 并引入
 
-    // module3.js文件
-    define(function(require, exports, module) {
-      const API_KEY = 'abc123'
-      exports.API_KEY = API_KEY
-    })
+- 官网: http://seajs.org/
+- github : https://github.com/seajs/seajs
+  然后将 sea.js 导入项目：js/libs/sea.js
 
-    // module4.js文件
-    define(function (require, exports, module) {
-      //引入依赖模块(同步)
-      var module2 = require('./module2')
-      function show() {
-        console.log('module4 show() ' + module2.msg)
-      }
-      exports.show = show
-      //引入依赖模块(异步)
-      require.async('./module3', function (m3) {
-        console.log('异步引入依赖模块3  ' + m3.API_KEY)
-      })
-    })
+1. 创建项目结构
 
-    // main.js文件
-    define(function (require) {
-      var m1 = require('./module1')
-      var m4 = require('./module4')
-      m1.show()
-      m4.show()
-    })
-  ```
-  2. 在index.html中引入
-  ```html
-    <script type="text/javascript" src="js/libs/sea.js"></script>
-    <script type="text/javascript">
-      seajs.use('./js/modules/main')
-    </script>
-  ```
-  ```js
-  module1 show(), xianzao
-  module4 show() I am xianzao
-  异步引入依赖模块3 abc123
-  ```
+```js
+    |-js
+      |-libs
+        |-sea.js
+      |-modules
+        |-module1.js
+        |-module2.js
+        |-module3.js
+        |-module4.js
+        |-main.js
+    |-index.html
+```
+
+1. 定义 sea.js 的模块代码
+
+```js
+// module1.js文件
+define(function (require, exports, module) {
+  //内部变量数据
+  var data = "xianzao.com";
+  //内部函数
+  function show() {
+    console.log("module1 show() " + data);
+  }
+  //向外暴露
+  exports.show = show;
+});
+
+// module2.js文件
+define(function (require, exports, module) {
+  module.exports = {
+    msg: "I am xianzao",
+  };
+});
+
+// module3.js文件
+define(function (require, exports, module) {
+  const API_KEY = "abc123";
+  exports.API_KEY = API_KEY;
+});
+
+// module4.js文件
+define(function (require, exports, module) {
+  //引入依赖模块(同步)
+  var module2 = require("./module2");
+  function show() {
+    console.log("module4 show() " + module2.msg);
+  }
+  exports.show = show;
+  //引入依赖模块(异步)
+  require.async("./module3", function (m3) {
+    console.log("异步引入依赖模块3  " + m3.API_KEY);
+  });
+});
+
+// main.js文件
+define(function (require) {
+  var m1 = require("./module1");
+  var m4 = require("./module4");
+  m1.show();
+  m4.show();
+});
+```
+
+2. 在 index.html 中引入
+
+```html
+<script type="text/javascript" src="js/libs/sea.js"></script>
+<script type="text/javascript">
+  seajs.use("./js/modules/main");
+</script>
+```
+
+```js
+module1 show(), xianzao
+module4 show() I am xianzao
+异步引入依赖模块3 abc123
+```
 
 ### [ES6 模块化](https://es6.ruanyifeng.com/#docs/module)
 
 - **概念** <br />
-ES6 模块的设计思想是尽量的静态化，使得编译时就能确定模块的依赖关系，以及输入和输出的变量。CommonJS 和 AMD 模块，都只能在运行时确定这些东西。比如，CommonJS 模块就是对象，输入时必须查找对象属性。
+  ES6 模块的设计思想是尽量的静态化，使得编译时就能确定模块的依赖关系，以及输入和输出的变量。CommonJS 和 AMD 模块，都只能在运行时确定这些东西。比如，CommonJS 模块就是对象，输入时必须查找对象属性。
 
 - **使用** <br />
-export命令用于规定模块的对外接口，import命令用于输入其他模块提供的功能。
+  export 命令用于规定模块的对外接口，import 命令用于输入其他模块提供的功能。
+
 ```JS
   /** 定义模块 math.js /
   var basicNum = 0;
@@ -370,7 +407,9 @@ export命令用于规定模块的对外接口，import命令用于输入其他�
       ele.textContent = add(99 + basicNum);
   }
 ```
-如上例所示，使用import命令的时候，用户需要知道所要加载的变量名或函数名，否则无法加载。为了给用户提供方便，让他们不用阅读文档就能加载模块，就要用到export default命令，为模块指定默认输出
+
+如上例所示，使用 import 命令的时候，用户需要知道所要加载的变量名或函数名，否则无法加载。为了给用户提供方便，让他们不用阅读文档就能加载模块，就要用到 export default 命令，为模块指定默认输出
+
 ```JS
   // export-default.js
   export default function () {
@@ -383,8 +422,10 @@ export命令用于规定模块的对外接口，import命令用于输入其他�
 ```
 
 ### UMD(Universal Module Definition)
-是一种javascript通用模块定义规范，让你的模块能在javascript所有运行环境中发挥作用。
-意味着要同时满足CommonJS, AMD, CMD的标准，以下为实现：
+
+是一种 javascript 通用模块定义规范，让你的模块能在 javascript 所有运行环境中发挥作用。
+意味着要同时满足 CommonJS, AMD, CMD 的标准，以下为实现：
+
 ```JS
   (function(root, factory) {
       if (typeof module === 'object' && typeof module.exports === 'object') {
@@ -409,9 +450,10 @@ export命令用于规定模块的对外接口，import命令用于输入其他�
   }))
 ```
 
-
 ### 区别
+
 - **AMD 与 CMD** <br />
+
   ```JS
   // CMD
     define(function (requie, exports, module) {
@@ -431,38 +473,44 @@ export命令用于规定模块的对外接口，import命令用于输入其他�
         }
     });
   ```
+
   1. 对依赖的处理：
-    - AMD推崇依赖前置，即通过依赖数组的方式提前声明当前模块的依赖；
-    - CMD推崇依赖就近，在编程需要用到的时候通过调用require方法动态引入；
+
+  - AMD 推崇依赖前置，即通过依赖数组的方式提前声明当前模块的依赖；没有考虑按需加载， 有引入成本
+  - CMD 推崇依赖就近，在编程需要用到的时候通过调用 require 方法动态引入；依赖打包，加载逻辑会实际打包到模块中，增加了模块体积
+
   2. 在本模块的对外输出：
-    - AMD推崇通过返回值的方式对外输出；
-    - CMD推崇通过给module.exports赋值的方式对外输出；
+
+  - AMD 推崇通过返回值的方式对外输出；
+  - CMD 推崇通过给 module.exports 赋值的方式对外输出；
 
 - **ES6 与 CommonJS** <br />
-1.  CommonJS 模块输出的是一个值的拷贝，ES6 模块输出的是值的引用；
-  ```JS
-   // lib.js
-    export let counter = 3;
-    export function incCounter() {
-      counter++;
-    }
-    // main.js
-    import { counter, incCounter } from './lib';
-    console.log(counter); // 3
-    incCounter();
-    console.log(counter); // 4
-  ```
-  ES6 模块的运行机制与 CommonJS 不一样。ES6 模块是动态引用，并且不会缓存值，模块里面的变量绑定其所在的模块。
-2. CommonJS 模块是运行时加载，ES6 模块是编译时输出接口；
-   CommonJS 加载的是一个对象（即module.exports属性），该对象只有在脚本运行完才会生成。而 ES6 模块不是对象，它的对外接口只是一种静态定义，在代码静态解析阶段就会生成。
 
+1.  CommonJS 模块输出的是一个值的拷贝，ES6 模块输出的是值的引用；
+
+```JS
+ // lib.js
+  export let counter = 3;
+  export function incCounter() {
+    counter++;
+  }
+  // main.js
+  import { counter, incCounter } from './lib';
+  console.log(counter); // 3
+  incCounter();
+  console.log(counter); // 4
+```
+
+ES6 模块的运行机制与 CommonJS 不一样。ES6 模块是动态引用，并且不会缓存值，模块里面的变量绑定其所在的模块。 2. CommonJS 模块是运行时加载，ES6 模块是编译时输出接口；
+CommonJS 加载的是一个对象（即 module.exports 属性），该对象只有在脚本运行完才会生成。而 ES6 模块不是对象，它的对外接口只是一种静态定义，在代码静态解析阶段就会生成。
 
 ### 总结
-1. CommonJS规范主要用于服务端编程，加载模块是同步的，这并不适合在浏览器环境，因为同步意味着阻塞加载，浏览器资源是异步加载的，因此有了AMD CMD解决方案；
-2. AMD规范在浏览器环境中异步加载模块，而且可以并行加载多个模块。不过，AMD规范开发成本高，代码的阅读和书写比较困难，模块定义方式的语义不顺畅；
-3. CMD规范与AMD规范很相似，都用于浏览器编程，依赖就近，延迟执行，可以很容易在Node.js中运行；
+
+1. CommonJS 规范主要用于服务端编程，加载模块是同步的，这并不适合在浏览器环境，因为同步意味着阻塞加载，浏览器资源是异步加载的，因此有了 AMD CMD 解决方案；
+2. AMD 规范在浏览器环境中异步加载模块，而且可以并行加载多个模块。不过，AMD 规范开发成本高，代码的阅读和书写比较困难，模块定义方式的语义不顺畅；
+3. CMD 规范与 AMD 规范很相似，都用于浏览器编程，依赖就近，延迟执行，可以很容易在 Node.js 中运行；
 4. ES6 在语言标准的层面上，实现了模块功能，而且实现得相当简单，完全可以取代 CommonJS 和 AMD 规范，成为浏览器和服务器通用的模块解决方案；
-5. UMD为同时满足CommonJS, AMD, CMD标准的实现；
+5. UMD 为同时满足 CommonJS, AMD, CMD 标准的实现；
 
 ### 资料引用
 

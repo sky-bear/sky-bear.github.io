@@ -23,6 +23,12 @@ export default defineConfig({
       { text: "vue", link: "/vue/index" },
       { text: "react", link: "/react/index" },
       { text: "数据结构和算法", link: "/algorithms/algorithms" },
+      {
+        text: "其他", items: [
+          { text: "性能优化", link: "/other/performance/performance" },
+          { text: "手写代码汇总", link: "/other/handwriting/handwriting" }
+        ]
+      },
     ],
 
     sidebar: {
