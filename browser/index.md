@@ -6,7 +6,7 @@ import Image from "../components/Image/index.vue"
 
 ## 浏览器的多进程架构(基于 Chrome 浏览器)
 
-<Image  src="./images/浏览器进程.jpg" />
+<Image  src="/browser/images/浏览器进程.jpg" />
 
 1. chrome 打开一个页面具体启动了几个进程?
    从上图中可以看出，启动一个页面至少启动了四个进程，分别是：
@@ -78,7 +78,7 @@ DOMContentLoaded 和 load 区别 <br />
 - 渲染进程的对布局树进行分层，分别栅格化每一层，并得到合成帧；
 - 渲染进程将合成帧信息发送给 GPU 进程显示到页面中；
 
-<Image  src="./images/rendering.png" />
+<Image  src="/browser/images/rendering.png" />
 
 ## JS 阻碍页面加载
 
@@ -135,7 +135,7 @@ CSS 会阻止页面呈现 因此考虑优化 css
 
 ## async defer preload prefetch
 
-<Image  src="./images/async_defer.png" />
+<Image  src="/browser/images/async_defer.png" />
 
 1. async (异步)
    - 解析时机：当浏览器遇到带有 async 属性的 `<script> `标签时，它会立即开始并行下载该脚本文件，而不阻塞 HTML 文档的解析。<br />
@@ -282,7 +282,7 @@ const EventUtils = {
 
 ### 事件冒泡和捕获
 
-<Image  src="./images/冒泡和捕获.jpg" ></Image>
+<Image  src="/browser/images/冒泡和捕获.jpg" ></Image>
 
 当一个事件发生时 —— 发生该事件的嵌套最深的元素被标记为“目标元素”（event.target）。
 
