@@ -11,7 +11,7 @@ import Image from "../../components/Image/index.vue"
 ### 作用域
 
 > 负责收集并维护由所有声明的标识符（标量）组成的查询。确定当前执行的代码对这些标识符的访问权限，作用域定义了如何查找变量的位置，即确定当前执行上下文中变量和其他资源的作用范围
-> <Image  src="./images/作用域是什么.jpg" />
+> <Image  src="/javascript/basis/images/作用域是什么.jpg" />
 
 - 全局作用域
   - 最外层函数和在最外层函数外面定义的变量
@@ -23,11 +23,11 @@ import Image from "../../components/Image/index.vue"
 
 ### 词法作用域
 
-<Image  src="./images/词法作用域.jpg" />
+<Image  src="/javascript/basis/images/词法作用域.jpg" />
 
 ### 函数作用域和块级作用域
 
-<Image  src="./images/函数作用域和块作用域.jpg" />
+<Image  src="/javascript/basis/images/函数作用域和块作用域.jpg" />
 
 #### 块作用域
 
@@ -138,7 +138,7 @@ function f() {
 
 ### 变量提升
 
-<Image  src="./images/变量提升.jpg" />
+<Image  src="/javascript/basis/images/变量提升.jpg" />
 
 ::: info
 静态作用域：作用域是在定义时确定的 <br />
@@ -227,7 +227,7 @@ checkscopeContext= {
 
 ### 闭包
 
-<Image  src="./images/闭包.jpg" />
+<Image  src="/javascript/basis/images/闭包.jpg" />
 在一个作用域中可以访问另一个函数内部的局部变量的函数
 闭包 = 函数 + 函数能够访问函数外的变量
 > MDN:闭包是由函数以及函数声明所在的词法环境组合而成的。该环境包含了这个闭包创建时作用域内的任何局部变量

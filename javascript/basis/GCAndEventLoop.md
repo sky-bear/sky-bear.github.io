@@ -6,7 +6,7 @@ import Image from "../../components/Image/index.vue"
 
 JavaScript 属于解释型语言，它需要在代码执行时，将代码编译为机器语言。<br />
 ast（abstract struct tree）
-<Image  src="./images/engine.png" />
+<Image  src="/javascript/basis/images/engine.png" />
 
 - Interpreter 逐行读取代码并立即执行。
 - Compiler 读取您的整个代码，进行一些优化，然后生成优化后的代码。
@@ -24,7 +24,7 @@ for (let i = 0; i < 1000; i++) {
 
 1. Interpreter 接收上面的代码后，它将逐行读取并立即执行代码，直到循环结束。 它的工作仅仅是实时地将代码转换为我们的计算机可以理解的内容。
 2. 如果这段代码受者是 Compiler，它会先完整地读取整个程序，对我们要执行的代码进行分析，并生成电脑可以读懂的机器语言。过程如同获取 X（我们的 JS 文件）并生成 Y（机器语言）一样。如果我们使用 Interpreter 执行 Y，则会获得与执行 X 相同的结果。
-   <Image  src="./images/engine_1.png" />
+   <Image  src="/javascript/basis/images/engine_1.png" />
    从上图中可以看出，ByteCode 只是中间码，计算机仍需要对其进行翻译才能执行。 但是 Interpreter 和 Compiler 都将源代码转换为机器语言，它们唯一的区别在于转换的过程不尽相同。
 
 - Interpreter 逐行将源代码转换为等效的机器代码。
@@ -41,14 +41,14 @@ JavaScript 其实有众多引擎，只不过 v8 是我们最为熟知的。
 
 <br />
 Node.js 架构
-<Image  src="./images/node.jpg" />
+<Image  src="/javascript/basis/images/node.jpg" />
 
 ::: warning
 谷歌的 Chrome 使用 V8，Safari 使用 JavaScriptCore，Firefox 使用 SpiderMonkey。
 :::
 
 简单看一下 V8 的处理过程。
-<Image  src="./images/v8.png" />
+<Image  src="/javascript/basis/images/v8.png" />
 
 1. 始于从网络中获取 JavaScript 代码。
 2. V8 解析源代码并将其转化为抽象语法树（AST）。
@@ -97,9 +97,9 @@ GC（garbage collection）
 #### 缺点
 
 标记清除算法有一个很大的缺点，就是在清除之后，剩余的对象内存位置是不变的，也会导致空闲内存空间是不连续的，出现了 内存碎片（如下图），并且由于剩余空闲内存不是一整块，它是由不同大小内存组成的内存列表，这就牵扯出了内存分配的问题
-<Image  src="./images/mark-sweep.jpg" />
+<Image  src="/javascript/basis/images/mark-sweep.jpg" />
 假设我们新建对象分配内存时需要大小为 size，由于空闲内存是间断的、不连续的，则需要对空闲内存列表进行一次单向遍历找出大于等于 size 的块才能为其分配（如下图）
-<Image  src="./images/fit.jpg" />
+<Image  src="/javascript/basis/images/fit.jpg" />
 那如何找到合适的块呢？我们可以采取下面三种分配策略
 
 - First-fit，找到大于等于 size 的块立即返回
@@ -118,11 +118,11 @@ GC（garbage collection）
 V8 的垃圾回收策略主要基于分代式垃圾回收机制，V8 中将堆内存分为新生代和老生代两区域，采用不同的垃圾回收器也就是不同的策略管理垃圾回收
 :::
 
-<Image  src="./images/v8-gc.jpg" />
+<Image  src="/javascript/basis/images/v8-gc.jpg" />
 
 ### 新生代
 
-<Image  src="./images/v8-gc-1.jpg" />
+<Image  src="/javascript/basis/images/v8-gc-1.jpg" />
 当新加入对象时，它们会被存储在使用区。然而，当使用区快要被写满时，垃圾清理操作就需要执行。在开始垃圾回收之前，新生代垃圾回收器会对使用区中的活动对象进行标记。标记完成后，活动对象将会被复制到空闲区并进行排序。然后，垃圾清理阶段开始，即将非活动对象占用的空间清理掉。最后，进行角色互换，将原来的使用区变成空闲区，将原来的空闲区变成使用区。
 
 如果一个对象经过多次复制后依然存活，那么它将被认为是生命周期较长的对象，且会被移动到老生代中进行管理。除此之外，还有一种情况，如果复制一个对象到空闲区时，空闲区的空间占用超过了 25%，那么这个对象会被直接晋升到老生代空间中。25%比例的设置是为了避免影响后续内存分配，因为当按照 Scavenge 算法回收完成后，空闲区将翻转成使用区，继续进行对象内存分配。
@@ -212,11 +212,11 @@ var test = () => {
 ### 事件循环
 
 首先这里要区分下， 浏览器的消息队列是先进先出的， 而我们平时常说的事件循环，也就是宏队列和为队列， 它是按照一定的调度顺序依次添加到消息队列的， 而这个调度顺序就是由事件循环来控制的
-<Image  src="./images/browers-event-loop.jpg" />
+<Image  src="/javascript/basis/images/browers-event-loop.jpg" />
 
 下面这张图就是调度的顺序， 就是代码的执行顺序
 
-<Image  src="./images/event-loop.jpg" />
+<Image  src="/javascript/basis/images/event-loop.jpg" />
 - 执行宏任务：从宏任务队列中取出一个任务并执行。
 - 处理所有微任务：在一个宏任务完成后，浏览器会检查微任务队列，并依次执行所有可用的微任务，直到微任务队列为空。
 - 渲染：如果此时有需要更新的内容，且已经到了显示器的刷新时间点，浏览器将进行一次渲染更新。
@@ -467,7 +467,7 @@ $outer.addEventListener("click", handler); // 冒泡触发
 
 ### Node 事件循环机制
 
-<Image  src="./images/node-event-loop.jpg" />
+<Image  src="/javascript/basis/images/node-event-loop.jpg" />
 
 ## 资料引用
 

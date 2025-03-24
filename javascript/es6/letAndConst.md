@@ -6,7 +6,7 @@ import Image from "../../components/Image/index.vue"
 
 ## 块级作用域
 
-<Image  src="./images/块级作用域.jpg" />
+<Image  src="/javascript/es6/images/块级作用域.jpg" />
 函数声明
 
 ```js
@@ -142,8 +142,8 @@ JavaScript 引擎在处理 let 和 const 时，实际上是在编译阶段就确
    由于 let 和 const 有明确的作用域边界，一旦超出其作用域，变量就可以被标记为不再需要，并且可以由垃圾回收机制清理掉。这有助于更有效地管理内存。
 
 
-<Image  src="./images/let&const-1.png" />
-<Image  src="./images/let&const-2.png" />
+<Image  src="/javascript/es6/images/let&const-1.png" />
+<Image  src="/javascript/es6/images/let&const-2.png" />
 
 ### let 的底层实现过程
 

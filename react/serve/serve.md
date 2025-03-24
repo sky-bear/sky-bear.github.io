@@ -38,4 +38,4 @@ import Image from "../../components/Image/index.vue"
 - 需要更多的服务器资源：由于需要在服务器端进行渲染，因此需要更多的服务器资源，包括 CPU、内存和带宽等。
 
 ## 服务端渲染原理
-<Image  src="./images/serve.jpg" />
+<Image  src="/react/serve/images/serve.jpg" />

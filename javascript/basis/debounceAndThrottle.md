@@ -10,7 +10,7 @@ import Image from "../../components/Image/index.vue"
 ```
 
 下面是一个例子：
-<Image  src="./images/debounce.gif" />
+<Image  src="/javascript/basis/images/debounce.gif" />
 
 最左边`加1`是没有进行防抖处理的， 每次点击都会执行， `加3`是处理过的， 效果很明显
 
@@ -70,7 +70,7 @@ const debounce = (
 规定在一个单位时间内，只能触发一次函数。如果这个单位时间内触发多次函数，只有一次生效
 ```
 
-<Image  src="./images/throttle.gif" />
+<Image  src="/javascript/basis/images/throttle.gif" />
 
 ```js
  const throttle = (fn, time = 1000, options = { leading: true }) => {

@@ -1084,13 +1084,13 @@ vm.$el = vm.__patch__(vm.$el, vnode, hydrating, false /* removeOnly */);
 
 diff 算法的目的是为了找到哪些节点发生了变化，哪些节点没有发生变化可以复用。如果用最传统的 diff 算法，如下图所示，每个节点都要遍历另一棵树上的所有节点做比较，这就是 o(n^2)的复杂度，加上更新节点时的 o(n)复杂度，那就总共达到了 o(n^3)的复杂度，这对于一个结构复杂节点数众多的页面，成本是非常大的。
 
-<Image  src="./images/diff.png" />
+<Image  src="/vue/vue2/images/diff.png" />
 
 实际上 vue 和 react 都对虚拟 dom 的 diff 算法做了一定的优化，将复杂度降低到了 o(n)级别，具体的策略是：同层的节点才相互比较；
 
 1. 节点比较时，如果类型不同，则对该节点及其所有子节点直接销毁新建；
 2. 类型相同的子节点，使用 key 帮助查找，并且使用算法优化查找效率。其中 react 和 vue2 以及 vue3 的 diff 算法都不尽相同；
-   <Image  src="./images/diff1.png" />
+   <Image  src="/vue/vue2/images/diff1.png" />
 
 ### 双端比较
 
@@ -1323,7 +1323,7 @@ function vue2Diff(prevChildren, nextChildren, parent) {
 4. 使用旧列表的最后一个节点 oldEndNode 与新列表的头一个节点 newStartNode 对比；
 
 使用以上四步进行对比，去寻找 key 相同的可复用的节点，当在某一步中找到了则停止后面的寻找。具体对比顺序如下图：
-<Image  src="./images/diff2.png" />
+<Image  src="/vue/vue2/images/diff2.png" />
 
 对比顺序代码结构如下:
 
@@ -1446,7 +1446,7 @@ function vue2Diff(prevChildren, nextChildren, parent) {
 - 什么情况下 DOM 节点需要移动；
 - DOM 节点如何移动；
   我们来解决第一个问题：什么情况下需要移动，我们还是以上图为例：
-  <Image  src="./images/diff3.png" />
+  <Image  src="/vue/vue2/images/diff3.png" />
   当我们在第一个循环时，在第四步发现旧列表的尾节点 oldEndNode 与新列表的头节点 newStartNode 的 key 相同，是可复用的 DOM 节点。通过观察我们可以发现，原本在旧列表末尾的节点，却是新列表中的开头节点，没有人比他更靠前，因为他是第一个，所以我们只需要把当前的节点移动到原本旧列表中的第一个节点之前，让它成为第一个节点即可。
   ```js
   function vue2Diff(prevChildren, nextChildren, parent) {
@@ -1471,7 +1471,7 @@ function vue2Diff(prevChildren, nextChildren, parent) {
     }
   }
   ```
-<Image  src="./images/diff4.png" />
+<Image  src="/vue/vue2/images/diff4.png" />
 进入第二次循环，我们在第二步发现，旧列表的尾节点oldEndNode和新列表的尾节点newEndNode为复用节点。原本在旧列表中就是尾节点，在新列表中也是尾节点，说明该节点不需要移动，所以我们什么都不需要做。同理，如果是旧列表的头节点oldStartNode和新列表的头节点newStartNode为复用节点，我们也什么都不需要做
 
 ```js
@@ -1485,7 +1485,7 @@ function vue2Diff(prevChildren, nextChildren, parent) {
     } 
 ```
 
-<Image  src="./images/diff5.png" />
+<Image  src="/vue/vue2/images/diff5.png" />
 进入第三次循环，我们在第三部发现，旧列表的头节点oldStartNode和新列表的尾节点newEndNode为复用节点。，我们只要将DOM-A移动到DOM-B后面就可以了。
 依照惯例我们还是解释一下，原本旧列表中是头节点，然后在新列表中是尾节点。那么只要在旧列表中把当前的节点移动到原本尾节点的后面，就可以了。
 
@@ -1511,13 +1511,13 @@ function vue2Diff(prevChildren, nextChildren, parent) {
   }
 }
 ```
-<Image  src="./images/diff6.png" />
+<Image  src="/vue/vue2/images/diff6.png" />
 进入最后一个循环。在第一步旧列表头节点oldStartNode与新列表头节点newStartNode位置相同，所以啥也不用做。然后结束循环。
 
 
 ##### 非理想情况
 上文中有一个特殊情况，当四次对比都没找到复用节点时，我们只能拿新列表的第一个节点去旧列表中找与其key相同的节点。
-<Image  src="./images/diff7.png" />
+<Image  src="/vue/vue2/images/diff7.png" />
 
 ```js
 function vue2Diff(prevChildren, nextChildren, parent) {
@@ -1541,7 +1541,7 @@ function vue2Diff(prevChildren, nextChildren, parent) {
 }
 ```
 找节点的时候其实会有两种情况：一种在旧列表中找到了，另一种情况是没找到
-<Image  src="./images/diff8.png" />
+<Image  src="/vue/vue2/images/diff8.png" />
 
 当我们在旧列表中找到对应的VNode，我们只需要将找到的节点的DOM元素，移动到开头就可以了。这里的逻辑其实和第四步的逻辑是一样的，只不过第四步是移动的尾节点，这里是移动找到的节点。DOM移动后，由我们将旧列表中的节点改为undefined，这是至关重要的一步，因为我们已经做了节点的移动了所以我们不需要进行再次的对比了。最后我们将头指针newStartIndex向后移一位。
 ```js
@@ -1573,7 +1573,7 @@ function vue2Diff(prevChildren, nextChildren, parent) {
 }
 ```
 如果在旧列表中没有找到复用节点，就直接创建一个新的节点放到最前面就可以了，然后后移头指针 `newStartIndex`
-<Image  src="./images/diff9.png" />
+<Image  src="/vue/vue2/images/diff9.png" />
 
 ```js
 function vue2Diff(prevChildren, nextChildren, parent) {
@@ -1630,9 +1630,9 @@ function vue2Diff(prevChildren, nextChildren, parent) {
 }
 ```
 ##### 添加节点
-<Image  src="./images/diff10.png" />
+<Image  src="/vue/vue2/images/diff10.png" />
 针对上述例子，几次循环都是尾节点相同，尾指针一直向前移动，直到循环结束；
-<Image  src="./images/diff11.png" />
+<Image  src="/vue/vue2/images/diff11.png" />
 此时oldEndIndex已经小于了oldStartIndex，但是新列表中还有剩余的节点，我们只需要将剩余的节点依次插入到oldStartNode的DOM之前就可以了。为什么是插入oldStartNode之前呢？原因是剩余的节点在新列表的位置是位于oldStartNode之前的，如果剩余节点是在oldStartNode之后，oldStartNode就会先行对比
 
 ```js
@@ -1758,4 +1758,4 @@ Vue2 是全量 Diff（当数据发生变化，它就会新生成一个DOM树，�
 ## 资料引用
 
 <a href="https://y03l2iufsbl.feishu.cn/docx/E6J2dV7aLogtQ4xq2Fvc1yCFnjf" target="_blank"  style="display: block">vue</a>
-<a href="./pdf/5. Vue2 核心模块源码解析.pdf" target="_blank"  style="display: block">pdf</a>
+<a href="/vue/vue2/pdf/5. Vue2 核心模块源码解析.pdf" target="_blank"  style="display: block">pdf</a>

@@ -6,7 +6,7 @@ import Image from "../../components/Image/index.vue"
 
 参考书籍《你不知道的 javascript 上》
 
-<Image  src="./images/你不知道的javascript上.jpg" />
+<Image  src="/javascript/basis/images/你不知道的javascript上.jpg" />
 
 ## 基础
 

@@ -12,7 +12,7 @@ import Image from "../../components/Image/index.vue"
 - view，以声明方式将 state 映射到视图；
 - actions，响应在 view 上的用户输入导致的状态变化。
 
-<Image  src="./images/单项数据流.png" />
+<Image  src="/vue/vue2/images/单项数据流.png" />
 
 ## 解决的问题
 
