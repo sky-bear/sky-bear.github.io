@@ -288,11 +288,11 @@ aFunc( n ) {
   如何分析平均时间复杂度 ？代码在不同情况下复杂度出现量级差别，则用代码所有可能情况下执行次数的加权平均值表示。
   要查找的变量 x 在数组中的位置，有 n+1 种情况：在数组的 0 ～ n-1 位置中和不在数组中。我们把每种情况下，查找需要遍历的元素个数累加起来，然后再除以 n+1，就可以得到需要遍历的元素个数的平均值，即：
 
-    <Image  src="./images/1.png" />
+    <Image  src="/algorithms/images/1.png" />
     省略掉系数、低阶、常量，所以，这个公式简化之后，得到的平均时间复杂度就是 O(n)。
     我们知道，要查找的变量 x，要么在数组里，要么就不在数组里。这两种情况对应的概率统计起来很麻烦，我们假设在数组中与不在数组中的概率都为 1/2。另外，要查找的数据出现在 0～n-1 这 n 个位置的概率也是一样的，为 1/n。所以，根据概率乘法法则，要查找的数据出现在 0～n-1 中任意位置的概率就是 1/(2n)。
     因此，前面的推导过程中存在的最大问题就是，没有将各种情况发生的概率考虑进去。如果我们把每种情况发生的概率也考虑进去，那平均时间复杂度的计算过程就变成了这样
-    <Image  src="./images/2.png" />
+    <Image  src="/algorithms/images/2.png" />
     这个值就是概率论中的 **加权平均值**，也叫 **期望值**，所以平均时间复杂度的全称应该叫 **加权平均时间复杂**度 或者 **期望时间复杂度**。
   所以，根据上面结论推导出，得到的 平均时间复杂度 仍然是 O(n)
 
@@ -300,7 +300,7 @@ aFunc( n ) {
 排序：O(1) < O(lgn) < O(n) < O(nlgn) < O(n^2) < O(n^3) < O(2^n) < O(n!)
 :::
 
-<Image  src="./images/3.png" />
+<Image  src="/algorithms/images/3.png" />
 
 ### 空间复杂度[引用](http://t.zoukankan.com/GarfieldEr007-p-12251700.html)
 
@@ -804,7 +804,7 @@ Eggs   --> Null
 
 ### 设计一个基于对象的单向链表
 
-<Image  src="./images/4.png" />
+<Image  src="/algorithms/images/4.png" />
 
 ```js
 //  实现一个链表，要有 插入节点，删除节点，显示列表元素的方法
@@ -897,7 +897,7 @@ cities.display();
 ### 双向链表
 
 前后可以同时遍历的链表
-<Image  src="./images/6.png" />
+<Image  src="/algorithms/images/6.png" />
 
 ```js
 /**
@@ -990,7 +990,7 @@ cities.dispReverse();
 ### 循环列表
 
 循环列表只是在创建节点时将 next 属性指向它本身
-<Image  src="./images/7.png" />
+<Image  src="/algorithms/images/7.png" />
 
 ```mermaid
 graph LR
@@ -1150,7 +1150,7 @@ let hasCycle = function (head) {
 
 树是计算机科学中经常用到的一种数据结构。树是一种非线性的数据结构，以分层的方式存储数据。
 
-<Image  src="./images/tree.png" />
+<Image  src="/algorithms/images/tree.png" />
 
 它遵循：
 
@@ -1165,23 +1165,23 @@ let hasCycle = function (head) {
 - 节点的高度 ：节点到叶节点的最长路径
 - 树的高度：根节点的高度
 
-<Image  src="./images/tree1.png" />
+<Image  src="/algorithms/images/tree1.png" />
 B、C、D就互称为兄弟节点，其中，节点B的高度为2，节点B的深度为 1，树的高度为3
 
 ## 二叉树
 
 二叉树，故名思义，最多仅有两个子节点的树（最多能分两个叉的树）：
-<Image  src="./images/tree2.png" />
+<Image  src="/algorithms/images/tree2.png" />
 
 ## 平衡二叉树
 
 二叉树中，每一个节点的左右子树的高度相差不能大于 1，称为平衡二叉树
-<Image  src="./images/tree3.png" />
+<Image  src="/algorithms/images/tree3.png" />
 
 - 满二叉树：除了叶结点外每一个结点都有左右子叶且叶子结点都处在最底层的二叉树
 
 - 完全二叉树：深度为 h，除第 h 层外，其它各层 (1 ～ h-1) 的结点数都达到最大个数，第 h 层所有的结点都连续集中在最左边
-  <Image  src="./images/tree4.jpg" />
+  <Image  src="/algorithms/images/tree4.jpg" />
 
 ## 代码表示二叉树
 
@@ -1209,7 +1209,7 @@ B、C、D就互称为兄弟节点，其中，节点B的高度为2，节点B的�
   }
   ```
 - 数组存储法(适用于完全二叉树)
-  <Image  src="./images/tree8.png" />
+  <Image  src="/algorithms/images/tree8.png" />
 
   上图就是一棵完全二叉树，
   如果我们把根节点存放在位置 i=1 的位置，则它的左子节点位置为 2i = 2 ，右子节点位置为 2i+1 = 3 。
@@ -1226,13 +1226,13 @@ B、C、D就互称为兄弟节点，其中，节点B的高度为2，节点B的�
 
 - 前序遍历
   对于二叉树中的任意一个节点，先打印该节点，然后是它的左子树，最后右子树
-  <Image  src="./images/tree5.png" />
+  <Image  src="/algorithms/images/tree5.png" />
 - 中序遍历
   对于二叉树中的任意一个节点，先打印它的左子树，然后是该节点，最后右子树
-  <Image  src="./images/tree6.png" />
+  <Image  src="/algorithms/images/tree6.png" />
 - 后序遍历
   对于二叉树中的任意一个节点，先打印它的左子树，然后是右子树，最后该节点
-  <Image  src="./images/tree7.png" />
+  <Image  src="/algorithms/images/tree7.png" />
 
     <!-- 代码实现 -->
 
@@ -1563,7 +1563,7 @@ function dynFib1(n) {
 
   > 也就是一个物品不选,则取上一个子问题的最优解;一个物品选,则取上一个子问题剩余容量的最优解。
 
-    <Image  src="./images/8.jpg" />
+    <Image  src="/algorithms/images/8.jpg" />
 
   ```js
   f[i][w] = max{ f[i-1][w], f[i-1][w-w[i]]+v[i] }
@@ -1697,7 +1697,7 @@ function dynFib1(n) {
      平均情况：T(n) = O(n(2))。
 - 动画
 
-  <Image  src="./images/bubble.gif" />
+  <Image  src="/algorithms/images/bubble.gif" />
 
 ### 插入排序
 
@@ -1750,7 +1750,7 @@ function dynFib1(n) {
      平均情况：T(n) = O(n(2))。
 
 - 动画
-  <Image  src="./images/insert.webp" />
+  <Image  src="/algorithms/images/insert.webp" />
 
 #### 拆半插入
 
@@ -1839,7 +1839,7 @@ function dynFib1(n) {
      最差情况：T(n) = O(n(2))。
      平均情况：T(n) = O(n(2))。
 - 动画
-  <Image  src="./images/select.webp" />
+  <Image  src="/algorithms/images/select.webp" />
 
 ### 归并排序
 
@@ -1847,7 +1847,7 @@ function dynFib1(n) {
   排序一个数组，我们先把数组从中间分成前后两部分，然后对前后两部分分别排序，再将排好序的两部分合并在一起，这样整个数组就都有序了。
   归并排序采用的是分治思想。
   分治，顾名思义，就是分而治之，将一个大问题分解成小的子问题来解决。小的子问题解决了，大问题也就解决了。
-  <Image  src="./images/mergeSort.png" />
+  <Image  src="/algorithms/images/mergeSort.png" />
 
 > 注：x >> 1 是位运算中的右移运算，表示右移一位，等同于 x 除以 2 再取整，即 x >> 1 === Math.floor(x / 2)
 
@@ -1902,7 +1902,7 @@ function dynFib1(n) {
      平均情况：T(n) = O(n log n)。
 
 - 动画
-  <Image  src="./images/mergeSort.webp" />
+  <Image  src="/algorithms/images/mergeSort.webp" />
 
 ### 快速排序
 
@@ -2221,7 +2221,7 @@ function MonotonicQueuqe() {
 
 ## 资料引用：
 
-<a href="./pdf/数据结构与算法JavaScript.pdf" target="_blank"  style="display: block">数据结构与算法 JavaScript</a>
+<a href="/algorithms/pdf/数据结构与算法JavaScript.pdf" target="_blank"  style="display: block">数据结构与算法 JavaScript</a>
 <a href="https://github.com/trekhleb/javascript-algorithms/blob/master/README.zh-CN.md" target="_blank"  style="display: block">JavaScript 算法与数据结构</a>
 <a href="https://nwy3y7fy8w5.feishu.cn/docx/MUZndda3koTzTtxNnE6ccsRYnjb" target="_blank"  style="display: block">资料-常见数据结构</a>
 <a href="https://nwy3y7fy8w5.feishu.cn/docx/Vp1odZwQtoGxtnxnhagcabsZnLf" target="_blank"  style="display: block">资料-常见算法</a>
