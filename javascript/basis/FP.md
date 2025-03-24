@@ -9,11 +9,24 @@ import Image from "../../components/Image/index.vue"
 函数式编程（Functional Programming，FP）是一种编程范式，它将计算视为数学函数的求值，并避免了改变状态和可变数据。在函数式编程中，程序是由纯函数的组合构成的，其中：
 
 - 纯函数：给定相同的输入，总是返回相同的输出，且没有副作用（side effects）。这意味着纯函数不会修改任何外部状态或依赖于任何可变的状态。
-- 不可变性（Immutability）：一旦创建了一个对象，在其生命周期内它的状态不能被更改。如果需要更改对象，则会创建一个新的对象来表示这种变化。
+- 不可变性（Immutability）：一旦创建了一个对象，在其生命周期内它的状态不能被更改。如果需要更改对象，则会创建一个新的对象来表示这种变化(就是不能对形参就行修改)
 - 高阶函数（Higher-order functions）：函数可以作为参数传递给其他函数，也可以作为结果从函数返回。函数被视为一等公民（first-class citizens）。
 - 递归（Recursion）：由于缺乏循环结构（如 for 或 while），迭代操作通常通过递归来实现。
 - 函数组合（Function Composition）：简单的函数可以通过组合形成更复杂的逻辑，而不需要引入额外的状态。
 - 惰性求值（Lazy Evaluation）：表达式不是在绑定到变量的时候就立即求值，而是保持为一个表达式，直到它的值真正需要为止。
+
+```js
+function fn(type) {
+  if (type === "a") {
+    return function (...args) {};
+  } else if (type === "b") {
+    return function (...args) {};
+  } else {
+    return function (...args) {};
+  }
+}
+```
+
 - 模式匹配（Pattern Matching）：用于解构数据结构，例如列表或记录，并根据它们的构造形式执行不同的代码路径。
 
 ## 一等公民的函数
@@ -196,6 +209,7 @@ _fn(1)(2)(3)(4)(5);
 _fn(1, 2, 3, 4, 5);
 ```
 
+第一种：
 ```js
 function curry(fn) {
   const length = fn.length;
@@ -211,6 +225,23 @@ function curry(fn) {
   };
   return _fn;
 }
+```
+第二种;
+```js
+function add() {
+  const arg = [...arguments];
+  const fn = function (num) {
+    arg.push(num);
+    return fn;
+  }
+  fn.toString = function () {
+    return arg.reduce((a, b) => a + b, 0);
+  }
+  
+  return fn
+}
+
+console.log(add(1)(2)(3)(4)+'');
 ```
 
 ## 代码组合
@@ -237,6 +268,14 @@ var shout = compose(exclaim, toUpperCase);
 shout("send in the clowns");
 //=> "SEND IN THE CLOWNS!"
 ```
+上面是函数式，下面补充下
+```js
+// 命令式
+exclaim(toUpperCase(x))
+// 面向对象
+Obj.toUpperCase(x).exclaim()
+```
+
 
 ## 资料引用
 
