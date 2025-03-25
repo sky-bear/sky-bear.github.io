@@ -1,49 +1,43 @@
 {
-  "hash": "f63b30fc",
-  "configHash": "559d9aca",
-  "lockfileHash": "b6d4fb8a",
-  "browserHash": "72850591",
+  "hash": "91d38049",
+  "configHash": "470b694a",
+  "lockfileHash": "870a3f1c",
+  "browserHash": "65a05dd2",
   "optimized": {
     "vue": {
       "src": "../../../node_modules/vue/dist/vue.runtime.esm-bundler.js",
       "file": "vue.js",
-      "fileHash": "a3b844fe",
+      "fileHash": "a1f49868",
       "needsInterop": false
     },
     "vitepress > @vue/devtools-api": {
       "src": "../../../node_modules/@vue/devtools-api/dist/index.js",
       "file": "vitepress___@vue_devtools-api.js",
-      "fileHash": "4c541973",
+      "fileHash": "308edd69",
       "needsInterop": false
     },
     "vitepress > @vueuse/core": {
       "src": "../../../node_modules/@vueuse/core/index.mjs",
       "file": "vitepress___@vueuse_core.js",
-      "fileHash": "40ffe21c",
+      "fileHash": "5cf84a45",
       "needsInterop": false
     },
     "vitepress > @vueuse/integrations/useFocusTrap": {
       "src": "../../../node_modules/@vueuse/integrations/useFocusTrap.mjs",
       "file": "vitepress___@vueuse_integrations_useFocusTrap.js",
-      "fileHash": "7aac4822",
+      "fileHash": "85bc189d",
       "needsInterop": false
     },
     "vitepress > mark.js/src/vanilla.js": {
       "src": "../../../node_modules/mark.js/src/vanilla.js",
       "file": "vitepress___mark__js_src_vanilla__js.js",
-      "fileHash": "29371975",
+      "fileHash": "577efa5e",
       "needsInterop": false
     },
     "vitepress > minisearch": {
       "src": "../../../node_modules/minisearch/dist/es/index.js",
       "file": "vitepress___minisearch.js",
-      "fileHash": "1c0f5ce4",
-      "needsInterop": false
-    },
-    "ant-design-vue": {
-      "src": "../../../node_modules/ant-design-vue/es/index.js",
-      "file": "ant-design-vue.js",
-      "fileHash": "db02e893",
+      "fileHash": "4be61509",
       "needsInterop": false
     }
   },
@@ -53,9 +47,6 @@
     },
     "chunk-VJWGEPT5": {
       "file": "chunk-VJWGEPT5.js"
-    },
-    "chunk-G3PMV62Z": {
-      "file": "chunk-G3PMV62Z.js"
     }
   }
 }

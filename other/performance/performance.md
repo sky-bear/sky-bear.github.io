@@ -77,54 +77,225 @@ TCP 提供可靠的链接， 链接是需要通过 3 次握手来建立， 关�
 
   - 强缓存：浏览器会检查缓存是否过期，如果未过期，则直接使用缓存，否则发送请求到服务器
   - 协商缓存：浏览器会发送请求到服务器，服务器会检查缓存是否过期，如果未过期，则返回 304，否则返回新的资源
-  - 缓存策略：Cache-Control、Expires、Last-Modified、ETag
+  - 缓存策略：Cache-Control、Expires(http1.0)、Last-Modified、ETag
 
   ::: warning
   **Cache-Control** 客户端缓存
 
   - 可缓存性
 
-  ```markdown
-  - public：HTTP 请求返回时，经过的代理服务器以及客户端都可以对内容进行缓存。
-  - private：只有发起请求的浏览器可以进行缓存
-  - no-cache：(协商缓存)本地和代理服务器可以缓存，但是每次使用缓存时都要到服务器验证一下，服务器返回可以使用缓存才能生效。
-  ```
+    - public：HTTP 请求返回时，经过的代理服务器以及客户端都可以对内容进行缓存。
+    - private：只有发起请求的浏览器可以进行缓存
+    - no-cache：(协商缓存)本地和代理服务器可以缓存，但是每次使用缓存时都要到服务器验证一下，服务器返回可以使用缓存才能生效。
 
   - 到期性
-    ```markdown
+
     - max-age=xxx (xxx is numeric) 缓存的内容将在 xxx 秒后失效, 这个选项只在 HTTP 1.1 可用, 并如果和 Last-Modified 一起使用时, 优先级较高
     - s-maxage 在代理服务器使用
     - max-stale = xxx 发起端设置， 即使缓存失效(max-age)，但在 max-stale 仍在在时间内，依然使用。浏览器端一般不用
-    ```
+
   - 重新验证
 
-    ```markdown
     - must-revalidate 浏览器重新发送请求到服务器
     - proxy-revalidate
-    ```
 
   - 其他
-
-  ```markdown
   - no-store 不能存缓存， 每次重新拿
   - no-transform 禁止对内容做修改
-  ```
 
-**资源验证**
+  **资源验证**
 
-- Last-Modified 上次修改时间
+  - Last-Modified 上次修改时间
 
-  ```
-  配合If-Modified-Since或者If-Unmodified-Since使用， 通过对比上次修改时间以验证资源是否更新
+    配合 If-Modified-Since 或者 If-Unmodified-Since 使用， 通过对比上次修改时间以验证资源是否更新
 
-  收到带Last-Modified这个头，下次浏览器发送request就会带上If-Modified-Since或者If-Unmodified-Since，服务器收到这个request的If-Modified-Since后，通过读取它的值对比资源存在的地方的Last-Modified，服务器就告诉浏览器是否可以使用缓存
-  ```
+    服务器返回带有 Last-Modified 的头部，收到带 Last-Modified 这个头，下次浏览器发送 request 就会带上 If-Modified-Since 或者 If-Unmodified-Since，服务器收到这个 request 的 If-Modified-Since 后，通过读取它的值对比资源存在的地方的 Last-Modified，服务器就告诉浏览器是否可以使用缓存
 
-- Etag 数据签名
+  - Etag 数据签名
 
-  ```
-  根据文件的内容生成Etag（数据签名，最常用做法是对资源内容进行哈希计算），收到带Etag这个头，下次浏览器发送request就会带上If-Match或者If-Non-Match，服务器收到这个request的上If-Match或者If-Non-Match后，通过读取它的值对比资源存在的地方的Etag，服务器就告诉浏览器是否可以使用缓存。
+    根据文件的内容生成 Etag（数据签名，最常用做法是对资源内容进行哈希计算），收到带 Etag 这个头，下次浏览器发送 request 就会带上 If-Match 或者 If-Non-Match，服务器收到这个 request 的上 If-Match 或者 If-Non-Match 后，通过读取它的值对比资源存在的地方的 Etag，服务器就告诉浏览器是否可以使用缓存。
+    :::
 
-  ```
+**通过缓存可以加快网页的加载速度，减少服务器的压力，提高用户体验**
 
-  :::
+### 服务器处理请求并返回 HTTP 报文
+
+- http 状态码
+  - 1xx：信息性状态码，表示请求已接收，继续处理
+  - 2xx：成功状态码，表示请求已成功接收、理解和接受
+  - 3xx：重定向状态码，表示请求需要进一步的操作以完成
+    - 301：永久重定向
+    - 302：临时重定向
+    - 304：资源未修改
+  - 4xx：客户端错误状态码，表示请求包含语法错误或无法完成请求
+    - 401：未授权
+    - 403：禁止访问
+    - 404：未找到
+  - 5xx：服务器错误状态码，表示服务器在处理请求的过程中发生了错误
+    - 500：内部服务器错误
+    - 502：Bad Gateway
+    - 503：服务不可用
+    - 504：Gateway Timeout
+- 响应报头
+  - Content-Type：响应体的媒体类型
+  - Content-Length：响应体的长度
+  - Content-Encoding：响应体的编码方式
+  - Set-Cookie：服务器发送给浏览器的 Cookie
+  - Connection：浏览器与服务器的连接方式
+  - Cache-Control：缓存控制
+- 响应报文
+  - 请求的 html css js 图片等资源
+
+### 浏览器解析渲染页面
+
+- 解析 HTML，构建 DOM 树
+  - 根据当前 html 的内容，构建 DOM 树(深度遍历)
+  - 构建 DOM 树的过程中，如果遇到 js，会停止构建 DOM 树，先执行 js 代码，然后再继续构建 DOM 树
+- 解析 CSS，构建 CSSOM 树
+  - 解析 css 形成 css 规则树， 解析 css 规则树时，js 执行暂停，直到 css 规则树就绪（js 可能操作 css）
+  - **css 规则树生成前，页面不会渲染**
+- 合并 DOM 树和 CSSOM 树，构建渲染树
+- 布局渲染树，计算每个节点的位置和大小
+  - 布局： 通过渲染树中渲染对象的信息， 计算出渲染对象的位置和尺寸
+  - 重排(回流)： 当渲染树中的一部分（或全部）因为元素的规模尺寸，布局，隐藏等改变而需要重新构建
+- 绘制渲染树，根据计算好的信息，将每个节点绘制到屏幕上
+  - 绘制阶段， 系统会遍历渲染树，并调用渲染器的 paint()方法，将每个节点绘制出来
+  - 重绘： 当页面中元素样式的改变并不影响它在文档流中的位置时（例如：修改了字体颜色），浏览器会将新样式赋予给元素并重新绘制它，这个过程称为重绘。 他不影响布局属性
+  - 回流：某个元素尺寸发生变化，则需要计算它对周围元素的影响，浏览器需要重新渲染页面，这个过程称为回流。 它会影响布局属性
+    - 首次渲染
+    - 浏览器窗口大小发生变化
+    - 元素尺寸或位置发生变化
+    - 内容变化（文字数量）
+    - 添加或者删除 Dom 元素
+    - 激活 css 伪类（如：hover）
+    - 查询某些属性或者调用某些方法
+      - offsetTop、offsetLeft、offsetWidth、offsetHeight
+      - scrollTop、scrollLeft、scrollWidth、scrollHeight
+      - clientTop、clientLeft、clientWidth、clientHeight
+      - width、height
+      - getComputedStyle()
+      - getBoundingClientRect()【只有布局定义为脏的时候才会触发重排】
+- js 解析
+  浏览器开始加载 html 页面， 遇到`script`标签， 会根据标签的属性（sync defer）来决定如何处理脚本
+- 浏览器引擎执行 JS
+
+  - 编译
+    - 词法分析
+    - 语法分析
+    - 代码生成
+  - 执行
+    - 执行上下文和作用域
+      - js 引擎会创建执行上下文，包含变量对象、作用域链、this 等
+      - js 事件循环
+
+- 页面渲染
+  当所有资源都加载和执行完后，页面显示给用户
+
+### 页面渲染过程中触发的事件
+
+## 性能指标
+
+- LCP:最大内容渲染时间
+  LCP:Largest Contentful Paint. 衡量的是视口中最大内容元素何时渲染到屏幕上。这大致表示网页的主要内容何时可供用户查看<br/>
+  LCP 建议在 2.5s 以内，如果大于这个值，说明页面加载较慢
+- FCP:首次内容渲染时间
+  FCP:First Contentful Paint. 测量的是页面从开始加载到页面内容的任何部分在屏幕上渲染完成的时间点
+  FCP 建议在 1.8s 以内，如果大于这个值，说明页面加载较慢
+- FID:首次输入延迟时间
+  FID:First Input Delay. 测量的是从用户第一次与页面交互（例如点击一个链接、按钮或使用 JavaScript 驱动的自定义控件）到浏览器实际能够对交互做出响应的时间,FID 建议在 100ms 以内(考虑第一次交互)
+- INP
+  通过观察用户访问网页期间发生的所有点击、点按和键盘互动的延迟时间，评估网页对用户互动的总体响应情况
+- CLS
+  衡量页面在整个生命周期内发生的最大意外布局偏移分数。建议 CLS 小于 0.1s
+- LONG TASK
+  阻塞住线程超过 50ms 的长任务，包括响应事件的延迟和动画卡顿
+- 长时间运运行的事件处理程序
+- 回流或其他重新渲染操作，入 dom 操作，动画
+- 超过 50ms 的长时间循环
+
+## 性能优化方向
+
+性能优化的目标是，减少页面加载的事件，让用户可以以更快的速度第一时间访问到页面内容，因此核心思路在于如何降低资源的加载时间与如何提高页面的渲染速度
+
+### 网络方面
+
+让资源体积更小，加载更快
+
+- 构建优化
+
+  - 减小打包体积
+    - 代码分割 treeShaking 动态垫片 按需加载,代码压缩
+      - split chunks 拆包 分割各个模块代码, 提取相同部分,好处是减少重复代码的的出现频率
+  - 减少打包时间
+
+    - treeShaking 移除重复代码和未使用代码, 只对 ES 规范生效,其他模块规范无效.因为 treeShaking 是针对静态分析的, 只有 import/export 才能提供静态的导入和导出功能. webpack 打包时, 只要把 mode 改成生产环境, 就会自动开启 treeShaking
+    - 动态垫片 polyfill.io.提供一个服务, 根据当前 UA 的返回的浏览器需要的 polyfill, 按需使用 polyfill
+
+    ```js
+    import HtmlTagsPlugin from  "html-webpack-tags-plugin"
+      export default {
+        //...
+        plugins: [
+          new HtmlTagsPlugin({
+            append: false, //在生成资源后插入
+            publicjPath: false //使用公共路径
+            tags: ["https: //polyfill.alicdn.com/polufill.min.js"]// 资源路径
+          })
+        ]
+      }
+    ```
+
+    - 减少打包范围,缓存 定向搜索 提前构建 并行构建
+
+      - 缩减范围
+
+      ```js
+      export default {
+        //...
+        modules: {
+          rules: [
+            {
+              exclude: /node_modules/,
+              include: /src/,
+              test: /\.js/,
+              use: "babel-loader",
+            },
+          ],
+        },
+      };
+      ```
+
+      - 构建缓存
+
+      ```js
+      export default {
+        //...
+        modules: {
+          rules: [{
+            exclude: /node_modules/,
+            include: /src/,
+            test: /\.js/,
+            use: [{
+              loader: "babel-loader"
+              options: {cacheDirectory: true}
+            }]
+          }]
+        }
+      }
+      ```
+
+- 图像(静态资源)优化
+- 分发策略优化
+- 缓存优化
+
+### 渲染层面
+
+- css 优化
+- DOM 优化
+- 阻塞优化
+- 回流重绘优化
+- 异步更新优化
+
+## 引用
+
+<a href="https://web.developers.google.cn/articles/lcp?hl=zh_cn" target="_blank"  style="display: block">web.developers</a>
