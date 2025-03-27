@@ -224,3 +224,6 @@ export function defineAsyncComponent(options) {
 ## hooks
 
 <a href="https://github.com/InhiblabCore/vue-hooks-plus/blob/master/README.zh-CN.md" target="_blank"  style="display: block">VueHooks Plus</a>
+
+
+<a href="/vue/vue3/pdf/Vue3 核心模块源码解析" target="_blank"  style="display: block">pdf</a>

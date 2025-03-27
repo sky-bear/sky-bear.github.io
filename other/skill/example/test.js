@@ -1,0 +1,6 @@
+console.log(parseInt(1, 0))
+console.log(parseInt(2, 1))
+console.log(parseInt(3, 2))
+console.log(parseInt(4, 3))
+// console.log(parseInt(11, 2))
+console.log(parseInt(11, 3))

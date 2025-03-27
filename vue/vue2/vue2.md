@@ -1298,6 +1298,12 @@ function patchVnode(
 ```
 
 #### updateChildren
+新 - 旧 <br. >
+首首比较
+尾尾比较
+尾首比较
+首尾比较
+
 
 ##### 实现思路
 
