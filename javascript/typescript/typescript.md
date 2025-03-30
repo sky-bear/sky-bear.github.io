@@ -4,7 +4,31 @@
 import Image from "../../components/Image/index.vue"
 </script>
 
-## 环境搭建
+## 基础
+
+- 对比原理
+  它是 JS 的一个超级，在原有的语法基础上，添加了可选静态类型和基于类的面向对象编程
+- 面向项目
+  TS -面向解决大型复杂项目的， 架构以及带卡维护较为复杂
+  JS - 脚本化语言， 用于面向简单页面场景
+- 自主检测
+  TS - 编译时， 主动发现并纠正错误
+  JS - 运行时， 报错
+
+- 类型检测
+  TS - 弱类型， 支持类型推断， 并且可以进行编译时提示
+  JS -弱类型，无静态类型选项
+
+- 运行流程
+  TS - 依赖编译， 依靠编译打包实现浏览器的运行
+
+  ```js
+  npm install -g typescript
+  tsx xxx.ts
+  // 所有的类型检测和纠错阶段都在编译阶段完成
+  ```
+
+  JS - 可直接在浏览器运行
 
 ## 八个 JS 中见过的类型
 
@@ -279,7 +303,30 @@ import Image from "../../components/Image/index.vue"
   }
   ```
 
+  面试题
+
+  ```tsx
+  enum Enum {
+    A, // 0
+    B, // 1
+    C = "c",
+    D = 4,
+    E = 6,
+    F, // 7
+  }
+
+  enum Enum {
+    A, // 0
+    B, // 1
+    C = "c",
+    D = 1, // 覆盖上面的1
+    E, // 2
+    F, // 3
+  }
+  ```
+
 - **Any 任意类型**
+  声明阶段绕过所有的类型检查
 
   ```tsx
   let value: any;
@@ -287,6 +334,28 @@ import Image from "../../components/Image/index.vue"
   value = "abc";
   value = false;
   const array: any[] = [1, "a", true];
+  ```
+
+- **Unknown 未知类型**
+  绕过了赋值检查， 禁止更改传递， 也就是不能把 unkonwn 类型的值赋给其他类型变量
+
+  ```tsx
+  let unkanownValue: unknown;
+  unkanownValue = 123;
+  unkanownValue = "abc";
+  unkanownValue = false;
+  const array: unknown[] = [1, "a", true];
+
+  const value1: any = unkanownValue; // ok
+  const value2: boolean = unkanownValue; //  no ok
+  ```
+
+- **Tuple 元组类型**
+  元组类型允许表示一个已知元素数量和类型的数组，各元素的类型不必相同，比如，你可以定义一对值分别为`string`和`number`类型的元组。
+
+  ```tsx
+  let tupleType: [string, number];
+  tupleType = ["lison", 18];
   ```
 
 - **void**
@@ -332,6 +401,29 @@ import Image from "../../components/Image/index.vue"
 
   上面例子我们定义了一个立即执行函数，也就是`"let neverVariable = "`右边的内容。右边的函数体内是一个死循环，所以这个函数调用后的返回值类型为 never，所以赋值之后 neverVariable 的类型是 never 类型，当我们给 neverVariable 赋值 123 时，就会报错，因为除它自身外任何类型都不能赋值给 never 类型。
 
+- **object | Object | {}**
+
+  - object 类型表示非原始类型，也就是除 number、string、boolean、symbol、null、undefined 之外的类型
+  - Object, 不光有 object 上的类型还有原型上的属性, 需要要原型链上的属性可以使用这个类型
+
+  ```ts
+  interface Object {
+    constructor: Function;
+    toString(): string;
+    toLocaleString(): string;
+    valueOf(): Object;
+    hasOwnProperty(v: PropertyKey): boolean;
+    isPrototypeOf(v: Object): boolean;
+    propertyIsEnumerable(v: PropertyKey): boolean;
+  }
+  ```
+
+  - {} 空对象类型，这个类型和 object 类型很像，但是还是有区别的，object 类型是最顶级的类型，而 {} 空对象类型表示的是没有任何属性的对象，也就是说这个对象内部没有任何属性，我们来看例子：
+
+  ```tsx
+  const obj: {} = {};
+  ```
+
 - **交叉类型**
 
   交叉类型就是取多个类型的并集，使用 `&` 符号定义，被&符链接的多个类型构成一个交叉类型，表示这个类型同时具备这几个连接起来的类型的特点，来看例子：
@@ -371,6 +463,26 @@ import Image from "../../components/Image/index.vue"
   console.log(getLength(123)); // 3
   ```
 
+  面试题： 联合类型冲突
+
+  ```ts
+  interface A {
+    c: string;
+    d: string;
+  }
+  interface B {
+    c: number;
+    e: string;
+  }
+  let obj: A & B = {
+    d: "1",
+    e: "2",
+    c: "1", //报错： 不能将类型“string”分配给类型“never”
+  };
+
+  // 合并后c为 never
+  ```
+
 ## 类型断言
 
 有时候你会遇到这样的情况，你会比 TypeScript 更了解某个值的详细信息。 通常这会发生在你清楚地知道一个实体具有比它现有类型更确切的类型。
@@ -396,6 +508,8 @@ let strLength: number = (someValue as string).length;
 两种形式是等价的。 至于使用哪个大多数情况下是凭个人喜好；然而，当你在 TypeScript 里使用 JSX 时，只有 `as`语法断言是被允许的。
 
 ## 接口定义
+
+对行为的抽象， 内部不包含属性的值， 只有类型
 
 - **基本用法**
 
@@ -459,6 +573,8 @@ let strLength: number = (someValue as string).length;
     readonly 0: string;
     readonly 1: string;
   }
+  const value5: ReadonlyArray<number> = [1, 2, 3, 4];
+  value5[2] = 2; // error 类型“readonly number[]”中的索引签名仅允许读取
   ```
 
   这里我们定义了一个角色字典，有 0 和 1 两种角色 id。下面我们定义一个实际的角色  数据，然后来试图修改一下它的值：
@@ -1039,6 +1155,24 @@ let strLength: number = (someValue as string).length;
     }
     ```
 
+    ```ts
+    interface Person {
+      name: string;
+      speak(): void;
+    }
+    interface Dog {
+      name: string;
+    }
+    function isPerson(p: Person | Dog) {
+      if ("speak" in p) {
+      }
+    }
+    ```
+
+  ```
+
+  ```
+
 - **自定义类型保护**
 
   ```tsx
@@ -1548,7 +1682,7 @@ obj?.[expr] // 对象属性
 arr?.[index] // 获取数据中 index 下标对应的值
 func?.(...args) // 函数或对象方法的调用
 
-## interface 和 type 的区别
+## **interface 和 type 的区别**（面试题）
 
 - 扩展方式
 
@@ -1609,10 +1743,22 @@ func?.(...args) // 函数或对象方法的调用
   interface Quare {}
   type size = Shape | Quare;
   ```
+- type 可以使用 `in`
+
+```ts
+type keys = "name" | "age";
+interface Class {
+  name: string;
+  age: number;
+}
+type ClassType = {
+  [key in keys]: Class[key];
+};
+```
 
 ## `extends` 和 `implements` 的区别
 
-- `extends` 关键字用于表示类与类之间的关系，表示一个类继承另一个类，继承意味着子类可以继承父类的属性和方法，并且可以添加自己的属性和方法。
+- `extends` 关键字用于表示类与类之间的关系，表示一个类继承另一个类，继承意味着子类可以继承父类的属性和方法，并且可以添加自己的属性和方法。也可以继承接口
 - `implements` 关键字用于表示类与接口之间的关系，表示一个类实现一个或多个接口，实现意味着类必须实现接口中定义的所有属性和方法，否则会导致编译错误。【抽象约束】
 
 ## 资料引用
@@ -1631,3 +1777,7 @@ func?.(...args) // 函数或对象方法的调用
 <a href="https://github.com/react-hook-form/react-hook-form" target="_blank"  style="display: block">react-hook-form </a>
 
 <a href="https://zod.dev/README_ZH" target="_blank"  style="display: block">zod </a>
+
+```
+
+```
