@@ -13,6 +13,14 @@
 - [垃圾回收 & 运行机制](./GCAndEventLoop)
 - [作用域](./scope)
 - [javascript 的深浅复制](./copy)
+- [防抖节流](./debounceAndThrottle)
+- [number](./number)
+- [原型](./prototype)
+- [作用域](./scope)
+- [模块化](./module)
+- [垃圾回收 & 运行机制](./GCAndEventLoop)
+- [函数式编程](./FP)
+
 
 
 
