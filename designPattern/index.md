@@ -517,7 +517,7 @@ const decorator = function (input, fn) {
 
 ### 观察者模式
 
-<Image  src="./images/1.jpg" />
+<Image  src="/designPattern/images/1.jpg" />
 观察者模式(Observer):又被称作发布-订阅者模式或消息机制,定义了一种依赖关系,解决了主体对象与观察者之间功能的耦合。
 <br />
 同一个对象既可以是观察者又可以是订阅者
@@ -551,7 +551,7 @@ observer.notify("5");
 
 #### 发布订阅
 
-<Image  src="./images/2.jpg" />
+<Image  src="/designPattern/images/2.jpg" />
 发布订阅的本质还是观察者模式
 
 ### 状态模式

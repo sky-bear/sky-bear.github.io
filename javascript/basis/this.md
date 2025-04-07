@@ -19,7 +19,7 @@ import Image from "../../components/Image/index.vue"
   - 静态绑定
     - 箭头函数不会创建自己的 this 上下文；它们会使用定义时所在的外部作用域中的 this。
     - 这意味着一旦箭头函数被定义，它的 this 就已经确定了，即使之后该函数在不同的上下文中被调用，this 的值也不会改变
-  - 继承自最近的非箭头函数
+  - **继承自最近的非箭头函数**
     - 如果箭头函数位于另一个普通函数内部，那么它将继承该普通函数的 this
     - 如果不在任何普通函数内部，则 this 通常是全局对象（在浏览器环境中为 window 或严格模式下的 undefined）
 
@@ -422,9 +422,6 @@ foo(1, 2, 3); // Arguments(3) [1, 2, 3, callee: (...), Symbol(Symbol.iterator): 
 - 函数的 arguments 对象
 - DOM 元素的集合，如 document.getElementsByTagName() 返回的 NodeList
 
-
-
-
 ## 资料引用：
 
-<a href="https://nwy3y7fy8w5.feishu.cn/docx/P4RQdXuJqoEyOIxVxeCcs26gnhb" target="_blank"  style="display: block">this指针/闭包/作用域</a>
+<a href="https://nwy3y7fy8w5.feishu.cn/docx/P4RQdXuJqoEyOIxVxeCcs26gnhb" target="_blank"  style="display: block">this 指针/闭包/作用域</a>

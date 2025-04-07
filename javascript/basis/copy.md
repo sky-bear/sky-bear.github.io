@@ -116,13 +116,13 @@ console.log(obj_1, obj_3); // {a: 2} {a: 3}
       "[object Number]",
       "[object Boolean]",
       "[object Undefined]",
-      "[object Null]"
+      "[object Null]",
     ];
     if (basicData.includes(Object.prototype.toString.call(data))) return data;
     let result;
     if (Object.prototype.toString.call(data) === "[object Array]") {
       result = [];
-      data.forEach(item => {
+      data.forEach((item) => {
         result.push(deepClone(item));
       });
       return result;
@@ -152,129 +152,157 @@ console.log(obj_1, obj_3); // {a: 2} {a: 3}
 
 ### 解决循环递归爆栈(依然不能复制)
 
-用循环遍历一棵树，需要借助一个栈，当栈为空时就遍历完了，栈里面存储下一个需要拷贝的节点首先我们往栈里放入种子数据，key用来存储放哪一个父元素的那一个子元素拷贝对象然后遍历当前节点下的子元素，如果是对象就放到栈里，否则直接拷贝 只能解决爆栈，但是依然无法解决循环引用
+用循环遍历一棵树，需要借助一个栈，当栈为空时就遍历完了，栈里面存储下一个需要拷贝的节点首先我们往栈里放入种子数据，key 用来存储放哪一个父元素的那一个子元素拷贝对象然后遍历当前节点下的子元素，如果是对象就放到栈里，否则直接拷贝 只能解决爆栈，但是依然无法解决循环引用
 
 ```js
 function deepCloneObj(x) {
-    let num = 1;
-    const root = {};
-    const loopList = [
-        {
-            parent: root,
-            key: undefined,
-            data: x
-        }
-    ];
-    while (loopList.length) {
-        num += 1;
-        console.log(num);
-        const node = loopList.pop();
-        const parent = node.parent;
-        const key = node.key;
-        const data = node.data;
+  let num = 1;
+  const root = {};
+  const loopList = [
+    {
+      parent: root,
+      key: undefined,
+      data: x,
+    },
+  ];
+  while (loopList.length) {
+    num += 1;
+    console.log(num);
+    const node = loopList.pop();
+    const parent = node.parent;
+    const key = node.key;
+    const data = node.data;
 
-        // 初始化赋值目标，key为undefined则拷贝到父元素，否则拷贝到子元素
-        let res = parent;
-        if (typeof key !== "undefined") {
-            parent[key] = {};
-            res = parent;
-        }
-        Object.keys(data).forEach(key => {
-            if (
-                Object.prototype.toString.call(data[key]) === "[object Object]"
-            ) {
-                loopList.push({
-                    parent: res,
-                    key,
-                    data: data[key]
-                });
-            } else {
-                res[key] = data[key];
-            }
-        });
+    // 初始化赋值目标，key为undefined则拷贝到父元素，否则拷贝到子元素
+    let res = parent;
+    if (typeof key !== "undefined") {
+      parent[key] = {};
+      res = parent;
     }
-    return root;
+    Object.keys(data).forEach((key) => {
+      if (Object.prototype.toString.call(data[key]) === "[object Object]") {
+        loopList.push({
+          parent: res,
+          key,
+          data: data[key],
+        });
+      } else {
+        res[key] = data[key];
+      }
+    });
+  }
+  return root;
 }
-  // 不会报错
+// 不会报错
 ```
 
 ### 解决循环引用的深复制
 
 ```js
 function cloneForce(x) {
-    const uniqueList = []; // 用来去重
+  const uniqueList = []; // 用来去重
 
-    let root = {};
+  let root = {};
 
-    // 循环数组
-    const loopList = [
-        {
-            parent: root,
-            key: undefined,
-            data: x
-        }
-    ];
+  // 循环数组
+  const loopList = [
+    {
+      parent: root,
+      key: undefined,
+      data: x,
+    },
+  ];
 
-    while (loopList.length) {
-        // 深度优先
-        const node = loopList.pop();
-        const parent = node.parent;
-        const key = node.key;
-        const data = node.data;
+  while (loopList.length) {
+    // 深度优先
+    const node = loopList.pop();
+    const parent = node.parent;
+    const key = node.key;
+    const data = node.data;
 
-        // 初始化赋值目标，key为undefined则拷贝到父元素，否则拷贝到子元素
-        let res = parent;
-        if (typeof key !== "undefined") {
-            res = parent[key] = {};
-        }
-        // 数据已经存在
-        let uniqueData = find(uniqueList, data);
-        if (uniqueData) {
-            parent[key] = uniqueData.target;
-            continue; // 中断本次循环
-        }
-
-        // 数据不存在
-        // 保存源数据，在拷贝数据中对应的引用
-        uniqueList.push({
-            source: data,
-            target: res
-        });
-
-        for (let k in data) {
-            if (data.hasOwnProperty(k)) {
-                if (typeof data[k] === "object") {
-                    // 下一次循环
-                    loopList.push({
-                        parent: res,
-                        key: k,
-                        data: data[k]
-                    });
-                } else {
-                    res[k] = data[k];
-                }
-            }
-        }
+    // 初始化赋值目标，key为undefined则拷贝到父元素，否则拷贝到子元素
+    let res = parent;
+    if (typeof key !== "undefined") {
+      res = parent[key] = {};
+    }
+    // 数据已经存在
+    let uniqueData = find(uniqueList, data);
+    if (uniqueData) {
+      parent[key] = uniqueData.target;
+      continue; // 中断本次循环
     }
 
-    return root;
+    // 数据不存在
+    // 保存源数据，在拷贝数据中对应的引用
+    uniqueList.push({
+      source: data,
+      target: res,
+    });
+
+    for (let k in data) {
+      if (data.hasOwnProperty(k)) {
+        if (typeof data[k] === "object") {
+          // 下一次循环
+          loopList.push({
+            parent: res,
+            key: k,
+            data: data[k],
+          });
+        } else {
+          res[k] = data[k];
+        }
+      }
+    }
+  }
+
+  return root;
 }
 
 function find(arr, item) {
-    for (let i = 0; i < arr.length; i++) {
-        if (arr[i].source === item) {
-            return arr[i];
-        }
+  for (let i = 0; i < arr.length; i++) {
+    if (arr[i].source === item) {
+      return arr[i];
     }
-    return null;
+  }
+  return null;
 }
 ```
 
+#### 最合适的方法
 
+```js
+function deepClone(obj: any, hash = new WeakMap()) {
+  if (obj == null) {
+    return obj;
+  }
+  if (obj instanceof Date) {
+    return new Date(obj);
+  }
+  if (obj instanceof RegExp) {
+    return new RegExp(obj);
+  }
+  if (typeof obj === "function") {
+    return obj;
+  }
+  if (typeof obj !== "object") {
+    return obj;
+  }
+  if (hash.has(obj)) {
+    return hash.get(obj);
+  }
+  const cloneObj = new obj.constructor();
+  hash.set(obj, cloneObj);
+  for (const key in obj) {
+    if (Object.prototype.hasOwnProperty.call(obj, key)) {
+      cloneObj[key] = deepClone(obj[key], hash);
+    }
+  }
+  return cloneObj;
+}
+```
 
 ## 本文参考:
 
 [有意思的 JSON.parse(),JSON.string()](https://juejin.im/post/5be5b9f8518825512f58ba0e#heading-4)
 
-[深拷贝的终极探索](<https://juejin.im/post/5bc1ae9be51d450e8b140b0c#heading-4>)
-
+[深拷贝的终极探索](https://juejin.im/post/5bc1ae9be51d450e8b140b0c#heading-4)

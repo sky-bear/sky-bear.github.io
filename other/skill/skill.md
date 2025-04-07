@@ -61,12 +61,19 @@ footer a:hover {
 <div class="demo__cursor"></div>
 ```
 
-
 ## js
+
 #### 数组追加
+
 ```js
 var array1 = [12 , "foo" , {name "Joe"} , -2458];
 var array2 = ["Doe" , 555 , 100];
 Array.prototype.push.apply(array1, array2);
 /* array1 值为  [12 , "foo" , {name "Joe"} , -2458 , "Doe" , 555 , 100] */
+```
+
+#### 随机字符串
+
+```js
+Math.random().toString(36).substring(2, 9);
 ```
