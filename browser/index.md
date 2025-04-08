@@ -340,6 +340,49 @@ function stopPropagation(e) {
 
 事件（从 Window）向下走近元素。当它到达目标元素时，所有分配了 addEventListener(..., true) 的处理程序都会被调用。
 
+## html5 新增特性
+
+> 用于绘画的 canvas 元素
+> 用于媒介回放的 video 和 audio 元素
+> 对本地离线存储的更好的支持 localStorage sessionStorage
+> 新的特殊内容元素，比如 article、footer、header、nav、section
+> 新的表单控件，比如 calendar、date、time、email、url、search
+
+## link 和@import
+
+> - link 属于 XHTML 标签，除了加载 CSS 外，还能用于定义 RSS, 定义 rel 连接属性等作用；而@import 是 CSS 提供的，只能用于加载 CSS;
+> - 页面被加载的时，link 会同时被加载，而@import 引用的 CSS 会等到页面被加载完再加载;
+> - import 是 CSS2.1 提出的，只在 IE5 以上才能被识别，而 link 是 XHTML 标签，无兼容问题;
+> - link 支持使用 js 控制 DOM 去改变样式，而@import 不支持;**[这里使用 js 控制 DOM 改变样式指的是通过 js 创建 link 标签去加载 css,从而改变样式]**
+> - link 标签还可以引入 icon`<link rel="shortcut icon" href="/favicon.ico" type="image/x-icon" />`
+
+## src 和 href 的区别
+
+> src 和 href 都是 HTML 中的特定元素的属性，都可以用来引入外部的资源
+
+#### src(source)
+
+> - 会下载资源并将资源嵌入到当前文档中元素所在的位置，例如：img,video,script，iframe 等等
+> - 当浏览器解析到 src ，会暂停其他资源的下载和处理，直到将该资源加载、编译、执行完毕，并且把当前资源替换到 src 引用处了。图片和框架等也如此，类似于将所指向资源应用到当前内容
+> - 指向物件的来源地址：主要指向需要下载的资源
+
+#### href（ hypertext reference）超文本引用
+
+> - 用于在当前文档和引用资源之间确立联系，常用的 link,a 等
+> - 在文档中添加 href ，浏览器会识别该文档为 CSS 文件，就会并行下载资源并且不会停止对当前文档的处理
+> - href 全称为 Hypertext Reference 的缩写。意思是指定超链接目标的 URL，表示超文本引用。href 属性的值可以是任何有效文档的相对或绝对 URL，包括片段标识符和 JavaScript 代码段。
+
+## 存储
+
+> cookie，localStorage，sessionStorage，indexDB
+
+| 特征         | cookie                                     | loaclStorage             | sessionStorage | indexDB                  |
+| ------------ | ------------------------------------------ | ------------------------ | -------------- | ------------------------ |
+| 数据生命周期 | 一般由服务器生成，可以设置过期时间         | 除非被清理，否则一直存在 | 页面关闭就清理 | 除非被清理，否则一直存在 |
+| 存储大小     | 单个 4K                                    | 5M                       | 5M             | 无限                     |
+| 与服务端通信 | 每次都会携带在 header 中，对于请求性能影响 | 不参与                   | 不参与         | 不参与                   |
+| 域名         | 只受主域名控制                             | 受域名控制               | 受域名控制     |                          |
+
 ## 浏览器请求
 
 ### 手写 [ajax](https://developer.mozilla.org/zh-CN/docs/Web/API/XMLHttpRequest)
