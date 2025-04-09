@@ -6,6 +6,39 @@ import Image from "../components/Image/index.vue"
 
 > CSS 指层叠样式表 ( Cascading Style Sheets), 用来描述如何显示 HTML 元素， 通俗点将就是控制页面的布局和外观。样式层叠就是对一个元素多次设置同一个样式，这将使用最后一次设置的属性值。样式层叠次序基于一定的规则权重
 
+## 面试分类
+
+### 必知必会
+
+- 选择器&优先级
+- 显示隐藏
+- 盒模型及其特性
+- 图片格式&精灵图
+- 像素密度和图片应用
+- CSS 工程化和预处理
+- 单行多行文本溢出
+
+### 布局场景
+
+- px em rem
+- 两列布局
+- 三列布局
+- 水平垂直居中
+- 弹性布局相关
+
+### 定位浮动
+
+- 清除浮动的原因和方法
+- BFC 创建和 margin 问题
+- position 属性
+
+### 手写案例
+
+- 三角形 与梯形
+- 扇形
+- 0.5px 的线和小于 12px 的文字
+- 1px 问题
+
 ## css 样式引入
 
 - 样式分类
@@ -44,7 +77,6 @@ import Image from "../components/Image/index.vue"
 
 ## 权重
 
-```md
   <table>
   <thead>
   <tr>
@@ -75,7 +107,6 @@ import Image from "../components/Image/index.vue"
   </tr>
   </tbody>
   </table>
-```
 
 1. 先从高等级进行比较，高等级相同时，再比较低等级的，以此类推；
 2. 完全相同的话，就采用 后者优先 原则；
@@ -688,3 +719,44 @@ flex 布局就是弹性布局， 用来为盒模型提供最大的灵活性
 ### 布局单位 [掘进](https://zhuanlan.zhihu.com/p/547003009)
 
 ## 常见面试问题[掘进](https://juejin.cn/post/6936913689115099143#heading-35)
+
+## 常见面试方式
+
+相对零散 从点到面
+
+### display
+
+- display 属性
+
+  - none
+  - block
+  - inline
+  - inline-block
+  - flex
+  - grid
+  - inherit 继承
+
+- inline-block 和 block inline 的区别
+
+  - block 块级元素（Block-level element）会占据其父容器的整个宽度，并且在其前后都会换行
+    - 独占一行
+    - 宽度默认 100%
+    - 高度、内边距（padding）、外边距（margin）等属性都可以正常生效
+    - 可以自动换行
+    - 默认情况下，块级元素是垂直方向排列的
+    - 常见元素： `div p h1~h6 ul li`
+  - inline-block 行内块级元素（Inline-block element）既具有块级元素的特点，又具有行内元素的特点
+    - 不独占一行
+    - 宽度默认由内容撑开
+    - 高度、内边距（padding）、外边距（margin）等属性都可以正常生效
+  - inline 行内元素（Inline element）不会占据其父容器的整个宽度，并且在其前后不会换行
+    - 不独占一行
+    - 宽度默认由内容撑开，无法设置宽高
+    - 高度、内边距（padding-top/padding-bottom）和外边距（margin-top/margin-bottom）等属性水平有效， 垂直无效
+    - 不会自动换行
+    - 常见元素：`span a img input em i `
+
+- 切换方式
+  - display
+  - float : 设置浮动后，会自动成为 display :block =》去除行内元素之间的空白问题
+  - position : 设置 absolute/ fixed 后，会自动成为 display :block
