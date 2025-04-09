@@ -1,5 +1,9 @@
 # 性能优化
 
+<script setup>
+import Image from "../../components/Image/index.vue"
+</script>
+
 ## 网页渲染过程
 
 > URL(统一资源定位符)
@@ -115,6 +119,8 @@ TCP 提供可靠的链接， 链接是需要通过 3 次握手来建立， 关�
 
     根据文件的内容生成 Etag（数据签名，最常用做法是对资源内容进行哈希计算），收到带 Etag 这个头，下次浏览器发送 request 就会带上 If-Match 或者 If-Non-Match，服务器收到这个 request 的上 If-Match 或者 If-Non-Match 后，通过读取它的值对比资源存在的地方的 Etag，服务器就告诉浏览器是否可以使用缓存。
     :::
+
+<Image  src="/other/performance/images/cache.png" />
 
 **通过缓存可以加快网页的加载速度，减少服务器的压力，提高用户体验**
 

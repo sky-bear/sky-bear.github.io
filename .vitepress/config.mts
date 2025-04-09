@@ -19,6 +19,7 @@ export default defineConfig({
       { text: "Examples", link: "/example/markdown-examples" },
       { text: "Javascript", link: "/javascript/index" },
       { text: "browser", link: "/browser/index" },
+      { text: "css", link: "/css/css" },
       { text: "设计模式", link: "/designPattern/index" },
       { text: "vue", link: "/vue/index" },
       { text: "react", link: "/react/index" },
