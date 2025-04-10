@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>布局</title>
+    <style>
+      .box0 {
+        height: 200px;
+      }
+      .box0 .left {
+        float: left;
+        width: 30%;
+        height: 100%;
+        background: pink;
+      }
+      .box0 .right {
+        float: right;
+        width: 70%;
+        height: 100%;
+        background: red;
+      }
+      .box1 {
+        height: 200px;
+      }
+      .box1 .left {
+        width: 50%;
+        height: 100%;
+        background: pink;
+        float: left;
+      }
+      .box1 .right {
+        height: 100%;
+        background: red;
+        overflow: hidden;
+      }
+      .box2 {
+        margin-top: 20px;
+        height: 200px;
+      }
+      .box2 .left {
+        width: 50%;
+        height: 100%;
+        background: pink;
+        float: left;
+      }
+      .box2 .right {
+        width: auto;
+        margin-left: 50%;
+        height: 100%;
+        background: red;
+      }
+
+      .box3 {
+        margin-top: 20px;
+        height: 200px;
+        position: relative;
+      }
+      .box3 .left {
+        width: 50%;
+        height: 100%;
+        background: pink;
+      }
+      .box3 .right {
+        position: absolute;
+        left: 50%;
+        top: 0;
+        height: 100%;
+        background: red;
+        width: 50%;
+      }
+
+      .box4 {
+        margin-top: 20px;
+        height: 200px;
+        position: relative;
+      }
+      .box4 .left {
+        width: 10%;
+        height: 100%;
+        position: absolute;
+        background: pink;
+      }
+      .box4 .middle {
+        /* position: absolute;
+        left: 10%;
+        right: 10%;
+        top: 0;
+        bottom: 0;
+        height: 100%;
+        background: yellow; */
+        margin-left: 10%;
+        margin-right: 10%;
+        height: 100%;
+        background: yellow;
+      }
+      .box4 .right {
+        position: absolute;
+        width: 10%;
+        right: 0;
+        top: 0;
+        height: 100%;
+        background: red;
+      }
+
+      .box5 {
+        margin-top: 20px;
+        height: 200px;
+      }
+      .box5 .left {
+        width: 10%;
+        height: 100%;
+        float: left;
+        background: pink;
+      }
+      .box5 .middle {
+        float: left;
+        height: 100%;
+        width: 80%;
+        background: yellow;
+      }
+      .box5 .right {
+        width: 10%;
+        float: right;
+        height: 100%;
+        background: red;
+      }
+      .box6 {
+        margin-top: 20px;
+        height: 200px;
+        padding-left: 40px;
+        padding-right: 40px;
+        position: relative;
+      }
+      .box6 .left {
+        width: 40px;
+        height: 100%;
+        position: absolute;
+        left: 0;
+        top: 0;
+        background: pink;
+      }
+      .box6 .middle {
+        float: left;
+        width: 100%;
+        height: 100%;
+        background: yellow;
+      }
+      .box6 .right {
+        position: absolute;
+        right: 0;
+        top: 0;
+        width: 40px;
+        height: 100%;
+        background: red;
+      }
+      .box7 {
+        margin-top: 20px;
+        height: 200px;
+        padding-left: 40px;
+        padding-right: 40px;
+        position: relative;
+      }
+      .box7 .left {
+        width: 40px;
+        height: 100%;
+        background: pink;
+        position: relative;
+        left: -40px;
+        float: left;
+        margin-right: -100%;
+      }
+      .box7 .middle {
+        float: left;
+        width: 100%;
+        height: 100%;
+        background: yellow;
+      }
+      .box7 .right {
+        width: 40px;
+        height: 100%;
+        background: red;
+        position: relative;
+        right: -40px;
+        float: right;
+        margin-left: -100%;
+      }
+
+    </style>
+  </head>
+  <body>
+    <div class="box0">
+      <div class="left">left</div>
+      <div class="right">right</div>
+    </div>
+    <div class="box1">
+      <div class="left">left</div>
+      <div class="right">right</div>
+    </div>
+    <div class="box2">
+      <div class="left">left</div>
+      <div class="right">right</div>
+    </div>
+    <div class="box3">
+      <div class="left">left</div>
+      <div class="right">right</div>
+    </div>
+
+    <div class="box4">
+      <div class="left">left</div>
+      <div class="middle">middle</div>
+      <div class="right">right</div>
+    </div>
+
+    <div class="box5">
+      <div class="left">left</div>
+      <div class="middle">middle</div>
+      <div class="right">right</div>
+    </div>
+    <div class="box6">
+      <div class="left">left</div>
+      <div class="middle">middle-圣杯布局</div>
+      <div class="right">right</div>
+    </div>
+    <div class="box7">
+      <div class="left">left</div>
+      <div class="middle">middle-圣杯布局</div>
+      <div class="right">right</div>
+    </div>
+
+  </body>
+</html>

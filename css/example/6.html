@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <style>
+      /* div {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      background-color: red
+    } */
+      .demo1 {
+        width: 0;
+        height: 0;
+        border: 10px solid transparent;
+        border-bottom-color: pink;
+      }
+      .demo2 {
+        width: 8px;
+        height: 0;
+        border: 10px solid transparent;
+        border-bottom-color: pink;
+      }
+      .demo3 {
+        margin-top: 20px;
+        width: 20px;
+        height: 20px;
+        border-radius: 50%;
+        /* border: 1px solid red; */
+        overflow: hidden;
+      }
+      .demo3 div {
+        width: 0;
+        height: 0;
+        border: 10px solid transparent;
+        border-top-color: pink;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="box">
+      <div class="demo1"></div>
+      <div class="demo2"></div>
+      <div class="demo3">
+        <div></div>
+      </div>
+    </div>
+  </body>
+</html>

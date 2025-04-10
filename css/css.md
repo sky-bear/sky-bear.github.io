@@ -37,6 +37,7 @@ import Image from "../components/Image/index.vue"
 - 三角形 与梯形
 - 扇形
 - 0.5px 的线和小于 12px 的文字
+  缩放scale
 - 1px 问题
 
 ## css 样式引入
@@ -400,6 +401,27 @@ import Image from "../components/Image/index.vue"
   不添加 transform 时效果如下：
   <Image  src="/css/images/css_fixed_transform.png" />
 
+## 浮动
+
+- 定义：浮动元素会脱离标准流[高度塌陷]，不占据空间，但会影响其他元素的位置
+- 特性
+  - 浮动元素会向左或向右移动，直到它的外边缘碰到包含框或另一个浮动元素的边框为止。
+  - 不受原有文档流的影响,同时无法影响原有父类
+  - 浮动元素会脱离文档流，但不会脱离文本流，即不会脱离文档流中的文字
+  - 浮动元素高度独立, 不在撑开父元素的高度
+- 解决高度塌陷
+  - 给父元素定义 heigth
+  - 浮动的后面增加一个元素: 使用` clear: both;`清除浮动
+  - 父级元素定义`overflow: hidden;`或者`overflow: auto;`触发 BFC
+  - 父级元素增加伪元素: `clear: both;`清除浮动
+  ```css
+  .clearfix::after {
+    content: "";
+    display: table;
+    clear: both;
+  }
+  ```
+
 ## BFC
 
 - 定义： BFC(Block formatting context)直译为“块级格式化上下文”。它是一个独立的渲染区域，只有 Block-level box（块）参与， 它规定了内部的块如何布局，并且与这个区域外部毫不相干
@@ -500,6 +522,13 @@ import Image from "../components/Image/index.vue"
   - 父元素增加 border【处理父元素和子元素 margin 合并】
   - 父元素设置 float【处理父元素和子元素 margin 合并】
 
+- 作用
+  - 清除浮动
+  - 解决高度塌陷
+  - 防止 margin 重叠
+  - 实现两栏布局
+  - 实现圣杯布局和双飞翼布局
+
 ## 元素的显示隐藏
 
 - 总结
@@ -530,11 +559,12 @@ import Image from "../components/Image/index.vue"
   - 如果希望元素不可见、可以点击、不占据空间，可以使用： `opacity: 0; position: absolute;`
   - 如果希望元素不可见、不能点击、占据空间，可以使用： `position: relative; z-index: -1;`
   - 如果希望元素不可见、不能点击、不占据空间，可以使用： `position: absolute ; z-index: -1;`
-  - clip  裁剪  占据空间
+  - clip 裁剪 占据空间
   - transform: scale(0) 缩放 占据空间
+
 - display:none 和 visibility:hidden 的区别
 
-  - `display: none`的元素不占据任何空间，渲染树中不会存在，DOM树存在，`visibility: hidden`的元素空间保留；
+  - `display: none`的元素不占据任何空间，渲染树中不会存在，DOM 树存在，`visibility: hidden`的元素空间保留；
 
   - `display: none`会影响 css3 的`transition`过渡效果，`visibility: hidden`不会；
 
@@ -588,12 +618,10 @@ flex 布局就是弹性布局， 用来为盒模型提供最大的灵活性
 
 - `align-self`属性允许单个项目有与其他项目不一样的对齐方式，可覆盖`align-items`属性。默认值为`auto`，表示继承父元素的`align-items`属性，如果没有父元素，则等同于`stretch`。
 
-## css工程化与预处理器
-- 预处理器:less scss => 利用编译库提供的能力,提供层级,函数,变量,mixin等能力,最终编译成css
+## css 工程化与预处理器
+
+- 预处理器:less scss => 利用编译库提供的能力,提供层级,函数,变量,mixin 等能力,最终编译成 css
 - 后处理器: postCss => 利用后处理编译,属性增加前缀, 实现浏览器兼容
-
-
-
 
 ## 常见 CSS 布局单位、区别和使用场景
 
@@ -643,40 +671,39 @@ flex 布局就是弹性布局， 用来为盒模型提供最大的灵活性
   - 代码
 
     ```js
-        const text =
-          " 这是一段很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长的文本";
-        const totalTextLen = text.length;
-        const formatStr = () => {
-          const ele = document.getElementsByClassName("demo")[0];
-          const lineNum = 2;
-          const baseWidth = window.getComputedStyle(ele).width;
-          const baseFontSize = window.getComputedStyle(ele).fontSize;
-          const lineWidth = +baseWidth.slice(0, -2);
+    const text =
+      " 这是一段很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长的文本";
+    const totalTextLen = text.length;
+    const formatStr = () => {
+      const ele = document.getElementsByClassName("demo")[0];
+      const lineNum = 2;
+      const baseWidth = window.getComputedStyle(ele).width;
+      const baseFontSize = window.getComputedStyle(ele).fontSize;
+      const lineWidth = +baseWidth.slice(0, -2);
 
-          // 所计算的strNum为元素内部一行可容纳的字数(不区分中英文)
-          const strNum = Math.floor(lineWidth / +baseFontSize.slice(0, -2));
+      // 所计算的strNum为元素内部一行可容纳的字数(不区分中英文)
+      const strNum = Math.floor(lineWidth / +baseFontSize.slice(0, -2));
 
-          let content = "";
+      let content = "";
 
-          // 多行可容纳总字数
-          const totalStrNum = Math.floor(strNum * lineNum);
+      // 多行可容纳总字数
+      const totalStrNum = Math.floor(strNum * lineNum);
 
-          const lastIndex = totalStrNum - totalTextLen;
+      const lastIndex = totalStrNum - totalTextLen;
 
+      if (totalTextLen > totalStrNum) {
+        content = text.slice(0, lastIndex - 3).concat("...");
+      } else {
+        content = text;
+      }
+      ele.innerHTML = content;
+    };
 
-          if (totalTextLen > totalStrNum) {
-            content = text.slice(0, lastIndex - 3).concat("...");
-          } else {
-            content = text;
-          }
-          ele.innerHTML = content;
-        };
+    formatStr();
 
-        formatStr();
-
-        window.onresize = () => {
-          formatStr();
-        };
+    window.onresize = () => {
+      formatStr();
+    };
     ```
 
 - **多行文本溢出省略（按高度）**
@@ -723,15 +750,54 @@ flex 布局就是弹性布局， 用来为盒模型提供最大的灵活性
 
 [参考文章]： [文本溢出截断省略](https://juejin.im/post/5dc15b35f265da4d432a3d10)
 
-
-
 ### 布局单位 [掘进](https://zhuanlan.zhihu.com/p/547003009)
-多单位的布局差别
-百分比: 子元素的百分比相对于直接父元素的对应属性
-em: 相对于父元素的字体大小的倍数
-rem: 相对于根元素的字体大小的倍数
-vw/vh: 相对于视口宽高
 
+- 多单位的布局差别
+  百分比: 子元素的百分比相对于直接父元素的对应属性
+  em: 相对于父元素的字体大小的倍数
+  rem: 相对于根元素的字体大小的倍数
+  vw/vh: 相对于视口宽高
+  vmin/vmax: 相对于视口宽高中较小/较大的值
+- 如何利用 rem 实现响应式
+  根据当前设备的视窗宽度与设计稿的宽度得到一个比例
+  根据比例设置根节点的 font-size
+  所有的长度都用 rem 布局
+
+### 布局手写
+查看example 5.html
+- 两列布局
+  - 浮动+生成BFC不重叠
+  - (绝对定位)
+  - flex 布局
+- 三列布局
+  - flex
+  - 绝对布局
+  - 浮动
+- 圣杯布局
+- 水平剧中
+  - 绝对定位
+  ```css
+  div {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      background-color: red
+    }
+  ```
+  - 自我拉扯
+   ```css
+  div {
+      position: absolute;
+      left: 0;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      margin: auto;
+      background-color: red
+    }
+  ```
+ - flex 布局    
 
 
 ## 常见面试问题[掘进](https://juejin.cn/post/6936913689115099143#heading-35)
@@ -776,31 +842,34 @@ vw/vh: 相对于视口宽高
   - display
   - float : 设置浮动后，会自动成为 display :block =》去除行内元素之间的空白问题
   - position : 设置 absolute/ fixed 后，会自动成为 display :block
+
 ### 可以继承的属性有哪些
+
 - 字体
-  - font-family, font-weight, font-size,  font-style
+  - font-family, font-weight, font-size, font-style
 - 文本
   - text-indent, text-align, line-height, color,word-spacing,letter-spacing
 - 元素
   - visibility
 - 列表布局
- - list-style
+- list-style
 - 光标
   - cursor
 
-
 ### 隐藏和显示相关
+
 - 哪些可以隐藏元素？ 区别是什么？
-参考上面的元素显示隐藏
+  参考上面的元素显示隐藏
 
 ### 伪元素和伪类的区别
+
 - 伪元素:
   - 常见
     - ::before
     - ::after
     - ::first-letter
     - ::first-line
-  - 伪元素用于创建一些不在文档树中的元素，并为其添加样式, 只存在于CSS中
+  - 伪元素用于创建一些不在文档树中的元素，并为其添加样式, 只存在于 CSS 中
   - 使用双冒号
 - 伪类 选中元素的某种状态或特定位置的元素
   - 常见
@@ -816,50 +885,55 @@ vw/vh: 相对于视口宽高
   - 使用单冒号
   - 伪类用于当已有元素处于某个状态时，为其添加对应的样式
 
-
 ### 图片格式
-  有哪些? 怎么应用?怎么选择?
+
+有哪些? 怎么应用?怎么选择?
+
 - 常见图片格式
+
   - JPEG
     - 优点：压缩率高，适合大图, 直接色存储,适合还原度要求高的图片
     - 缺点：不支持透明度，不支持动画
   - PNG-8
     - 优点：无损,支持透明度,体积优秀, 使用索引色
-    - 缺点：对于包含大量颜色的图像，文件大小可能比JPEG大。
+    - 缺点：对于包含大量颜色的图像，文件大小可能比 JPEG 大。
   - PNG-24
     - 优点：无损,支持透明度,直接色存储,压缩
-    - 缺点：对于包含大量颜色的图像，文件大小可能比JPEG大。
+    - 缺点：对于包含大量颜色的图像，文件大小可能比 JPEG 大。
   - GIF
     - 优点: 无损,支持动画效果
-    - 缺点: 颜色限制为256种颜色
+    - 缺点: 颜色限制为 256 种颜色
   - SVG
-    - 优点: 矢量格式，可以无限缩放而不失真。适合做logo,图标等
-    - 缺点: 对于复杂的图像或照片，SVG 可能不如位图格式（如JPEG或PNG）清晰
+    - 优点: 矢量格式，可以无限缩放而不失真。适合做 logo,图标等
+    - 缺点: 对于复杂的图像或照片，SVG 可能不如位图格式（如 JPEG 或 PNG）清晰
   - WebP
-    - 优点:提供无损和有损压缩选项，可以生成比JPEG和PNG更小的文件, 使用直接色
-    - 缺点不是所有浏览器都原生支持WebP格式，需要额外的库或插件支持
-  - BMP: 
+    - 优点:提供无损和有损压缩选项，可以生成比 JPEG 和 PNG 更小的文件, 使用直接色
+    - 缺点不是所有浏览器都原生支持 WebP 格式，需要额外的库或插件支持
+  - BMP:
     - 优点:无损的，几乎不进行压缩
     - 缺点:图片文件较大
 
 - 精灵图(雪碧图)
-所有涉及到的图片放到一张大图中, 使用background-position来定位
-<br />
-提高加载性能
-
-
+  所有涉及到的图片放到一张大图中, 使用 background-position 来定位
+  <br />
+  提高加载性能
 
 ### 像素密度与图片应用
+
 #### 基础
+
 `window.devicePixelRatio`:是一个浏览器提供的只读属性，用于表示当前显示设备的物理像素与 CSS 像素之间的比例关系
 window.devicePixelRatio 表示每个 CSS 像素对应多少个物理像素。
 例如：
+
 - 如果 devicePixelRatio = 1，则 1 个 CSS 像素对应 1 个物理像素。
 - 如果 devicePixelRatio = 2，则 1 个 CSS 像素对应 4 个物理像素（2x2）。
 - 如果 devicePixelRatio = 3，则 1 个 CSS 像素对应 9 个物理像素（3x3）。
 
 #### 如何在图片的加载上应用
+
 提供不同倍数的图片
+
 ```js
 image{
   background-image: url('image@1x.png');
