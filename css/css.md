@@ -504,7 +504,7 @@ import Image from "../components/Image/index.vue"
 
 - 总结
 
-  - 如果希望元素不可见、不占据空间、资源会加载、DOM 可访问： `display: none`；
+  - 如果希望元素不可见、不占据空间、资源会加载、DOM 可访问,但是渲染树中不会存在： `display: none`；
 
   - 如果希望元素不可见、不能点击、但占据空间、资源会加载，可以使用： `visibility: hidden`；
 
@@ -530,10 +530,11 @@ import Image from "../components/Image/index.vue"
   - 如果希望元素不可见、可以点击、不占据空间，可以使用： `opacity: 0; position: absolute;`
   - 如果希望元素不可见、不能点击、占据空间，可以使用： `position: relative; z-index: -1;`
   - 如果希望元素不可见、不能点击、不占据空间，可以使用： `position: absolute ; z-index: -1;`
-
+  - clip  裁剪  占据空间
+  - transform: scale(0) 缩放 占据空间
 - display:none 和 visibility:hidden 的区别
 
-  - `display: none`的元素不占据任何空间，`visibility: hidden`的元素空间保留；
+  - `display: none`的元素不占据任何空间，渲染树中不会存在，DOM树存在，`visibility: hidden`的元素空间保留；
 
   - `display: none`会影响 css3 的`transition`过渡效果，`visibility: hidden`不会；
 
@@ -587,6 +588,13 @@ flex 布局就是弹性布局， 用来为盒模型提供最大的灵活性
 
 - `align-self`属性允许单个项目有与其他项目不一样的对齐方式，可覆盖`align-items`属性。默认值为`auto`，表示继承父元素的`align-items`属性，如果没有父元素，则等同于`stretch`。
 
+## css工程化与预处理器
+- 预处理器:less scss => 利用编译库提供的能力,提供层级,函数,变量,mixin等能力,最终编译成css
+- 后处理器: postCss => 利用后处理编译,属性增加前缀, 实现浏览器兼容
+
+
+
+
 ## 常见 CSS 布局单位、区别和使用场景
 
 ### 文本溢出截断省略
@@ -595,7 +603,7 @@ flex 布局就是弹性布局， 用来为盒模型提供最大的灵活性
 
   - css 语句
     - `overrflow: hidden`；（文字长度超出限定宽度，则隐藏超出的内容）
-    - `white-space: nowrap`；（设置文字在一行显示，不能换行）
+    - `white-space: nowrap`；（设置文字在一行显示，不能换行）[有宽度就会换行,加这个防止换行]
     - `text-overflow: ellipsis`；（规定当文本溢出时，显示省略符号来代表被修剪的文本）
   - 优点
     - 无兼容问题
@@ -635,7 +643,6 @@ flex 布局就是弹性布局， 用来为盒模型提供最大的灵活性
   - 代码
 
     ```js
-    <script type="text/javascript">
         const text =
           " 这是一段很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长的文本";
         const totalTextLen = text.length;
@@ -711,12 +718,21 @@ flex 布局就是弹性布局， 用来为盒模型提供最大的灵活性
 
   - 缺点
 
-    - 无法识别文字的长短，无论文本是否溢出范围, 一直显示省略号
+    - 无法识别文字的长短，无论文本是否溢出范围, 一直显示省略号, 必须要直知道固定行高
     - 省略号显示可能不会刚刚好，有时会遮住一半文字
 
 [参考文章]： [文本溢出截断省略](https://juejin.im/post/5dc15b35f265da4d432a3d10)
 
+
+
 ### 布局单位 [掘进](https://zhuanlan.zhihu.com/p/547003009)
+多单位的布局差别
+百分比: 子元素的百分比相对于直接父元素的对应属性
+em: 相对于父元素的字体大小的倍数
+rem: 相对于根元素的字体大小的倍数
+vw/vh: 相对于视口宽高
+
+
 
 ## 常见面试问题[掘进](https://juejin.cn/post/6936913689115099143#heading-35)
 
@@ -760,3 +776,102 @@ flex 布局就是弹性布局， 用来为盒模型提供最大的灵活性
   - display
   - float : 设置浮动后，会自动成为 display :block =》去除行内元素之间的空白问题
   - position : 设置 absolute/ fixed 后，会自动成为 display :block
+### 可以继承的属性有哪些
+- 字体
+  - font-family, font-weight, font-size,  font-style
+- 文本
+  - text-indent, text-align, line-height, color,word-spacing,letter-spacing
+- 元素
+  - visibility
+- 列表布局
+ - list-style
+- 光标
+  - cursor
+
+
+### 隐藏和显示相关
+- 哪些可以隐藏元素？ 区别是什么？
+参考上面的元素显示隐藏
+
+### 伪元素和伪类的区别
+- 伪元素:
+  - 常见
+    - ::before
+    - ::after
+    - ::first-letter
+    - ::first-line
+  - 伪元素用于创建一些不在文档树中的元素，并为其添加样式, 只存在于CSS中
+  - 使用双冒号
+- 伪类 选中元素的某种状态或特定位置的元素
+  - 常见
+    - :hover
+    - :active
+    - :focus
+    - :first-child
+    - :last-child
+    - :nth-child(n)
+    - :nth-last-child(n)
+    - :nth-of-type(n)
+    - :nth-last-of-type(n)
+  - 使用单冒号
+  - 伪类用于当已有元素处于某个状态时，为其添加对应的样式
+
+
+### 图片格式
+  有哪些? 怎么应用?怎么选择?
+- 常见图片格式
+  - JPEG
+    - 优点：压缩率高，适合大图, 直接色存储,适合还原度要求高的图片
+    - 缺点：不支持透明度，不支持动画
+  - PNG-8
+    - 优点：无损,支持透明度,体积优秀, 使用索引色
+    - 缺点：对于包含大量颜色的图像，文件大小可能比JPEG大。
+  - PNG-24
+    - 优点：无损,支持透明度,直接色存储,压缩
+    - 缺点：对于包含大量颜色的图像，文件大小可能比JPEG大。
+  - GIF
+    - 优点: 无损,支持动画效果
+    - 缺点: 颜色限制为256种颜色
+  - SVG
+    - 优点: 矢量格式，可以无限缩放而不失真。适合做logo,图标等
+    - 缺点: 对于复杂的图像或照片，SVG 可能不如位图格式（如JPEG或PNG）清晰
+  - WebP
+    - 优点:提供无损和有损压缩选项，可以生成比JPEG和PNG更小的文件, 使用直接色
+    - 缺点不是所有浏览器都原生支持WebP格式，需要额外的库或插件支持
+  - BMP: 
+    - 优点:无损的，几乎不进行压缩
+    - 缺点:图片文件较大
+
+- 精灵图(雪碧图)
+所有涉及到的图片放到一张大图中, 使用background-position来定位
+<br />
+提高加载性能
+
+
+
+### 像素密度与图片应用
+#### 基础
+`window.devicePixelRatio`:是一个浏览器提供的只读属性，用于表示当前显示设备的物理像素与 CSS 像素之间的比例关系
+window.devicePixelRatio 表示每个 CSS 像素对应多少个物理像素。
+例如：
+- 如果 devicePixelRatio = 1，则 1 个 CSS 像素对应 1 个物理像素。
+- 如果 devicePixelRatio = 2，则 1 个 CSS 像素对应 4 个物理像素（2x2）。
+- 如果 devicePixelRatio = 3，则 1 个 CSS 像素对应 9 个物理像素（3x3）。
+
+#### 如何在图片的加载上应用
+提供不同倍数的图片
+```js
+image{
+  background-image: url('image@1x.png');
+}
+@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 2dppx) {
+  image {
+    background-image: url('image@2x.png');
+  }
+}
+@media (-webkit-min-device-pixel-ratio: 3), (min-resolution: 3dppx) {
+  image {
+    background-image: url('image@3x.png');
+  }
+}
+```

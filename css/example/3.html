@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <style>
+    div h1:first-child {
+      color: red;
+    }
+    div p:first-child {
+      color: blue;
+    }
+    div:first-child {
+      color: green;
+    }
+    div p:nth-child(3) {
+      color: darkorchid;
+    }
+    .test {
+      width: 200px;
+      overflow: hidden;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+    }
+    .demo1 {
+      position: relative;
+      line-height: 20px;
+      height: 40px;
+      overflow: hidden;
+    }
+    .demo1::after {
+      content: "...";
+      position: absolute;
+      bottom: 0;
+      right: 0;
+      padding: 0 20px 0 10px;
+      background: #fff;
+    }
+  </style>
+</head>
+<body>
+  <div>
+    <h1>h1</h1>
+    <p>1</p>
+    <p>2</p>
+    <p>3</p>
+    <p>4</p>
+    <h2>h2</h2>
+    <div class="test">
+      完美的解决方案，特别是在需要精确控制显示行数时。例如，你可以使完美的解决方案，特别是在需要精确控制显示行数时。例如，你可以使完美的解决方案，特别是在需要精确控制显示行数时。例如，你可以使完美的解决方案，特别是在需要精确控制显示行数时。例如，你可以使
+    </div>
+    <div class="demo1">
+      完美的解决方案，特别是在需要精确控制显示行数时。例如，你可以使完美的解决方案，特别是在需要精确控制显示行数时。例如，你可以使完美的解决方案，特别是在需要精确控制显示行数时。例如，你可以使完美的解决方案，特别是在需要精确控制显示行数时。例如，你可以使
+    </div>
+    <div class="demo">
+      完美的解决方案，特别是在需要精确控制显示行数时。例如，你可以使完美的解决方案，特别是在需要精确控制显示行数时。例如，你可以使完美的解决方案，特别是在需要精确控制显示行数时。例如，你可以使完美的解决方案，特别是在需要精确控制显示行数时。例如，你可以使
+    </div>
+  </div>
+  <script>
+    const text =
+          " 这是一段很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长的文本";
+        const totalTextLen = text.length;
+        const formatStr = () => {
+          const ele = document.getElementsByClassName("demo")[0];
+          const lineNum = 2;
+          const baseWidth = window.getComputedStyle(ele).width;
+          const baseFontSize = window.getComputedStyle(ele).fontSize;
+          const lineWidth = +baseWidth.slice(0, -2);
+
+          // 所计算的strNum为元素内部一行可容纳的字数(不区分中英文)
+          const strNum = Math.floor(lineWidth / +baseFontSize.slice(0, -2));
+
+          let content = "";
+
+          // 多行可容纳总字数
+          const totalStrNum = Math.floor(strNum * lineNum);
+
+          const lastIndex = totalStrNum - totalTextLen;
+
+
+          if (totalTextLen > totalStrNum) {
+            content = text.slice(0, lastIndex - 3).concat("...");
+          } else {
+            content = text;
+          }
+          ele.innerHTML = content;
+        };
+
+        formatStr();
+
+        window.onresize = () => {
+          formatStr();
+        };
+  </script>
+</body>
+</html>

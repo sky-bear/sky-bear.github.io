@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>基础知识-css-元素的显示隐藏</title>
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+  </head>
+  <style>
+    #app {
+      position: relative;
+    }
+    .hide {
+      position: absolute;
+      visibility: hidden;
+      opacity: 0;
+      transition: opacity 0.5s linear;
+      background: cyan;
+    }
+    .hide.active {
+      visibility: visible;
+      opacity: 1;
+    }
+    .none {
+      display: none;
+    }
+  </style>
+  <body>
+    <div>基础知识-css-元素的显示隐藏</div>
+    <div id="app">
+      <button class="button" @click="handleSwitch">
+        {{hide ? '显示': '隐藏'}}
+      </button>
+      <div :class="['hide',!hide && 'active']" @click="handleClick">
+        显示隐藏
+      </div>
+
+      <div>测试测试测试测试</div>
+      <div>------------------------</div>
+      <div class="none">display:none</div>
+    </div>
+    <script>
+      const { createApp } = Vue;
+
+      createApp({
+        data() {
+          return {
+            message: "Hello Vue!",
+            hide: false,
+          };
+        },
+        methods: {
+          handleSwitch() {
+            this.hide = !this.hide;
+          },
+          handleClick() {
+            console.log("点击了");
+          },
+        },
+      }).mount("#app");
+    </script>
+  </body>
+</html>
