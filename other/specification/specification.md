@@ -45,7 +45,7 @@ module.exports = {
 - `stylelint`
 - `stylelint-config-standard` 是 Stylelint 的官方推荐配置之一，基于现代 CSS 标准和最佳实践。它适用于大多数项目，尤其适合需要遵循标准化 CSS 编写风格的团队
 - `stylelint-config-prettier` 是一个用于关闭所有与 Prettier 冲突的 Stylelint 规则的配置包。它确保 Stylelint 和 Prettier 可以和平共处，避免两者在格式化规则上的冲突。
-- `stylelint-config-html` 是一个专门用于处理嵌入在 HTML 文件中的 <style> 标签内容的 Stylelint 配置包。它扩展了 Stylelint 的能力，使其能够正确解析和检查 HTML 中的样式代码 -` stylelint-config-vue` 是专门为 Vue.js 项目设计的 Stylelint 配置包。Vue 单文件组件（.vue 文件）中通常包含 <style> 标签，该配置可以帮助 Stylelint 正确解析和检查这些样式代码
+- `stylelint-config-html` 是一个专门用于处理嵌入在 HTML 文件中的 `<style>` 标签内容的 Stylelint 配置包。它扩展了 Stylelint 的能力，使其能够正确解析和检查 HTML 中的样式代码 -`stylelint-config-vue` 是专门为 Vue.js 项目设计的 Stylelint 配置包。Vue 单文件组件（.vue 文件）中通常包含 `<style>` 标签，该配置可以帮助 Stylelint 正确解析和检查这些样式代码
 
 ### 命名约束
 

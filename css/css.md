@@ -495,7 +495,7 @@ import Image from "../components/Image/index.vue"
     display: flex;
     flex-direction: column;
     ```
-    ![](~@image/css/css_bfc_margin_flex.png)
+    <Image  src="/css/images/css_bfc_margin_flex.png" />
   - 利用外层 padding 代替内部 margin，但是如果盒子有背景色的话，会受到影响【父元素和子元素，子元素与子元素】
   - 父元素增加 border【处理父元素和子元素 margin 合并】
   - 父元素设置 float【处理父元素和子元素 margin 合并】
