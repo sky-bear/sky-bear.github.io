@@ -395,6 +395,34 @@ console.log(sum(1)(2)(3)().get()); // 6
 
 ## 深复制
 
+```js
+function deepClone(obj, map = new WeakMap()) {
+  if (obj === null) {
+    return obj;
+  }
+  if (obj instanceof Date) {
+    return new Date(obj);
+  }
+  if (obj instanceof RegExp) {
+    return new RegExp(obj);
+  }
+  if (typeof obj === "function") {
+    return obj;
+  }
+  if (map.has(obj)) {
+    return map.get(obj);
+  }
+  const cloneObj = new obj.constructor();
+  map.set(obj, newObj);
+  for (let key in obj) {
+    if (Object.prototype.hasOwnProperty.call(obj, key)) {
+      cloneObj[key] = deepClone(obj[key], map);
+    }
+  }
+  return cloneObj;
+}
+```
+
 ## 标签路径解析
 
 ```js
@@ -420,5 +448,30 @@ function getPathToElement(element: any) {
   path.unshift("body");
 
   return path.join(" > ");
+}
+```
+
+## instanceof
+
+在 a 的整条[[prototype]]链中 是否有指向 Foo.prototype 的对象
+
+```js
+function myInstance(left, right) {
+  // 获取对象的原型
+  let _proto = Object.getPrototypeOf(left);
+  // 构造函数的prototype
+  let _prototype = right.prototype;
+
+  while (true) {
+    if (!_proto) {
+      return false;
+    }
+
+    if (_proto === _prototype) {
+      return true;
+    }
+
+    _proto = Object.getPrototypeOf(_proto);
+  }
 }
 ```
