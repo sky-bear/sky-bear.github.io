@@ -1,5 +1,20 @@
 # vueRouter
 
+## 基本原理
+
+- hash 实现
+  - hash 是 URL 中 hash(#)及后边的部分，常用于锚点再页面内进行导航，改变 URL 中的 hash 部分不会引起页面刷新
+  - 改变 URL 的方式
+    - 通过浏览器的前进后退改变 URL
+    - 通过<a>标签改变 URL
+    - 通过 window.location 改变 URL
+- history 实现
+  - history 提供了 pushState 和 replaceState 两个方法，这两个方法都改变 URL 部分不引起页面刷新
+  - history 提供了类似 hashchange 事件的 popstate 事件，但是
+    - 通过浏览器前进后退改变 URL 的时候会触发 popState 事件
+    - 通过 pushState/replaceState 或<a>标签改变 URL 不会触发 popState，但是我们可以通过拦截 pushState/replaceState 的调用和<a>标签的点击事件来检测 URL 变化
+    - 通过 js 调用 history 的 back, go, forward 方法触发该事件
+
 ## vueRouter3
 
 ```js
@@ -93,8 +108,8 @@ VueRouter.install = function (v) {
 
 export default VueRouter;
 ```
-这里使用`Vue.util.defineReactive`,将`this._router.history`编程响应式， 这样当路由改变的时候，页面就会重新调用`router-view`中的render函数，从而实现页面更新
 
+这里使用`Vue.util.defineReactive`,将`this._router.history`编程响应式， 这样当路由改变的时候，页面就会重新调用`router-view`中的 render 函数，从而实现页面更新
 
 ## vueRouter4
 
@@ -124,17 +139,19 @@ try {
 }
 ```
 
-## 组合API 
-这里实现和vuex是一样的, useRoute 都是使用provide 和 inject 实现的， 
+## 组合 API
+
+这里实现和 vuex 是一样的, useRoute 都是使用 provide 和 inject 实现的，
+
 ```js
 export function createRouter(options) {
-  const currentRoute = shallowRef()
-  const matcher = createRouterMatcher(options.routes, options)
+  const currentRoute = shallowRef();
+  const matcher = createRouterMatcher(options.routes, options);
 
-  console.log("matcher", matcher)
+  console.log("matcher", matcher);
 
   // 定义一个install函数，用于安装组件
-  
+
   function install(app) {
     // 这里的this 指向插件
     const router = this;
@@ -143,13 +160,13 @@ export function createRouter(options) {
     // 支持this.$router
     app.config.globalProperties.$router = router;
     // 添加当前的currentRoute
-    Object.defineProperty(app.config.globalProperties, '$route', {
+    Object.defineProperty(app.config.globalProperties, "$route", {
       enumerable: true,
       get: () => unref(currentRoute),
-    })
+    });
     // 支持组合式api
-    app.provide(routerKey, router)
-    app.provide(routerViewLocationKey, currentRoute)
+    app.provide(routerKey, router);
+    app.provide(routerViewLocationKey, currentRoute);
   }
 
   const router = {
@@ -157,23 +174,18 @@ export function createRouter(options) {
   };
   return router;
 }
-
 ```
 
-
-
-
 ## 刷新问题
-- 如何改变url不引起页面刷新
-  - ‌pushState‌是HTML5 History API的一部分，允许开发者在不重新加载页面的情况下改变浏览器的URL。pushState方法可以向浏览器的历史记录中添加一个新的记录，而不会导致页面刷新
-  <br />
-  当使用pushState或replaceState方法时，不会立即触发popstate事件。只有当用户点击浏览器的回退或前进按钮，或者使用JavaScript调用history.back()、history.forward()、history.go()方法时，才会触发popstate事件。
+
+- 如何改变 url 不引起页面刷新
+  - ‌pushState‌ 是 HTML5 History API 的一部分，允许开发者在不重新加载页面的情况下改变浏览器的 URL。pushState 方法可以向浏览器的历史记录中添加一个新的记录，而不会导致页面刷新
+    <br />
+    当使用 pushState 或 replaceState 方法时，不会立即触发 popstate 事件。只有当用户点击浏览器的回退或前进按钮，或者使用 JavaScript 调用 history.back()、history.forward()、history.go()方法时，才会触发 popstate 事件。
   - location.hash
-  <br />
-  location.hash属性是URL中hash部分的值，即URL中#后面的部分。当location.hash的值发生变化时，浏览器会触发hashchange事件，从而实现页面不刷新的情况下改变URL。
-  <br />
-
-
+    <br />
+    location.hash 属性是 URL 中 hash 部分的值，即 URL 中#后面的部分。当 location.hash 的值发生变化时，浏览器会触发 hashchange 事件，从而实现页面不刷新的情况下改变 URL。
+    <br />
 
 ## 资料引用
 
