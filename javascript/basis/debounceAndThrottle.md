@@ -3,6 +3,7 @@
 <script setup>
 import Image from "../../components/Image/index.vue"
 </script>
+
 ## 函数防抖（debounce）
 
 ```
@@ -25,13 +26,15 @@ const debounce = (fn, time = 1000, options = { leading: true }) => {
         }
         if (options.leading && !timer) {  // 首次是否执行
             timer = setTimeout(null, time);
-            fn.apply(that, arguments); // 将dom中的this传递到函数中
-        } else {
+          return  fn.apply(that, arguments); // 将dom中的this传递到函数中
+        } 
+        if (timer) clearTimeout(timer);
+         
             timer = setTimeout(() => {
                 fn.apply(that, arguments); // 将dom中的this传递到函数中
                 timer = null;
             }, time);
-        }
+        
     };
     return _debounce;
 };
@@ -45,21 +48,17 @@ const debounce = (
     options = { leading: true, context: null } // 这里的context 就是需要绑定的this
 ) => {
     let timer;
-    const _debounce = function() {
-        if (timer) {
-            clearTimeout(timer);
-        }
-        if (options.leading && !timer) {
-            timer = setTimeout(null, time);
-            fn.apply(options.context, arguments);
-        } else {
-            timer = setTimeout(() => {
-                fn.apply(options.context, arguments);
+    const _debounce = function (...args) {
+    if(options.immediately && !timer) {
+     return fn.apply(options.context,args);
+    }
+    if(timer) clearTimeout(timer);
+    timer = setTimeout(() => {
+      fn.apply(options.context,args);
+      timer = null
+    }, delay)
 
-                timer = null;
-            }, time);
-        }
-    };
+  }
     return _debounce;
 };
 ```

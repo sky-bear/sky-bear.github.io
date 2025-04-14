@@ -122,7 +122,7 @@ export default defineConfig({
           text: "react",
           items: [
             {
-              text: "服务端渲染",
+              text: "同构渲染",
               link: "/react/serve/serve",
             },
           ],
