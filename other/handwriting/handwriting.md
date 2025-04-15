@@ -476,30 +476,45 @@ function myInstance(left, right) {
 }
 ```
 
-
 ## debounce
+
 ```js
-function debounce(fn,delay = 100, options = {
-  context:null,
-  immediately: true // 是否第一次立即执行
-}) {
+function debounce(
+  fn,
+  delay = 100,
+  options = {
+    context: null,
+    immediately: true, // 是否第一次立即执行
+  }
+) {
   let timer = null;
   const _debounce = function (...args) {
-    if(options.immediately && !timer) {
-     return fn.apply(options.context,args); 
+    if (options.immediately && !timer) {
+      return fn.apply(options.context, args);
     }
-    if(timer) clearTimeout(timer);
+    if (timer) clearTimeout(timer);
     timer = setTimeout(() => {
-      fn.apply(options.context,args);
-      timer = null
-    }, delay)
-
-  }
+      fn.apply(options.context, args);
+      timer = null;
+    }, delay);
+  };
   // 返回句柄
   const clear = () => {
-    if( timer) clearTimeout(timer);
+    if (timer) clearTimeout(timer);
     timer = null;
-  }
-  return {debounce: _debounce , clear}
+  };
+  return { debounce: _debounce, clear };
+}
+```
+
+## new 的实现
+
+```js
+function objectFactory() {
+  const obj = new Object();
+  const Constructor = [].shift.call(arguments);
+  obj.__proto__ = Constructor.prototype;
+  const result = Constructor.apply(obj, arguments);
+  return typeof result === "object" && result !== null ? result : obj;
 }
 ```
