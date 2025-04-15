@@ -15,10 +15,12 @@ function debounce(fn,delay = 100, options = {
 }) {
   let timer = null;
   const _debounce = function (...args) {
+    if(timer) clearTimeout(timer);
     if(options.immediately && !timer) {
+      timer = setTimeout(null, delay);
      return fn.apply(options.context,args); 
     }
-    if(timer) clearTimeout(timer);
+    
     timer = setTimeout(() => {
       fn.apply(options.context,args);
       timer = null

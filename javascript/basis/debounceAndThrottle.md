@@ -27,14 +27,14 @@ const debounce = (fn, time = 1000, options = { leading: true }) => {
         if (options.leading && !timer) {  // 首次是否执行
             timer = setTimeout(null, time);
           return  fn.apply(that, arguments); // 将dom中的this传递到函数中
-        } 
+        }
         if (timer) clearTimeout(timer);
-         
+
             timer = setTimeout(() => {
                 fn.apply(that, arguments); // 将dom中的this传递到函数中
                 timer = null;
             }, time);
-        
+
     };
     return _debounce;
 };
@@ -49,14 +49,16 @@ const debounce = (
 ) => {
     let timer;
     const _debounce = function (...args) {
+     if(timer) clearTimeout(timer);
     if(options.immediately && !timer) {
+      timer = setTimeout(null, time);
      return fn.apply(options.context,args);
     }
-    if(timer) clearTimeout(timer);
+
     timer = setTimeout(() => {
       fn.apply(options.context,args);
       timer = null
-    }, delay)
+    }, time)
 
   }
     return _debounce;
