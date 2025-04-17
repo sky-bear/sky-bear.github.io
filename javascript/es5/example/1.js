@@ -1,14 +1,9 @@
 
-var arr = ['a', 'b'];
-arr.length // 2
+var obj = {};
 
-arr[2] = 'c';
-arr.length // 3
+Object.defineProperty(obj, 'x', {
+  value: 123,
+  enumerable: false
+});
 
-arr[9] = 'd';
-arr.length // 10
-
-arr[1000] = 'e';
-arr.length // 1001
-
-console.log("arr.length", arr.length)
+console.log(JSON.stringify(obj)); // 123

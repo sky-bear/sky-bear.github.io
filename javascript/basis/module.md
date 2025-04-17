@@ -113,7 +113,9 @@ import Image from "../../components/Image/index.vue"
     module.exports.x = x;
     module.exports.addX = addX;
     ```
+
     上面代码通过 module.exports 输出变量 x 和函数 addX
+
     ```js
     var example = require("./example.js"); //如果参数字符串以“./”开头，则表示加载的是一个位于相对路径
     console.log(example.x); // 5
@@ -121,7 +123,8 @@ import Image from "../../components/Image/index.vue"
     ```
     require 命令用于加载模块文件。require 命令的基本功能是，读入并执行一个 JavaScript 文件，然后返回该模块的 exports 对象。如果没有发现指定模块，会报错。
   - **机制** <Badge type="danger" text="重要" /> <br />
-    CommonJS 模块的加载机制是，输入的是被输出的值的拷贝。也就是说，一旦输出一个值，模块内部的变化就影响不到这个值
+    CommonJS 模块的加载机制是，输入的是被输出的值的拷贝。也就是说，一旦输出一个值，模块内部的变化就影响不到这个值.对象也是拷贝【深拷贝】
+    
 - **服务端使用** <br />
   可以直接使用， 不需要经过特殊处理
 - **浏览器端使用** <br />

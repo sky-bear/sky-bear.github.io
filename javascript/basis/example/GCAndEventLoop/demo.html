@@ -7,11 +7,15 @@
   </head>
   <body>
     <div id="outer">
-      <div id="inner">点我</div>
+      <div id="middle">
+        <div id="inner">点我</div>
+      </div>
+      
     </div>
     </div>
     <script>
       const $inner = document.querySelector("#inner");
+      const $middle = document.querySelector("#middle");
       const $outer = document.querySelector("#outer");
 
       function handler() {
@@ -37,6 +41,17 @@
 
         $outer.setAttribute("data-random", Math.random()); // DOM属性修改，触发微任务
       }
+      function handler2() {
+        console.log("click-middle"); // 直接输出
+
+        Promise.resolve().then((_) => console.log("promise-middle")); // 注册微任务
+
+        setTimeout(() => console.log("timeout-middle")); // 注册宏任务
+
+        requestAnimationFrame((_) => console.log("animationFrame-middle")); // 注册宏任务
+
+        $outer.setAttribute("data-random", Math.random()); // DOM属性修改，触发微任务
+      }
 
       new MutationObserver((_) => {
         console.log("observer");
@@ -45,6 +60,7 @@
       });
 
       $inner.addEventListener("click", handler);
+      $middle.addEventListener("click", handler2);
       $outer.addEventListener("click", handler1);
       // click
       // promise

@@ -509,7 +509,7 @@ function debounce(
 }
 ```
 
-<<<<<<< HEAD
+
 
 ## new 的实现
 
@@ -523,7 +523,7 @@ function objectFactory() {
 }
 ```
 
-=======
+
 
 ## throttle
 
@@ -552,4 +552,3 @@ function throttle(fn, time = 100, options = {}) {
   return  _throttle
 ```
 
-> > > > > > > 57376bff1a06afe6198a32e68609a7ae39dcab79

@@ -453,8 +453,11 @@ $outer.addEventListener("click", handler); // 冒泡触发
 ```
 
 如在一个宏任务内部同时注册了点击事件监听器和设置了 setTimeout，那么点击事件通常会比 setTimeout 先执行。这是因为点击事件被视为用户交互，具有较高的优先级，并且会立即加入宏任务队列；而 setTimeout 的回调则需要等待当前同步代码和所有微任务完成后才会被调度。
+<Badge type="danger" text="重要" />
+当在添加一层冒泡事件监听器后，点击事件会先执行，因为冒泡事件监听器会先于 setTimeout 的回调执行。
 
 总结来说，在大多数情况下，点击事件会比 setTimeout(fn, 0) 更早执行，因为它属于用户交互类的宏任务，而 setTimeout 则是在指定时间延迟后才被加入宏任务队列
+
 
 ::: warning
 我们知道渲染是在微任务之后，宏任务之前进行的， 那为啥 vue.$nextTick 可以通过 promise.then 来执行呢？<br />
