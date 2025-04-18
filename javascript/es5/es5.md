@@ -556,10 +556,11 @@ new Array("a", "b", "c"); // ['a', 'b', 'c']
   - `lastIndexOf`: 返回给定元素在数组中最后一次出现的位置，如果没有出现则返回-1。
 
 ### 包装对象
+
 - `Number、String、Boolean`
-所谓“包装对象”，指的是与数值、字符串、布尔值分别相对应的 Number、String、Boolean 三个原生对象。这三个原生对象可以把原始类型的值变成（包装成）对象
-<br />
-Number、String 和 Boolean 这三个原生对象，如果不作为构造函数调用（即调用时不加 new），而是作为普通函数调用，常常用于将任意类型的值转为数值、字符串和布尔值
+  所谓“包装对象”，指的是与数值、字符串、布尔值分别相对应的 Number、String、Boolean 三个原生对象。这三个原生对象可以把原始类型的值变成（包装成）对象
+  <br />
+  Number、String 和 Boolean 这三个原生对象，如果不作为构造函数调用（即调用时不加 new），而是作为普通函数调用，常常用于将任意类型的值转为数值、字符串和布尔值
 
 ```js
 var v1 = new Number(123);
@@ -583,12 +584,264 @@ String(123); // "123"
 // 数值转为布尔值
 Boolean(123); // true
 ```
+
 - 原始类型与实例对象的自动转换
-原始类型的值会自动当作包装对象调用，即调用包装对象的属性和方法。这时，JavaScript 引擎会自动将原始类型的值转为包装对象实例，并在使用后立刻销毁实例。
+  原始类型的值会自动当作包装对象调用，即调用包装对象的属性和方法。这时，JavaScript 引擎会自动将原始类型的值转为包装对象实例，并在使用后立刻销毁实例。
+
 ```js
-'abc'.length // 3
+"abc".length; // 3
 ```
 
+## 面向对象编程
+
+### 构造函数 new
+
+- 判断当前是否使用 new 创建
+
+  - 构造函数内部使用严格模式：函数内部的 this 不能指向全局对象，默认等于 undefined，导致不加 new 调用会报错（JavaScript 不允许对 undefined 添加属性）
+  - 构造函数内部判断是否使用 new 命令，如果发现没有使用，则直接返回一个实例对象。
+
+    ```js
+    function Fubar(foo, bar) {
+      if (!(this instanceof Fubar)) {
+        return new Fubar(foo, bar);
+      }
+
+      this._foo = foo;
+      this._bar = bar;
+    }
+    ```
+
+- new 原理
+  ```js
+  function _new(/* 构造函数 */ constructor, /* 构造函数参数 */ params) {
+    // 将 arguments 对象转为数组
+    var args = [].slice.call(arguments);
+    // 取出构造函数
+    var constructor = args.shift();
+    // 创建一个空对象，继承构造函数的 prototype 属性
+    var context = Object.create(constructor.prototype);
+    // 执行构造函数
+    var result = constructor.apply(context, args);
+    // 如果返回结果是对象，就直接返回，否则返回 context 对象
+    return typeof result === "object" && result != null ? result : context;
+  }
+  ```
+- new.target: 函数内部可以使用 new.target 属性。如果当前函数是 new 命令调用，new.target 指向当前函数，否则为 undefined
+
+```js
+function f() {
+  console.log(new.target === f);
+}
+
+f(); // false
+new f(); // true
+```
+
+### this
+
+- 涵义：简单说，this 就是属性或方法“当前”所在的对象， 调用的对象不同， this 指向也不同
+- 实质：JavaScript 语言之所以有 this 的设计，跟内存里面的数据结构有关系
+  ```js
+  var obj = { foo: 5 };
+  ```
+  上面的代码将一个对象赋值给变量 obj。JavaScript 引擎会先在内存里面，生成一个对象{ foo: 5 }，然后把这个对象的内存地址赋值给变量 obj。也就是说，变量 obj 是一个地址（reference）。后面如果要读取 obj.foo，引擎先从 obj 拿到内存地址，然后再从该地址读出原始的对象，返回它的 foo 属性。
+  ```js
+  {
+    foo: {
+        [[value]]: 5
+        [[writable]]: true
+        [[enumerable]]: true
+        [[configurable]]: true
+      }
+    }
+  ```
+  此时如果 value 的值是一个对象， 那么它同 obj 一样， value 的值是一个对象的地址， 函数也是对象<br />
+  由于函数是一个单独的值，所以它可以在不同的环境（上下文）执行。
+  由于函数可以在不同的运行环境执行，所以需要有一种机制，能够在函数体内部获得当前的运行环境（context）。所以，this 就出现了，它的设计目的就是在**函数体内部，指代函数当前的运行环境**
+- 绑定 this 的方法
+  参数为 null 或 undefined， 或者空会被忽略
+  - call
+  - apply
+    - 找出数组最大值
+      ```js
+      var a = [10, 2, 4, 15, 9];
+      Math.max.apply(null, a); // 15
+      ```
+    - 将数组的空元素变为`undefined`
+      ```js
+      Array.apply(null, ["a", , "b"]);
+      // [ 'a', undefined, 'b' ]
+      ```
+  - bind
+  - 箭头函数
+
+### 对象的继承
+
+- 概述
+  - prototype： JavaScript 继承机制的设计思想就是，原型对象的所有属性和方法，都能被实例对象共享。原型对象的作用，就是定义所有实例对象共享的属性和方法。这也是它被称为原型对象的原因，而实例对象可以视作从原型对象衍生出来的子对象
+  - 原型链： JavaScript 规定，所有对象都有自己的原型对象（prototype），原型对象也是对象，所以它也有自己的原型。 因此，就会形成一个“原型链”（prototype chain）：对象到原型，再到原型的原型...
+    - 原型链的尽头就是 null
+  - constructor ：prototype 对象有一个 constructor 属性，默认指向 prototype 对象所在的构造函数
+- instanceof:instanceof 运算符返回一个布尔值，表示对象是否为某个构造函数的实例.只能用于对象，不适用原始类型的值。
+  instanceof 运算符的左边是实例对象，右边是构造函数。它会检查右边构造函数的原型对象（prototype），是否在左边对象的原型链上
+  <br/>
+
+```js
+var obj = Object.create(null);
+typeof obj; // "object"
+obj instanceof Object; // false
+```
+
+这是唯一的 instanceof 运算符判断会失真的情况（一个对象的原型是 null）。
+
+- 构造函数的继承
+  - 子类中调用父类构造函数
+    ```js
+    function Sub(value) {
+      Super.call(this);
+      this.prop = value;
+    }
+    ```
+  - 让子类的原型指向父类的原型
+    ```js
+    Sub.prototype = Object.create(Super.prototype);
+    Sub.prototype.constructor = Sub;
+    Sub.prototype.method = "...";
+    ```
+
+### 模块
+
+模块是实现特定功能的一组属性和方法的封装。
+
+### Object 对象的相关方法
+
+- `Object.getPrototypeOf`方法返回参数对象的原型。这是获取原型对象的标准方法
+- `Object.setPrototypeOf`方法为参数对象设置原型，返回该参数对象。它接受两个参数，第一个是现有对象，第二个是原型对象。
+- `Object.create()`方法接受一个对象作为参数，然后以它为原型，返回一个实例对象。该实例完全继承原型对象的属性
+
+  ```js
+  if (typeof Object.create !== "function") {
+    Object.create = function (obj) {
+      function F() {}
+      F.prototype = obj;
+      return new F();
+    };
+  }
+  ```
+
+  - `Object.create(null);`返回原型为 null 的对象
+  - 动态继承了原型。在原型上添加或修改任何方法，会立刻反映在新对象之上。
+
+    ```js
+    var obj1 = { p: 1 };
+    var obj2 = Object.create(obj1);
+
+    obj1.p = 2;
+    obj2.p; // 2
+    ```
+
+    obj1 的修改会自动反映在 obj2 上。这是因为 obj2 的原型对象是 obj1，它拿到的一切属性和方法，实际上是继承自 obj1。也就是说，obj1 是 obj2 的“原型”
+
+  - `Object.create()`方法还可以接受第二个参数。该参数是一个属性描述对象，它所描述的对象属性，会添加到实例对象，作为该对象自身的属性
+  - `isPrototypeOf`用来判断该对象是否为参数对象的原型
+
+  ```js
+  var o1 = {};
+  var o2 = Object.create(o1);
+  var o3 = Object.create(o2);
+
+  o2.isPrototypeOf(o3); // true
+  o1.isPrototypeOf(o3); // true
+  ```
+
+  - `__proto__`:指向当前对象的原型对象，即构造函数的 prototype 属性
+  - in 运算符返回一个布尔值,表示一个对象是否具有某个属性。它不区分该属性是对象自身的属性，还是继承的属性。
+
+## 异步操作
+
+### 概述
+
+- 单线程模型：JavaScript 只在一个线程上运行，不代表 JavaScript 引擎只有一个线程
+- 同步任务和异步任务
+  - 同步任务：同步任务是那些没有被引擎挂起、在主线程上排队执行的任务
+  - 异步任务：异步任务是那些被引擎放在一边，不进入主线程、而进入任务队列的任务
+
+### 定时器
+
+- setTimeout/clearTimeout
+- setInterval/clearInterval
+- setTimeout(f, 0)
+  - 改变代码执行顺序
+  - 将任务放到浏览器最早可得的空闲时段执行，所以那些计算量大、耗时长的任务，常常会被放到几个小部分，分别放到 setTimeout(f, 0)里面执行。
+
+## DOM
+
+### 概述
+
+文档对象模型
+
+- 节点类型
+  - Document：整个文档树的顶层节点
+  - DocumentType：doctype 标签（比如`<!DOCTYPE html>`）
+  - Element：网页的各种 HTML 标签（比如`<body>、<a>`等）
+  - Attr：网页元素的属性（比如 class="right"）
+  - Text：标签之间或标签包含的文本
+  - Comment：注释
+  - DocumentFragment：文档的片段
+- 节点树
+  - `nextSibling`: 返回紧跟在当前节点后面的第一个同级节点。如果当前节点后面没有同级节点，则返回 null
+  - `previousSibling`:返回当前节点前面的、距离最近的一个同级节点。如果当前节点前面没有同级节点，则返回 null
+
+### NodeList 和 HTMLCollection
+
+- NodeList： 包含所有节点
+- HTMLCollection：只能包含元素节点（element）
+  HTMLCollection 实例都是动态集合，节点的变化会实时反映在集合中
+
+### CSS
+
+- style
+  - setAttribute
+    ```js
+    div.setAttribute(
+      "style",
+      "background-color:red;" + "border:1px solid black;"
+    );
+    ```
+  - getAttribute
+  - removeAttribute
+- CSSStyleDeclaration
+
+  ```js
+  var divStyle = document.querySelector("div").style;
+  divStyle.backgroundColor = "red"; // 需要改成驼峰命名法
+  divStyle.border = "1px solid black";
+  ```
+
+  - cssText
+
+  ````js
+  var divStyle = document.querySelector('div').style;
+    // 添加
+    divStyle.cssText = 'background-color: red;'
+      + 'border: 1px solid black;'
+      + 'height: 100px;'
+      + 'width: 100px;';
+    // 清空
+    divStyle.cssText = '';
+      ```
+  ````
+- window.getComputedStyle
+
+
+### Mutation Observer
+- 概述：用来监视 DOM 变动。DOM 的任何变动，比如节点的增减、属性的变动、文本内容的变动，这个 API 都可以得到通知
+  - 它等待所有脚本任务完成后，才会运行（即异步触发方式）
+  - 它把 DOM 变动记录封装成一个数组进行处理，而不是一条条个别处理 DOM 变动。 
+  - 它既可以观察 DOM 的所有类型变动，也可以指定只观察某一类变动
+  
+### 事件
 
 ## 资料引用
 
