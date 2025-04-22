@@ -112,6 +112,220 @@ v18 后
 
 ### immutable 及 immer
 
+## 高阶组件
+
+组件作为参数，返回的还是组件函数
+
+- 实现重复代码的抽离
+- 条件渲染， 权限管理
+- 拦截传入组件的生命周期 拦截组件渲染性能 日志打点
+
+### HOC 的实现方式
+
+#### 属性代理：
+
+不能改变原有的属性
+
+- 代理 props
+
+```js
+// 函数式组件
+function withHOC(WrappedComponent) {
+  const newProps = {};
+  return (props) => <WrappedComponent {...props} {...newProps} />;
+}
+
+function withHOC(WrappedComponent) {
+  return class extends React.Component {
+    render() {
+      const newProps = {};
+      return <WrappedComponent {...this.props} {...newProps} />;
+    }
+  };
+}
+```
+
+- 抽象 state
+
+```js
+function withHOC(WrappedComponent) {
+  return class extends React.Component {
+    constructor(props) {
+      super(props);
+      this.state = { name: "HOC" };
+      this.onChange = this.onChange.bind(this);
+    }
+    onChange() {
+      this.setState({ name: "new HOC" });
+    }
+    render() {
+      const newProps = { name: this.state.name, onChange: this.onChange };
+      return <WrappedComponent {...this.props} {...newProps} />;
+    }
+  };
+}
+```
+
+- 条件渲染
+
+```js
+function withHOC(WrappedComponent) {
+  return (props) => {
+    if (props.visible) {
+      return <WrappedComponent {...props} />;
+    }
+    return null;
+  };
+}
+```
+
+#### 反向继承
+
+- 生命周期
+
+```js
+const HOC = (WrappedComponent) => {
+  return class extends WrappedComponent {
+    render() {
+      return super.render();
+    }
+  };
+};
+
+// 针对组件的生命周期处理-类
+function HOC(WrappedComponent) {
+  return class extends WrappedComponent {
+    componentDidMount() {
+      console.log("HOC componentDidMount");
+      super.componentDidMount();
+    }
+    render() {
+      return super.render();
+    }
+  };
+}
+
+// 针对组件的生命周期处理- 原型链
+function HOC(WrappedComponent) {
+  const didMount = WrappedComponent.prototype.componentDidMount;
+  return class extends WrappedComponent {
+    async componentDidMount() {
+      await (didMount && didMount.call(this));
+      console.log("HOC componentDidMount");
+    }
+    render() {
+      return super.render();
+    }
+  };
+}
+```
+
+- 操作 state
+
+```js
+// 操作state
+function HOC(WrappedComponent) {
+  const didMount = WrappedComponent.prototype.componentDidMount;
+  return class extends WrappedComponent {
+    constructor(props) {
+      super(props);
+      this.state = { name: "HOC" };
+    }
+
+    async componentDidMount() {
+      await (didMount && didMount.call(this));
+      console.log("HOC componentDidMount");
+      this.setState({ name: "new HOC" });
+    }
+    async componentDidMount() {
+      await (didMount && didMount.call(this));
+      console.log("HOC componentDidMount");
+    }
+    render() {
+      return super.render();
+    }
+  };
+}
+```
+
+- 条件渲染
+
+```js
+const HOC = (WrappedComponent) => {
+  return class extends WrappedComponent {
+    render() {
+      if (this.props.visible) {
+        return super.render();
+      }
+      return null;
+    }
+  };
+};
+```
+
+- 修改返回的 react 结构
+
+```js
+function HOC(WrappedComponent) {
+  return class extends WrappedComponent {
+    render() {
+      const element = super.render();
+      if (element.type === "div") {
+        const newStyle = { ...element.props.style, color: "red" };
+        const newElement = React.cloneElement(
+          element,
+          {
+            children: <div>{element.props.children}</div>,
+            style: newStyle,
+          },
+          element.props,
+          element.props.children
+        );
+      }
+      return newElement;
+    }
+  };
+}
+```
+
+#### 使用场景
+
+- 计算组件渲染时间
+
+```js
+function withHOC(WrappedComponent) {
+ return class extends WrappedComponent {
+   constructor(props) {
+     super(props);
+      start = 0；
+      end = 0
+   }
+
+   componentWillMount() {
+     super?.componentWillMount();
+     strart = Date.now();
+   }
+   aync componentDidMount() {
+     super?.componentDidMount();
+     end = Date.now();
+     console.log('组件渲染时间', end - start)
+
+   }
+   render() {
+     return super.render();
+   }
+
+
+ }
+}
+```
+
+:::warning
+
+- mixins:混入一些共有的方法和数据
+
+:::
+
 ## 引用
 
 <a href="https://react.docschina.org/" target="_blank"  style="display: block">react 官网</a>
