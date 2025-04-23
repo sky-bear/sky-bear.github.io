@@ -821,27 +821,132 @@ obj instanceof Object; // false
 
   - cssText
 
-  ````js
-  var divStyle = document.querySelector('div').style;
-    // 添加
-    divStyle.cssText = 'background-color: red;'
-      + 'border: 1px solid black;'
-      + 'height: 100px;'
-      + 'width: 100px;';
-    // 清空
-    divStyle.cssText = '';
-      ```
-  ````
+  ```js
+  var divStyle = document.querySelector("div").style;
+  // 添加
+  divStyle.cssText =
+    "background-color: red;" +
+    "border: 1px solid black;" +
+    "height: 100px;" +
+    "width: 100px;";
+  // 清空
+  divStyle.cssText = "";
+  ```
+
 - window.getComputedStyle
 
-
 ### Mutation Observer
+
 - 概述：用来监视 DOM 变动。DOM 的任何变动，比如节点的增减、属性的变动、文本内容的变动，这个 API 都可以得到通知
   - 它等待所有脚本任务完成后，才会运行（即异步触发方式）
-  - 它把 DOM 变动记录封装成一个数组进行处理，而不是一条条个别处理 DOM 变动。 
+  - 它把 DOM 变动记录封装成一个数组进行处理，而不是一条条个别处理 DOM 变动。
   - 它既可以观察 DOM 的所有类型变动，也可以指定只观察某一类变动
-  
-### 事件
+
+## 事件
+
+### EventTarget
+
+DOM 节点的事件操作（监听和触发），都定义在 EventTarget 接口。所有节点对象都部署了这个接口，其他一些需要事件通信的浏览器内置对象（比如，XMLHttpRequest、AudioNode、AudioContext）也部署了这个接口
+
+- `addEventListener`
+- `removeEventListener`
+- `dispatchEvent`
+  触发一个事件
+
+  ```js
+  para.addEventListener("click", hello, false);
+  var event = new Event("click");
+  para.dispatchEvent(event);
+  ```
+
+### 事件模型
+
+- 监听函数
+
+  - on: 只会在冒泡阶段触发
+
+  ```js
+   // 正确
+    <body onload="doSomething()">
+
+    // 错误
+    <body onload="doSomething">
+
+
+  ```
+
+  - setAttribute
+
+  ```js
+  el.setAttribute("onclick", "doSomething()");
+  // 等同于 这种方式同一个事件只能定义一个监听函数
+  // <Element onclick="doSomething()">
+  ```
+
+  - addEventListener: 可以定义多个监听函数
+
+- this: 监听函数内部的 this 指向触发事件的那个元素节点
+- 事件传播：捕获阶段、目标阶段、冒泡阶段
+- 事件代理
+  由于事件会在冒泡阶段向上传播到父节点，因此可以把子节点的监听函数定义在父节点上，由父节点的监听函数统一处理多个子元素的事件。这种方法叫做事件的代理
+  - `stopPropagation`方法只会阻止事件的传播, 不会阻止该节点的其他事件监听函数
+  - `stopImmediatePropagation`方法阻止同一个事件的其他监听函数被调用，不管监听函数定义在当前节点还是定义在父节点
+
+### Event 对象
+
+浏览器原生提供一个 Event 对象，所有的事件都是这个对象的实例，或者说继承了 Event.prototype 对象。
+
+```js
+event = new Event(type, options);
+```
+
+`Event.target`属性返回原始触发事件的那个节点，即事件最初发生的节点
+
+### 鼠标事件
+
+- 点击事件
+  - click：按下鼠标（通常是左键，也可以是中间滚轮按钮或右键），然后释放鼠标按钮。
+    click 事件可以看成是两个事件组成的：用户在同一个位置先触发 mousedown，再触发 mouseup。因此，触发顺序是，mousedown 首先触发，mouseup 接着触发，click 最后触发。
+  - dblclick：在同一个元素上双击鼠标按钮。
+  - mousedown：按下鼠标按钮。
+  - mouseup：释放鼠标按钮。
+  - contextmenu：按下鼠标右键，或者按下带有控制键的鼠标按钮。
+- 移动事件
+  - mousemove：鼠标在一个元素上面移动时触发。
+  - mouseenter: 鼠标进入一个元素时触发。进入子节点不会触发这个事件
+  - mouseover：鼠标进入一个节点时触发，进入子节点会再一次触发这个事件。
+  - mouseout：鼠标离开一个节点时触发，在父元素内部离开一个子元素时会触发这个事件。
+  - mouseleave：鼠标离开一个节点时触发，在父元素内部离开一个子元素时不会触发这个事件
+
+### 键盘事件
+
+### 进度事件
+
+进度事件用来描述资源加载的进度，主要由 AJAX 请求、`<img>、<audio>、<video>、<style>、<link>`等外部资源的加载触发，继承了 ProgressEvent 接口。它主要包含以下几种事件。
+
+- abort：外部资源中止加载时（比如用户取消）触发。如果发生错误导致中止，不会触发该事件。
+- error：由于错误导致外部资源无法加载时触发。
+- load：外部资源加载成功时触发。
+- loadstart：外部资源开始加载时触发。
+- loadend：外部资源停止加载时触发，发生顺序排在 error、abort、load 等事件的后面。
+- progress：外部资源加载过程中不断触发。
+- timeout：加载超时时触发。
+
+### 表单事件
+
+- input 事件当`<input>、<select>、<textarea>`的值发生变化时触发。对于复选框（`<input type=checkbox>`）或单选框（`<input type=radio>`），用户改变选项时，也会触发这个事件。另外，对于打开 contenteditable 属性的元素，只要值发生变化，也会触发 input 事件。
+
+```md
+会连续触发
+```
+
+- change
+  激活单选框（radio）或复选框（checkbox）时触发。
+  用户提交时触发。比如，从下列列表（select）完成选择，在日期或文件输入框完成选择。
+  当文本框或`<textarea>`元素的值发生改变，并且丧失焦点时触发。
+
+### 拖拉事件
+-  设置可拖拉`draggable="true"`
 
 ## 资料引用
 

@@ -326,6 +326,54 @@ function withHOC(WrappedComponent) {
 
 :::
 
+## Hooks
+
+- useState
+- useEffect: 先 DON 更新, 再执行 useEffect 中的 cb => 闪动
+- useLayoutEffect: 先执行 useLayoutEffect 中的 cb, 再 DOM 更新 => 卡顿
+- useRef
+  - 获取 dom 节点
+  - 保存数据:
+    - 变更不会触发页面渲染
+    - 可以在重新渲染之间 存储信息（普通对象存储的值每次渲染都会重置）。
+- useContext
+- useReducer
+- useMemo: 缓存结果
+- useCallback: 缓存函数
+- 自定义 Hooks
+
+```jsx
+import { useEffect } from "react";
+
+function useCustom() {
+  useEffect(() => {
+    console.log("useCustom");
+  }, []);
+}
+
+function App() {
+  useCustom();
+  return <div>App</div>;
+}
+
+export default App;
+```
+
+```jsx
+// 自定义更新
+import { useState } from "react";
+
+function useUpdate() {
+  const [, forceUpdate] = useState(0);
+  return () => forceUpdate((n) => n + 1);
+}
+
+function App() {
+  const update = useUpdate();
+  return <div onClick={update}>App</div>;
+}
+```
+
 ## 引用
 
 <a href="https://react.docschina.org/" target="_blank"  style="display: block">react 官网</a>
