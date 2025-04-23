@@ -374,6 +374,49 @@ function App() {
 }
 ```
 
+## 源码解析
+
+### 理念
+
+- 单项数据流 ui = render(data)
+- 快速响应
+- 异步非阻塞 用户优先级渲染
+
+### react15
+
+- reconiler: 协调器 diff 找到谁发生变化
+  - update
+  - component render jsx => virtual dom
+  - Vnode 跟上次的 vdom diff
+  - 找到变化的部分
+  - 通知 renderer 渲染
+- renderer: 渲染器 将变化的组件渲染到视图中
+  - ReactDom 跨平台框架
+  - ReactNative
+
+同步更新， 递归更新子组件， 不可中断， 用户体验差
+
+### react16
+
+在以上的基础上增加了 scheduler， 实现了异步可切片， 所谓的异步指的任务， 是打标的过程是可中断的
+
+- reconiler 会根据 scheduler 下发的任务， reconiler 会针对 Vdom 打标，所有的打标都完成后， 才给到 renderer 执行渲染
+- scheduler: 调度器,调度优先级 , 发生数据变化后，通知 reconiler
+  - requestIdleCallback 很多浏览器兼容性不好，react 自己实现了一个这样的功能
+- renderer： 是同步的
+
+### Fiber
+
+React 内部实现的一套数据结构，支持状态更新， 支持优先级调度，支持中断与恢复， 支持并发执行。
+
+- 架构
+  - React 15 的 Reconciler 采用递归遍历的方式执行， 当组件层级很深时，递归更新时间超过了 16ms，就会出现卡顿， 为了解决这个问题，
+  - React 16 将递归的无法拆分的任务进行拆分， 拆分成一个个小任务， 小任务执行时间不会超过 16ms， 这样就不会出现卡顿现象。
+- 数据结构
+  - Fiber 是一个数据结构， 每个 fiber 节点对应一个组件， 通过链表的形式， 将所有 fiber 节点连接起来， 形成一个 fiber 树， fiber 树的结构和 virtual dom 树的结构是一致的。
+- 工作单元
+  - 在当前更新过程中，当前节点发生什么变化， 打标
+
 ## 引用
 
 <a href="https://react.docschina.org/" target="_blank"  style="display: block">react 官网</a>
