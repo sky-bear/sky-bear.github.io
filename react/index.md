@@ -424,3 +424,5 @@ React 内部实现的一套数据结构，支持状态更新， 支持优先级�
 <a href="https://nwy3y7fy8w5.feishu.cn/docx/P4osdzJsHoFXhLxB17xcJElanTP" target="_blank"  style="display: block">react 基础</a>
 <a href="https://nwy3y7fy8w5.feishu.cn/docx/KiLQdRbFCoFpOLxuv2Acc2FpnFe" target="_blank"  style="display: block">react 源码 上</a>
 <a href="https://react.iamkasong.com/me.html" target="_blank"  style="display: block">react 技术揭秘</a>
+<a href="https://y03l2iufsbl.feishu.cn/docx/AsKMdzcoNojUA2xAh9cc1fzknJh
+" target="_blank"  style="display: block">状态管理和 CRA</a>
