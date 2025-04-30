@@ -4,6 +4,8 @@ Function.prototype.MyApply = function (context, args) {
     throw new TypeError(this + 'is not a function')
   }
   if(typeof context === 'undefined' || context === null)  return this(args)
+      // 把基本类型包装成对象
+  if(typeof context !== 'object') context = new Object(context);
   const fn = this;
   context.fn = this;
   const result = context.fn(...args);

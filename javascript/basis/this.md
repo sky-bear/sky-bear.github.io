@@ -62,31 +62,53 @@ import Image from "../../components/Image/index.vue"
   obj3.fn(fn2); // obj3 window
   ```
 
+  ```js
+  const fn = () => {
+    console.log("this", this);
+  };
+
+  const obj = {
+    a: 1,
+    fn: function () {
+      console.log("this", this);
+      fn();
+      const fn1 = () => {
+        console.log("this", this);
+      };
+      fn1();
+    },
+  };
+  obj.fn(); // obj window obj
+
+  const objFn = obj.fn;
+  objFn(); // window window window
+  ```
+
 ## 解析
 
 - 调用位置
-  - 调用位置：函数在代码中被调用的位置（而不是声明的位置）.
-  - 调用栈：为了到达当前执行位置所调用的所有函数
+- 调用位置：函数在代码中被调用的位置（而不是声明的位置）.
+- 调用栈：为了到达当前执行位置所调用的所有函数
 - <span class="k-p">绑定规则</span>
-  - 默认绑定
-    - 独立函数调用
-      - 非严格模式 window
-      - 严格模式 undefined
-  - 隐式绑定：当函数引用有山下文对象时，隐式绑定规则会把函数调用中的 this 绑定到这个上下文对象
-  - 显式绑定
-    - API 调用的"上下文"
-    - call apply bind
-    - new 绑定
-      - new 操作符会进行如下操作
-        - 创建一个全新的对象
-        - 新对象会被执行[[Prototype]]连接
-        - 新对象会绑定到函数调用的 this
-        - 如果函数没有返回其他对象，表达式会返回这个新对象
-    - 优先级
-      - new 绑定 > 显式绑定 > 隐式绑定 > 默认绑定
-    - 绑定例外:忽略的 this
-      - call apply bind  会忽略   null 或者 undefined 作为 this 的 绑定对象
-      - 使用 Object.create()，创建{}， 并委托 this,更安全
+- 默认绑定
+  - 独立函数调用
+    - 非严格模式 window
+    - 严格模式 undefined
+- 隐式绑定：当函数引用有山下文对象时，隐式绑定规则会把函数调用中的 this 绑定到这个上下文对象
+- 显式绑定
+  - API 调用的"上下文"
+  - call apply bind
+  - new 绑定
+    - new 操作符会进行如下操作
+      - 创建一个全新的对象
+      - 新对象会被执行[[Prototype]]连接
+      - 新对象会绑定到函数调用的 this
+      - 如果函数没有返回其他对象，表达式会返回这个新对象
+  - 优先级
+    - new 绑定 > 显式绑定 > 隐式绑定 > 默认绑定
+  - 绑定例外:忽略的 this
+    - call apply bind  会忽略   null 或者 undefined 作为 this 的 绑定对象
+    - 使用 Object.create()，创建{}， 并委托 this,更安全
 
 ## Reference 规范类型
 

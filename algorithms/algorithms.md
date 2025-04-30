@@ -2225,5 +2225,8 @@ function MonotonicQueuqe() {
 <a href="https://github.com/trekhleb/javascript-algorithms/blob/master/README.zh-CN.md" target="_blank"  style="display: block">JavaScript 算法与数据结构</a>
 <a href="https://nwy3y7fy8w5.feishu.cn/docx/MUZndda3koTzTtxNnE6ccsRYnjb" target="_blank"  style="display: block">资料-常见数据结构</a>
 <a href="https://nwy3y7fy8w5.feishu.cn/docx/Vp1odZwQtoGxtnxnhagcabsZnLf" target="_blank"  style="display: block">资料-常见算法</a>
-
+<a href="https://nwy3y7fy8w5.feishu.cn/docx/YsyDdax7Wo1h7yxdntwcvtDxn8c" target="_blank"  style="display: block">常见大厂算法-1</a>
+<a href="https://nwy3y7fy8w5.feishu.cn/docx/I8rPdgtzXoYvzLxUxZzccrsdnRe" target="_blank"  style="display: block">常见大厂算法-2</a>
 <a href="https://gitee.com/sky__bear/algorithm" target="_blank"  style="display: block">代码地址</a>
+
+

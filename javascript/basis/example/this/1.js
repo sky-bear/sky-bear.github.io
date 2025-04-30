@@ -23,17 +23,36 @@ const obj3 = {
   },
 };
 
-obj1.fn();
+// obj1.fn();
 
-obj2.fn();
+// obj2.fn();
 
-obj2.fn2();
+// obj2.fn2();
 
-const fn2 = obj2.fn2;
+// const fn2 = obj2.fn2;
 
-fn2();
+// fn2();
 
-obj3.fn(fn2);
+// obj3.fn(fn2);
 
 
 
+const fn = () => {
+  console.log("this", this);
+}
+
+const obj = {
+  a: 1,
+  fn: function () {
+    console.log("this", this);
+    fn();
+    const fn1 = () => {
+      console.log("this", this);
+    }
+    fn1()
+  }
+}
+obj.fn();
+
+const objFn = obj.fn;
+objFn()
