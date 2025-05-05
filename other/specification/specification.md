@@ -9,6 +9,12 @@ import Image from "../../components/Image/index.vue"
 - 代码相关：js/ts/style 编码规范
 - 命名与单词拼写规范
 - git 提交规范等
+- lint
+  - stylelint
+  - commit 检查
+  - markdownlint
+  - eslint
+  - prettier
 
 ### 样式约束`stylelint`
 
@@ -167,7 +173,7 @@ npm exec tsno run ./scripts/pre-commit.ts
 执行以下命令，实现 husky 提交前的约束 hook
 
 ```sh
-npx husky add .husky/pre-commit 
+npx husky add .husky/pre-commit
 npx husky add .husky/commit-msg
 ```
 
@@ -376,4 +382,6 @@ module.exports = {
 };
 ```
 
+## 工程化插件开发
 
+lerna + pnpm
