@@ -99,7 +99,7 @@ npm view xxx    // 判断是否有这个包
 - version：
 - dependencies: 开发环境+生产环境的依赖模块
 - devDependencies: 开发环境的依赖模块
-- peerDependencies: 同等依赖， 依赖摸个环境使用的， 依赖某个版本，比如 react-dom 和 react 的版本要一致
+- peerDependencies: 同等依赖， 依赖某个环境使用的， 依赖某个版本，比如 react-dom 和 react 的版本要一致
 - bundledDependencies: 打包时包含的依赖模块，这几个包将被一起打包
 - engine: 指定项目运行的 node 版本, 或者运行环境
 
