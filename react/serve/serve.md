@@ -74,7 +74,7 @@ import Image from "../../components/Image/index.vue"
 
 - 服务器端测试
   - 我们可以通过 apach bench, jmeter 等
-  - abs -n 1000 -c 100 http://localhost:3000/ ,表示以 100 并发的形式发送了 1000 个请求到 localhost: 3000
+  - `abs -n 1000 -c 100 http://localhost:3000/` ,表示以 100 并发的形式发送了 1000 个请求到 localhost: 3000
   - 我们可以接入 nodejs 的监控告警，保证服务稳定性
 - 多进程优化
 
@@ -127,5 +127,5 @@ import Image from "../../components/Image/index.vue"
   ```
 使用PM2部署我们的SSR应用
 然后使用同构应用框架进行开发
-- https://www.nuxtjs.cn/guide/installation(Vue)
-- https://www.nextjs.cn/learn/basics/create-nextjs-app(React)
+- `https://www.nuxtjs.cn/guide/installation(Vue)`
+- `https://www.nextjs.cn/learn/basics/create-nextjs-app(React)`

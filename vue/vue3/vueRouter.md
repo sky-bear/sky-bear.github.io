@@ -6,13 +6,13 @@
   - hash 是 URL 中 hash(#)及后边的部分，常用于锚点再页面内进行导航，改变 URL 中的 hash 部分不会引起页面刷新
   - 改变 URL 的方式
     - 通过浏览器的前进后退改变 URL
-    - 通过<a>标签改变 URL
+    - 通过`<a>`标签改变 URL
     - 通过 window.location 改变 URL
 - history 实现
   - history 提供了 pushState 和 replaceState 两个方法，这两个方法都改变 URL 部分不引起页面刷新
   - history 提供了类似 hashchange 事件的 popstate 事件，但是
     - 通过浏览器前进后退改变 URL 的时候会触发 popState 事件
-    - 通过 pushState/replaceState 或<a>标签改变 URL 不会触发 popState，但是我们可以通过拦截 pushState/replaceState 的调用和<a>标签的点击事件来检测 URL 变化
+    - 通过 pushState/replaceState 或`<a>`标签改变 URL 不会触发 popState，但是我们可以通过拦截 pushState/replaceState 的调用和`<a>`标签的点击事件来检测 URL 变化
     - 通过 js 调用 history 的 back, go, forward 方法触发该事件
 
 ## vueRouter3
