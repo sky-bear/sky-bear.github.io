@@ -103,14 +103,15 @@ v18 后
 - 进行浏览器兼容， 跨平台
 - 避免垃圾回收，React 对事件进行封装，减少了内存开销
 - 方便事件统一管理（如事件的委托）
-- 17之前都放到document  17开始  react树的根节点
+- 17 之前都放到 document 17 开始 react 树的根节点
 
   :::warning
   区别：
+
   - 命名不一样，react 事件采用驼峰命名，原生事件采用小写
   - 事件处理函数写法不一样
   - 阻止默认行为方式不同`e.preventDefault`
-  :::
+    :::
 
 ### immutable 及 immer
 
@@ -419,6 +420,31 @@ React 内部实现的一套数据结构，支持状态更新， 支持优先级�
 - 工作单元
   - 在当前更新过程中，当前节点发生什么变化， 打标
 
+## hooks
+
+hooks 在 fiber 是链表结构，这里用数组来模拟
+
+### 为什么不能在循环 和条件判断里使用 hooks
+
+因为 hooks 的状态 是通过类似数组的形式维护的，也就是按照 hooks 定义的顺序维护的， 如果在 if, for 中使用 hooks， 如果顺序发生变化， 导致 hooks 的依赖项无法正确获取
+
+### 为什么不能在函数组件中使用 hooks
+
+因为函数组件没有自己的生命周期， 所以无法使用 hooks
+
+### 为什么不能在函数组件中使用 hooks
+
+### 为什么 useEffect,第二个参数为空数组时，相当于 componentDidMount
+
+### hooks 如何解决依赖复用的问题
+
+采用类似数组的方式处理依赖项， 例如 useState, useEffect, useReducer, useCustom 等等
+每创建使用一个 hooks， 把对应的依赖项会存储在一个数组中， 当执行 useEffect 时， 会根据依赖项的索引， 找到对应的依赖项， 如果依赖项发生变化， 则会执行 useEffect 中的 cb
+
+共用一个 memoizeState
+
+### 模拟实现 hooks 的实现
+
 ## 引用
 
 <a href="https://react.docschina.org/" target="_blank"  style="display: block">react 官网</a>
@@ -429,3 +455,6 @@ React 内部实现的一套数据结构，支持状态更新， 支持优先级�
 <a href="https://react.iamkasong.com/me.html" target="_blank"  style="display: block">react 技术揭秘</a>
 <a href="https://y03l2iufsbl.feishu.cn/docx/AsKMdzcoNojUA2xAh9cc1fzknJh" target="_blank"  style="display: block">状态管理和 CRA</a>
 
+<a href="https://nwy3y7fy8w5.feishu.cn/docx/V2y4d9zEJobo7XxErDMcM436nA9" target="_blank"  style="display: block">hooks2</a>
+<a href="https://nwy3y7fy8w5.feishu.cn/docx/LpaZdo2q8ozsI2x09vNcyFkznrg" target="_blank"  style="display: block">hooks3</a>
+<a href="https://nwy3y7fy8w5.feishu.cn/docx/V7BadFHrooGtJmxdH5EcsoMznje" target="_blank"  style="display: block">hooks4</a>s
