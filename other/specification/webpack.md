@@ -18,8 +18,12 @@ webpack 是一个用于现代 JavaScript 应用程序的 静态模块打包工�
 - @babel/core： Babel 的核心库，它提供了将现代 JavaScript（ES6+）代码转换为向后兼容版本所需的所有基础功能。
 - @babel/preset-env 预设的插件集合
 - @babel/preset-typescript
+- @babel/plugin-transform-runtime 辅助函数
+- @babel/runtime
+  `@babel/plugin-transform-runtime` 插件通过引用 `@babel/runtime` 提供的模块来替换这些内联的辅助函数，从而避免了重复，减少了打包后的文件大小。
 - css-loader: 解析 css 文件，允许在 js 中导入 css， 模块化 css
 - style-loader: 将 css 动态插入到 DOM 中，配合 css-loader 使用
+- postcss-loader: 解析 css 文件，允许在 css 中使用 import, url 等语法
 
 ### plugin
 

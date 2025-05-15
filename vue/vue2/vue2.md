@@ -216,37 +216,36 @@ export function initGlobalAPI(Vue: GlobalAPI) {
 
 ##### Vue.set
 
-```md
+```js
 export function set (target: Array<any> | Object, key: any, val: any): any {
-if (process.env.NODE_ENV !== 'production' &&
-(isUndef(target) || isPrimitive(target))
-) {
-warn(`Cannot set reactive property on undefined, null, or primitive value: ${(target: any)}`)
-}
+// 判断目标元素是否是数组    并且key是否是合法的数组索引
 if (Array.isArray(target) && isValidArrayIndex(key)) {
-target.length = Math.max(target.length, key)
-target.splice(key, 1, val)
-return val
+  target.length = Math.max(target.length, key)
+  //  splice 方法会触发视图更新 重新写过的
+  target.splice(key, 1, val)
+  return val
 }
+// 本生就是响应数据不处理
 if (key in target && !(key in Object.prototype)) {
-target[key] = val
-return val
+  target[key] = val
+  return val
 }
-const ob = (target: any).**ob**
+const ob = (target).__ob__
 if (target.\_isVue || (ob && ob.vmCount)) {
-process.env.NODE_ENV !== 'production' && warn(
-'Avoid adding reactive properties to a Vue instance or its root $data ' +
-'at runtime - declare it upfront in the data option.'
-)
-return val
+  process.env.NODE_ENV !== 'production' && warn(
+  'Avoid adding reactive properties to a Vue instance or its root $data ' +
+  'at runtime - declare it upfront in the data option.'
+  )
+  return val
 }
+// 目标对象不是响应式直接赋值
 if (!ob) {
-target[key] = val
-return val
+  target[key] = val
+  return val
 }
-defineReactive(ob.value, key, val)
-ob.dep.notify()
-return val
+  defineReactive(ob.value, key, val)
+  ob.dep.notify()
+  return val
 }
 ```
 
@@ -381,6 +380,38 @@ export function initUse(Vue: GlobalAPI) {
 
 ##### Vue.component Vue.directive Vue.filter
 
+```js
+export const ASSET_TYPES = [
+  'component',
+  'directive',
+  'filter'
+]
+
+export function initAssetRegisters (Vue: GlobalAPI) {
+
+  ASSET_TYPES.forEach(type => {
+    Vue[type] = function (
+      id: string,
+      definition: Function | Object
+    ): Function | Object | void {
+      if (!definition) {
+        return this.options[type + 's'][id]
+      } else {
+        if (type === 'component' && isPlainObject(definition)) {
+          definition.name = definition.name || id
+          definition = this.options._base.extend(definition)
+        }
+        if (type === 'directive' && typeof definition === 'function') {
+          definition = { bind: definition, update: definition }
+        }
+        this.options[type + 's'][id] = definition
+        return definition
+      }
+    }
+  })
+}
+```
+
 initAssetRegisters 方法，主要是初始化这几个方法`component`,`directive`, `filter`
 
 ### 数据驱动
@@ -415,11 +446,9 @@ export function initMixin(Vue: Class<Component>) {
 
     // a flag to avoid this being observed
     vm._isVue = true;
-    // merge options
+    // 组件
     if (options && options._isComponent) {
-      // optimize internal component instantiation
-      // since dynamic options merging is pretty slow, and none of the
-      // internal component options needs special treatment.
+      // 处理组件
       initInternalComponent(vm, options);
     } else {
       vm.$options = mergeOptions(
@@ -1298,12 +1327,12 @@ function patchVnode(
 ```
 
 #### updateChildren
+
 新 - 旧 <br. >
 首首比较
 尾尾比较
 尾首比较
 首尾比较
-
 
 ##### 实现思路
 
@@ -1454,9 +1483,10 @@ function vue2Diff(prevChildren, nextChildren, parent) {
   我们来解决第一个问题：什么情况下需要移动，我们还是以上图为例：
   <Image  src="/vue/vue2/images/diff3.png" />
   当我们在第一个循环时，在第四步发现旧列表的尾节点 oldEndNode 与新列表的头节点 newStartNode 的 key 相同，是可复用的 DOM 节点。通过观察我们可以发现，原本在旧列表末尾的节点，却是新列表中的开头节点，没有人比他更靠前，因为他是第一个，所以我们只需要把当前的节点移动到原本旧列表中的第一个节点之前，让它成为第一个节点即可。
+
   ```js
   function vue2Diff(prevChildren, nextChildren, parent) {
-  // ...
+    // ...
     while (oldStartIndex <= oldEndIndex && newStartIndex <= newEndIndex) {
       if (oldStartNode.key === newStartNode.key) {
         // ...
@@ -1465,20 +1495,21 @@ function vue2Diff(prevChildren, nextChildren, parent) {
       } else if (oldStartNode.key === newEndNode.key) {
         // ...
       } else if (oldEndNode.key === newStartNode.key) {
-        patch(oldEndNode, newStartNode, parent)
+        patch(oldEndNode, newStartNode, parent);
         // 移动到旧列表头节点之前
-        parent.insertBefore(oldEndNode.el, oldStartNode.el)
-        
-        oldEndIndex--
-        newStartIndex++
-        oldEndNode = prevChildren[oldEndIndex]
-        newStartNode = nextChildren[newStartIndex]
+        parent.insertBefore(oldEndNode.el, oldStartNode.el);
+
+        oldEndIndex--;
+        newStartIndex++;
+        oldEndNode = prevChildren[oldEndIndex];
+        newStartNode = nextChildren[newStartIndex];
       }
     }
   }
   ```
-<Image  src="/vue/vue2/images/diff4.png" />
-进入第二次循环，我们在第二步发现，旧列表的尾节点oldEndNode和新列表的尾节点newEndNode为复用节点。原本在旧列表中就是尾节点，在新列表中也是尾节点，说明该节点不需要移动，所以我们什么都不需要做。同理，如果是旧列表的头节点oldStartNode和新列表的头节点newStartNode为复用节点，我们也什么都不需要做
+
+  <Image  src="/vue/vue2/images/diff4.png" />
+  进入第二次循环，我们在第二步发现，旧列表的尾节点oldEndNode和新列表的尾节点newEndNode为复用节点。原本在旧列表中就是尾节点，在新列表中也是尾节点，说明该节点不需要移动，所以我们什么都不需要做。同理，如果是旧列表的头节点oldStartNode和新列表的头节点newStartNode为复用节点，我们也什么都不需要做
 
 ```js
  else if (oldEndNode.key === newEndNode.key) {
@@ -1488,7 +1519,7 @@ function vue2Diff(prevChildren, nextChildren, parent) {
       newEndIndex--;
       oldEndNode = prevChildren[oldEndIndex];
       newEndNode = nextChildren[newEndIndex];
-    } 
+    }
 ```
 
 <Image  src="/vue/vue2/images/diff5.png" />
@@ -1504,25 +1535,26 @@ function vue2Diff(prevChildren, nextChildren, parent) {
     } else if (oldEndNode.key === newEndNode.key) {
       // ...
     } else if (oldStartNode.key === newEndNode.key) {
-      patch(oldStartNode, newEndNode, parent)
-      parent.insertBefore(oldStartNode.el, oldEndNode.el.nextSibling)
+      patch(oldStartNode, newEndNode, parent);
+      parent.insertBefore(oldStartNode.el, oldEndNode.el.nextSibling);
 
-      oldStartIndex++
-      newEndIndex--
-      oldStartNode = prevChildren[oldStartIndex]
-      newEndNode = nextChildren[newEndIndex]
+      oldStartIndex++;
+      newEndIndex--;
+      oldStartNode = prevChildren[oldStartIndex];
+      newEndNode = nextChildren[newEndIndex];
     } else if (oldEndNode.key === newStartNode.key) {
-     //...
+      //...
     }
   }
 }
 ```
+
 <Image  src="/vue/vue2/images/diff6.png" />
 进入最后一个循环。在第一步旧列表头节点oldStartNode与新列表头节点newStartNode位置相同，所以啥也不用做。然后结束循环。
 
-
 ##### 非理想情况
-上文中有一个特殊情况，当四次对比都没找到复用节点时，我们只能拿新列表的第一个节点去旧列表中找与其key相同的节点。
+
+上文中有一个特殊情况，当四次对比都没找到复用节点时，我们只能拿新列表的第一个节点去旧列表中找与其 key 相同的节点。
 <Image  src="/vue/vue2/images/diff7.png" />
 
 ```js
@@ -1530,54 +1562,56 @@ function vue2Diff(prevChildren, nextChildren, parent) {
   //...
   while (oldStartIndex <= oldEndIndex && newStartIndex <= newEndIndex) {
     if (oldStartNode.key === newStartNode.key) {
-    //...
+      //...
     } else if (oldEndNode.key === newEndNode.key) {
-    //...
+      //...
     } else if (oldStartNode.key === newEndNode.key) {
-    //...
+      //...
     } else if (oldEndNode.key === newStartNode.key) {
-    //...
+      //...
     } else {
       // 在旧列表中找到 和新列表头节点key 相同的节点
       let newKey = newStartNode.key,
-        oldIndex = prevChildren.findIndex(child => child.key === newKey);
-      
+        oldIndex = prevChildren.findIndex((child) => child.key === newKey);
     }
   }
 }
 ```
+
 找节点的时候其实会有两种情况：一种在旧列表中找到了，另一种情况是没找到
 <Image  src="/vue/vue2/images/diff8.png" />
 
-当我们在旧列表中找到对应的VNode，我们只需要将找到的节点的DOM元素，移动到开头就可以了。这里的逻辑其实和第四步的逻辑是一样的，只不过第四步是移动的尾节点，这里是移动找到的节点。DOM移动后，由我们将旧列表中的节点改为undefined，这是至关重要的一步，因为我们已经做了节点的移动了所以我们不需要进行再次的对比了。最后我们将头指针newStartIndex向后移一位。
+当我们在旧列表中找到对应的 VNode，我们只需要将找到的节点的 DOM 元素，移动到开头就可以了。这里的逻辑其实和第四步的逻辑是一样的，只不过第四步是移动的尾节点，这里是移动找到的节点。DOM 移动后，由我们将旧列表中的节点改为 undefined，这是至关重要的一步，因为我们已经做了节点的移动了所以我们不需要进行再次的对比了。最后我们将头指针 newStartIndex 向后移一位。
+
 ```js
 function vue2Diff(prevChildren, nextChildren, parent) {
   //...
   while (oldStartIndex <= oldEndIndex && newStartIndex <= newEndIndex) {
     if (oldStartNode.key === newStartNode.key) {
-    //...
+      //...
     } else if (oldEndNode.key === newEndNode.key) {
-    //...
+      //...
     } else if (oldStartNode.key === newEndNode.key) {
-    //...
+      //...
     } else if (oldEndNode.key === newStartNode.key) {
-    //...
+      //...
     } else {
       // 在旧列表中找到 和新列表头节点key 相同的节点
       let newtKey = newStartNode.key,
-        oldIndex = prevChildren.findIndex(child => child.key === newKey);
-      
+        oldIndex = prevChildren.findIndex((child) => child.key === newKey);
+
       if (oldIndex > -1) {
         let oldNode = prevChildren[oldIndex];
-        patch(oldNode, newStartNode, parent)
-        parent.insertBefore(oldNode.el, oldStartNode.el)
-        prevChildren[oldIndex] = undefined
+        patch(oldNode, newStartNode, parent);
+        parent.insertBefore(oldNode.el, oldStartNode.el);
+        prevChildren[oldIndex] = undefined;
       }
-      newStartNode = nextChildren[++newStartIndex]
+      newStartNode = nextChildren[++newStartIndex];
     }
   }
 }
 ```
+
 如果在旧列表中没有找到复用节点，就直接创建一个新的节点放到最前面就可以了，然后后移头指针 `newStartIndex`
 <Image  src="/vue/vue2/images/diff9.png" />
 
@@ -1586,56 +1620,59 @@ function vue2Diff(prevChildren, nextChildren, parent) {
   //...
   while (oldStartIndex <= oldEndIndex && newStartIndex <= newEndIndex) {
     if (oldStartNode.key === newStartNode.key) {
-    //...
+      //...
     } else if (oldEndNode.key === newEndNode.key) {
-    //...
+      //...
     } else if (oldStartNode.key === newEndNode.key) {
-    //...
+      //...
     } else if (oldEndNode.key === newStartNode.key) {
-    //...
+      //...
     } else {
       // 在旧列表中找到 和新列表头节点key 相同的节点
       let newtKey = newStartNode.key,
-        oldIndex = prevChildren.findIndex(child => child.key === newKey);
-      
+        oldIndex = prevChildren.findIndex((child) => child.key === newKey);
+
       if (oldIndex > -1) {
         let oldNode = prevChildren[oldIndex];
-        patch(oldNode, newStartNode, parent)
-        parent.insertBefore(oldNode.el, oldStartNode.el)
-        prevChildren[oldIndex] = undefined
+        patch(oldNode, newStartNode, parent);
+        parent.insertBefore(oldNode.el, oldStartNode.el);
+        prevChildren[oldIndex] = undefined;
       } else {
-              mount(newStartNode, parent, oldStartNode.el)
+        mount(newStartNode, parent, oldStartNode.el);
       }
-      newStartNode = nextChildren[++newStartIndex]
+      newStartNode = nextChildren[++newStartIndex];
     }
   }
 }
 ```
-最后当旧列表遍历到undefind时就跳过当前节点。
+
+最后当旧列表遍历到 undefind 时就跳过当前节点。
 
 ```js
 function vue2Diff(prevChildren, nextChildren, parent) {
   //...
   while (oldStartIndex <= oldEndIndex && newStartIndex <= newEndIndex) {
     if (oldStartNode === undefind) {
-            oldStartNode = prevChildren[++oldStartIndex]
+      oldStartNode = prevChildren[++oldStartIndex];
     } else if (oldEndNode === undefind) {
-            oldEndNode = prevChildren[--oldEndIndex]
+      oldEndNode = prevChildren[--oldEndIndex];
     } else if (oldStartNode.key === newStartNode.key) {
-    //...
+      //...
     } else if (oldEndNode.key === newEndNode.key) {
-    //...
+      //...
     } else if (oldStartNode.key === newEndNode.key) {
-    //...
+      //...
     } else if (oldEndNode.key === newStartNode.key) {
-    //...
+      //...
     } else {
-    // ...
+      // ...
     }
   }
 }
 ```
+
 ##### 添加节点
+
 <Image  src="/vue/vue2/images/diff10.png" />
 针对上述例子，几次循环都是尾节点相同，尾指针一直向前移动，直到循环结束；
 <Image  src="/vue/vue2/images/diff11.png" />
@@ -1645,34 +1682,34 @@ function vue2Diff(prevChildren, nextChildren, parent) {
 function vue2Diff(prevChildren, nextChildren, parent) {
   //...
   while (oldStartIndex <= oldEndIndex && newStartIndex <= newEndIndex) {
-  // ...
+    // ...
   }
   if (oldEndIndex < oldStartIndex) {
     for (let i = newStartIndex; i <= newEndIndex; i++) {
-      mount(nextChildren[i], parent, prevStartNode.el)
+      mount(nextChildren[i], parent, prevStartNode.el);
     }
   }
 }
 ```
 
-
 ##### 移除节点
-当新列表的 newEndIndex 小于newStartIndex时，我们将旧列表剩余的节点删除即可。这里我们需要注意，旧列表的undefind。在第二小节中我们提到过，当头尾节点都不相同时，我们会去旧列表中找新列表的第一个节点，移动完DOM节点后，将旧列表的那个节点改为undefind。所以我们在最后的删除时，需要注意这些undefind，遇到的话跳过当前循环即可。
+
+当新列表的 newEndIndex 小于 newStartIndex 时，我们将旧列表剩余的节点删除即可。这里我们需要注意，旧列表的 undefind。在第二小节中我们提到过，当头尾节点都不相同时，我们会去旧列表中找新列表的第一个节点，移动完 DOM 节点后，将旧列表的那个节点改为 undefind。所以我们在最后的删除时，需要注意这些 undefind，遇到的话跳过当前循环即可。
 
 ```js
 function vue2Diff(prevChildren, nextChildren, parent) {
   //...
   while (oldStartIndex <= oldEndIndex && newStartIndex <= newEndIndex) {
-  // ...
+    // ...
   }
   if (oldEndIndex < oldStartIndex) {
     for (let i = newStartIndex; i <= newEndIndex; i++) {
-      mount(nextChildren[i], parent, prevStartNode.el)
+      mount(nextChildren[i], parent, prevStartNode.el);
     }
   } else if (newEndIndex < newStartIndex) {
     for (let i = oldStartIndex; i <= oldEndIndex; i++) {
       if (prevChildren[i]) {
-        partent.removeChild(prevChildren[i].el)
+        partent.removeChild(prevChildren[i].el);
       }
     }
   }
@@ -1680,6 +1717,7 @@ function vue2Diff(prevChildren, nextChildren, parent) {
 ```
 
 ##### 总结
+
 ```js
 function vue2diff(prevChildren, nextChildren, parent) {
   let oldStartIndex = 0,
@@ -1692,76 +1730,75 @@ function vue2diff(prevChildren, nextChildren, parent) {
     newEndNode = nextChildren[newStartIndex];
   while (oldStartIndex <= oldStartIndex && newStartIndex <= newStartIndex) {
     if (oldStartNode === undefined) {
-      oldStartNode = prevChildren[++oldStartIndex]
+      oldStartNode = prevChildren[++oldStartIndex];
     } else if (oldEndNode === undefined) {
-      oldEndNode = prevChildren[--oldStartIndex]
+      oldEndNode = prevChildren[--oldStartIndex];
     } else if (oldStartNode.key === newStartNode.key) {
-      patch(oldStartNode, newStartNode, parent)
+      patch(oldStartNode, newStartNode, parent);
 
-      oldStartIndex++
-      newStartIndex++
-      oldStartNode = prevChildren[oldStartIndex]
-      newStartNode = nextChildren[newStartIndex]
+      oldStartIndex++;
+      newStartIndex++;
+      oldStartNode = prevChildren[oldStartIndex];
+      newStartNode = nextChildren[newStartIndex];
     } else if (oldEndNode.key === newEndNode.key) {
-      patch(oldEndNode, newEndNode, parent)
+      patch(oldEndNode, newEndNode, parent);
 
-      oldStartIndex--
-      newStartIndex--
-      oldEndNode = prevChildren[oldStartIndex]
-      newEndNode = nextChildren[newStartIndex]
+      oldStartIndex--;
+      newStartIndex--;
+      oldEndNode = prevChildren[oldStartIndex];
+      newEndNode = nextChildren[newStartIndex];
     } else if (oldStartNode.key === newEndNode.key) {
-      patch(oldStartNode, newEndNode, parent)
-      parent.insertBefore(oldStartNode.el, oldEndNode.el.nextSibling)
-      oldStartIndex++
-      newStartIndex--
-      oldStartNode = prevChildren[oldStartIndex]
-      newEndNode = nextChildren[newStartIndex]
+      patch(oldStartNode, newEndNode, parent);
+      parent.insertBefore(oldStartNode.el, oldEndNode.el.nextSibling);
+      oldStartIndex++;
+      newStartIndex--;
+      oldStartNode = prevChildren[oldStartIndex];
+      newEndNode = nextChildren[newStartIndex];
     } else if (oldEndNode.key === newStartNode.key) {
-      patch(oldEndNode, newStartNode, parent)
-      parent.insertBefore(oldEndNode.el, oldStartNode.el)
-      oldStartIndex--
-      newStartIndex++
-      oldEndNode = prevChildren[oldStartIndex]
-      newStartNode = nextChildren[newStartIndex]
+      patch(oldEndNode, newStartNode, parent);
+      parent.insertBefore(oldEndNode.el, oldStartNode.el);
+      oldStartIndex--;
+      newStartIndex++;
+      oldEndNode = prevChildren[oldStartIndex];
+      newStartNode = nextChildren[newStartIndex];
     } else {
       let newKey = newStartNode.key,
-        oldIndex = prevChildren.findIndex(child => child && (child.key === newKey));
+        oldIndex = prevChildren.findIndex(
+          (child) => child && child.key === newKey
+        );
       if (oldIndex === -1) {
-        mount(newStartNode, parent, oldStartNode.el)
+        mount(newStartNode, parent, oldStartNode.el);
       } else {
-        let prevNode = prevChildren[oldIndex]
-        patch(prevNode, newStartNode, parent)
-        parent.insertBefore(prevNode.el, oldStartNode.el)
-        prevChildren[oldIndex] = undefined
+        let prevNode = prevChildren[oldIndex];
+        patch(prevNode, newStartNode, parent);
+        parent.insertBefore(prevNode.el, oldStartNode.el);
+        prevChildren[oldIndex] = undefined;
       }
-      newStartIndex++
-      newStartNode = nextChildren[newStartIndex]
+      newStartIndex++;
+      newStartNode = nextChildren[newStartIndex];
     }
   }
   if (newStartIndex > newEndIndex) {
     while (oldStartIndex <= oldEndIndex) {
       if (!prevChildren[oldStartIndex]) {
-        oldStartIndex++
-        continue
+        oldStartIndex++;
+        continue;
       }
-      parent.removeChild(prevChildren[oldStartIndex++].el)
+      parent.removeChild(prevChildren[oldStartIndex++].el);
     }
   } else if (oldStartIndex > oldEndIndex) {
     while (newStartIndex <= newEndIndex) {
-      mount(nextChildren[newStartIndex++], parent, oldStartNode.el)
+      mount(nextChildren[newStartIndex++], parent, oldStartNode.el);
     }
   }
 }
 ```
 
 #### 缺点
-Vue2 是全量 Diff（当数据发生变化，它就会新生成一个DOM树，并和之前的DOM树进行比较，找到不同的节点然后更新），如果层级很深，很消耗内存；
 
-
-
-
+Vue2 是全量 Diff（当数据发生变化，它就会新生成一个 DOM 树，并和之前的 DOM 树进行比较，找到不同的节点然后更新），如果层级很深，很消耗内存；
 
 ## 资料引用
 
-<a href="https://y03l2iufsbl.feishu.cn/docx/E6J2dV7aLogtQ4xq2Fvc1yCFnjf" target="_blank"  style="display: block">vue</a>
+<a href="https://y03l2iufsbl.feishu.cn/docx/E6J2dV7aLogtQ4xq2Fvc1yCFnjf" target="_blank"  style="display: block">vue源码</a>
 <a href="/vue/vue2/pdf/5. Vue2 核心模块源码解析.pdf" target="_blank"  style="display: block">pdf</a>

@@ -103,11 +103,13 @@ v18 后
 - 进行浏览器兼容， 跨平台
 - 避免垃圾回收，React 对事件进行封装，减少了内存开销
 - 方便事件统一管理（如事件的委托）
+- 17之前都放到document  17开始  react树的根节点
+
   :::warning
   区别：
-- 命名不一样，react 事件采用驼峰命名，原生事件采用小写
-- 事件处理函数写法不一样
-- 阻止默认行为方式不同`e.preventDefault`
+  - 命名不一样，react 事件采用驼峰命名，原生事件采用小写
+  - 事件处理函数写法不一样
+  - 阻止默认行为方式不同`e.preventDefault`
   :::
 
 ### immutable 及 immer
@@ -426,3 +428,4 @@ React 内部实现的一套数据结构，支持状态更新， 支持优先级�
 <a href="https://nwy3y7fy8w5.feishu.cn/docx/TWPadLxd0odw1HxsP5UcJW26nlc" target="_blank"  style="display: block">react 源码 下</a>
 <a href="https://react.iamkasong.com/me.html" target="_blank"  style="display: block">react 技术揭秘</a>
 <a href="https://y03l2iufsbl.feishu.cn/docx/AsKMdzcoNojUA2xAh9cc1fzknJh" target="_blank"  style="display: block">状态管理和 CRA</a>
+

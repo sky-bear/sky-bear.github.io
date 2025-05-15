@@ -28,8 +28,31 @@
 
 
 
-const obj = {a:1}
-const a = Object.seal(obj)
-a.b = 2
-a.a = 2
-console.log(a)
+// const obj = {a:1}
+// const a = Object.seal(obj)
+// a.b = 2
+// a.a = 2
+// console.log(a)
+
+
+// const obj = {
+//   getA() {
+//     return () => {
+//       console.log(this)
+//     }
+//   }
+// }
+
+// obj.getA()()
+
+
+const phoneRex =/^1[34578]\d{9}$/g
+
+
+
+
+
+
+
+
+
