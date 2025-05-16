@@ -415,6 +415,116 @@ export function initAssetRegisters (Vue: GlobalAPI) {
 initAssetRegisters 方法，主要是初始化这几个方法`component`,`directive`, `filter`
 
 ### 数据驱动
+UI = render(state)
+
+#### 响应式
+
+```ts
+export class Observer {
+  value: any;
+  dep: Dep;
+  vmCount: number; // number of vms that have this object as root $data
+
+  constructor (value: any) {
+    this.value = value
+    this.dep = new Dep()  // 创建一个可观测对象
+    this.vmCount = 0
+    def(value, '__ob__', this) // 在当前的对象上添加一个__ob__属性，值是Observer实例 // def 往对象上添加属性
+    if (Array.isArray(value)) { // 数组
+      if (hasProto) { //   const hasProto = '__proto__' in {}  能否使用 __proto__
+        protoAugment(value, arrayMethods) // arrayMethods 数组的一些方法
+      } else {
+        copyAugment(value, arrayMethods, arrayKeys)
+      }
+      this.observeArray(value) // 对数据的都做了处理
+    } else {
+      this.walk(value) //非数组批量处理
+    }
+  }
+
+  walk (obj: Object) {
+    const keys = Object.keys(obj)
+    for (let i = 0; i < keys.length; i++) {
+      defineReactive(obj, keys[i])
+    }
+  }
+
+  observeArray (items: Array<any>) {
+    for (let i = 0, l = items.length; i < l; i++) {
+      observe(items[i])
+    }
+  }
+}
+
+```
+
+
+```ts
+export function defineReactive (
+  obj: Object,
+  key: string,
+  val: any,
+  customSetter?: ?Function,
+  shallow?: boolean
+) {
+  const dep = new Dep()
+
+  const property = Object.getOwnPropertyDescriptor(obj, key)
+  // 如果当前对象不可配置，则直接返回 这里可以使用Object.freeze优化代码
+  if (property && property.configurable === false) {
+    return
+  }
+
+  // cater for pre-defined getter/setters
+  const getter = property && property.get
+  const setter = property && property.set
+  if ((!getter || setter) && arguments.length === 2) {
+    val = obj[key]
+  }
+
+  // 如果不是浅层的 递归调用observe
+  let childOb = !shallow && observe(val)
+  Object.defineProperty(obj, key, {
+    enumerable: true,
+    configurable: true,
+    get: function reactiveGetter () {
+      const value = getter ? getter.call(obj) : val
+      if (Dep.target) {
+        dep.depend()
+        if (childOb) {
+          childOb.dep.depend()
+          if (Array.isArray(value)) {
+            dependArray(value)
+          }
+        }
+      }
+      return value
+    },
+    set: function reactiveSetter (newVal) {
+      const value = getter ? getter.call(obj) : val
+      /* eslint-disable no-self-compare */
+      if (newVal === value || (newVal !== newVal && value !== value)) {
+        return
+      }
+      /* eslint-enable no-self-compare */
+      if (process.env.NODE_ENV !== 'production' && customSetter) {
+        customSetter()
+      }
+      // #7981: for accessor properties without setter
+      if (getter && !setter) return
+      if (setter) {
+        setter.call(obj, newVal)
+      } else {
+        val = newVal
+      }
+      childOb = !shallow && observe(newVal)
+      dep.notify()
+    }
+  })
+}
+```
+
+
 
 #### new Vue
 
@@ -465,8 +575,8 @@ export function initMixin(Vue: Class<Component>) {
     }
     // expose real self
     vm._self = vm;
-    initLifecycle(vm);
-    initEvents(vm);
+    initLifecycle(vm); // 添加自己到parent.$children中， 一些数据的初始化 $parent,$root,$children,$refs 等， 给默认值
+    initEvents(vm); //   
     initRender(vm);
     callHook(vm, "beforeCreate");
     initInjections(vm); // resolve injections before data/props
@@ -490,7 +600,7 @@ export function initMixin(Vue: Class<Component>) {
 
 Vue 初始化主要就干了几件事情，合并配置，初始化生命周期，初始化事件中心，初始化渲染，初始化 data、props、computed、watcher 等
 
-- initLifecycle 初始化声明周期
+- initLifecycle 添加自己到parent.$children中， 一些数据的初始化 $parent,$root,$children,$refs 等， 给默认值
 - initEvents 初始化事件
 - initRender 初始化渲染
 - callHook 调用 beforeCreate 钩子

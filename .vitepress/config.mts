@@ -18,12 +18,16 @@ export default defineConfig({
       { text: "Home", link: "/" },
       { text: "Examples", link: "/example/markdown-examples" },
       { text: "Javascript", link: "/javascript/index" },
-      { text: "browser", link: "/browser/index" },
+      
       { text: "css", link: "/css/css" },
       { text: "设计模式", link: "/designPattern/index" },
       { text: "vue", link: "/vue/index" },
       { text: "react", link: "/react/index" },
       { text: "数据结构和算法", link: "/algorithms/algorithms" },
+      { text: "浏览器", items:[
+        { text: "浏览器相关内容", link: "/browser/index" },
+        { text: "缓存", link: "/browser/cache" },
+      ] },
       {
         text: "其他", items: [
           { text: "性能优化", link: "/other/performance/performance" },
