@@ -139,9 +139,32 @@ react 是函数化， 将所有逻辑都放到函数中处理
 
 ### diff 算法不同
 
-### vue2 采用的是双端 diff
+#### vue2 采用的是双端 diff
 
-### vue3 采用的是靶向更新+ 最长递增子序列（快速 diff）
+#### vue3 采用的是靶向更新+ 最长递增子序列（快速 diff）
+
+### 设计理念
+
+- vue2
+  - 对 TS 支持不友好， 所有的属性都在 this 上， 难以推到数据类型
+  - 全局 API 都在 Vue 对象上，无法实现 tree-shaking
+  - 跨平台不太友好， 无法自定义渲染器
+- Vue3
+  - 耦合度低， 模块化， 每个模块都可以单独使用
+  - 可以实现自定义渲染器
+  - 框架更小，更衣扩展
+  - 使用 monorepo 管理项目， 实现模块拆分
+  ```md
+  paclages
+  。reactivity: 响应式系统
+  。runtime-core:与平台无关的运行时核心
+  。runtime-dom: 针对浏览器的运行时，包括 DOM API，属性。事件处理
+  。runtime-test: 测试文件
+  。server-renderer:服务端渲染
+  。compiler-core:与平台无关的编译器核心
+  。compiler-dom: 针对浏览器的编译模块
+  。compiler-ssr: 服务端渲染
+  ```
 
 参看资料引用 vue3 核心模块源码解析
 

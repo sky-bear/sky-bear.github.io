@@ -80,10 +80,10 @@ Cache-Control 的优先级比 Expires 高！
 - Last-Modified 和 If-Modified-Since
 - Etag 和 If-None-Match
 
-只有协商缓存 才会在判断后添加是否要返回304状态 
+只有协商缓存 才会在判断后添加是否要返回 304 状态
 
 ```js
- res.writeHead(304, "Not Modified");
+res.writeHead(304, "Not Modified");
 ```
 
 #### Last-Modified 与 If-Modified-Since
@@ -129,9 +129,66 @@ ETag 的优先级比 Last-Modified 更高！
 - 分布式系统里多台机器间文件的 Last-Modified 必须保持完全一致，否则在请求负载均衡到不同机器时，会导致比对失败的情况；
 - 分布式系统尽量关闭掉 ETag，因为每台机器生成的 ETag 都不同。
 
+经常变更的资源采用协商缓存，不经常变更的资源采用强缓存。， 如果要做更精细化的缓存策略就要使用策略缓存
 
 #### service worker
+
+PWA 就是借助 service worker， 在前端实现对应资源， 以此将应用本地化
+
+可以使用 `workbox`
+
+#### 静态资源优化方案与思考
+
+- 配置超长时间的本地缓存 —— 节省带宽，提高性能
+- 采用内容摘要作为缓存更新依据 —— 精确的缓存控制
+- 静态资源 CDN 部署 —— 优化网络请求
+- 更资源发布路径实现非覆盖式发布 —— 平滑升级
+
+#### 充分利用浏览器缓存机制
+
+- 对于某些不需要缓存的资源，可以使用 Cache-control: no-store ，表示该资源不需要缓存
+- 对于频繁变动的资源（比如经常需要刷新的首页，资讯论坛新闻类），可以使用 Cache-Control: no-cache 并配合 ETag 使用，表示该资源已被缓存，但是每次都会发送请求询问资源是否更新。
+- 对于代码文件来说，通常使用 Cache-Control: max-age=31536000 并配合策略缓存使用，然后对文件进行指纹处理，一旦文件名变动就会立刻下载新的文件。
+- 静态资源文件通过 Service Worker 进行缓存控制和离线化加载
 
 ## 数据缓存
 
 用于将常使用数据存储在本地，例如用户登录态信息、不常变动且不涉及数据安全问题的数据等。数据缓存的方案有很多，例如：cookie、localstorage、indexedDB 等
+
+> cookie，localStorage，sessionStorage，indexDB
+
+| 特征         | cookie                                     | loaclStorage             | sessionStorage | indexDB                  |
+| ------------ | ------------------------------------------ | ------------------------ | -------------- | ------------------------ |
+| 数据生命周期 | 一般由服务器生成，可以设置过期时间         | 除非被清理，否则一直存在 | 页面关闭就清理 | 除非被清理，否则一直存在 |
+| 存储大小     | 单个 4K                                    | 5M                       | 5M             | 无限                     |
+| 与服务端通信 | 每次都会携带在 header 中，对于请求性能影响 | 不参与                   | 不参与         | 不参与                   |
+| 域名         | 只受主域名控制                             | 受域名控制               | 受域名控制     |                          |
+
+### cookie
+
+cookie 实际是一小段文本信息。客户端请求服务端，如果服务器需要记录该用户的登录状态，就需要使用在响应时向客户端返回一个 cookie。客户端浏览器会将 cookie 保存。客户端再次请求该网站时，会携带 cookie 一同提交到服务端。此时服务端检查该 cookie 来确定用户登录状态。服务器还可以根据需要修改 cookie 内容。
+cookie 包含以下属性：
+
+- Expires ：cookie 过期时间，绝对时间；
+- Max-Age：cookie 失效时间，相对时间；
+- Domain：指定 cookie 可以送达的主机名。
+- Path：指定一个 URL 路径，这个路径必须出现在要请求的资源的路径中才可以发送 Cookie 首部
+- Secure：一个带有安全属性的 cookie 只有在请求使用 SSL 和 HTTPS 协议的时候才会被发送到服务器。
+- HttpOnly: 设置了 HttpOnly 属性的 cookie 不能使用 JavaScript 经由 Document.cookie 属性、XMLHttpRequest 和 Request APIs 进行访问，以防范跨站脚本攻击（XSS）。
+
+```js
+if (req.url === "/read") {
+  // 读取 cookieconsole.log(req.headers.cookie);
+  res.end(req.headers.cookie);
+} else if (req.url === "/write") {
+  // 设置 cookie
+  res.setHeader("Set-Cookie", [
+    "name=heyi; domain=heyi.com; path=/write; httpOnly=true",
+    `age=28; Expires=${new Date(Date.now() + 1000 * 10).toGMTString()}`,
+    `address=${encodeURIComponent("合一")}; max-age=10`,
+  ]);
+  res.end("Write ok");
+} else {
+  res.end("Not Found");
+}
+```
