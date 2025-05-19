@@ -83,6 +83,42 @@ TCP 提供可靠的链接， 链接是需要通过 3 次握手来建立， 关�
   - 协商缓存：浏览器会发送请求到服务器，服务器会检查缓存是否过期，如果未过期，则返回 304，否则返回新的资源
   - 缓存策略：Cache-Control、Expires(http1.0)、Last-Modified、ETag
 
+  ::: warning
+  **Cache-Control** 客户端缓存
+
+  - 可缓存性
+
+    - public：HTTP 请求返回时，经过的代理服务器以及客户端都可以对内容进行缓存。
+    - private：只有发起请求的浏览器可以进行缓存
+    - no-cache：(协商缓存)本地和代理服务器可以缓存，但是每次使用缓存时都要到服务器验证一下，服务器返回可以使用缓存才能生效。
+
+  - 到期性
+
+    - max-age=xxx (xxx is numeric) 缓存的内容将在 xxx 秒后失效, 这个选项只在 HTTP 1.1 可用, 并如果和 Last-Modified 一起使用时, 优先级较高
+    - s-maxage 在代理服务器使用
+    - max-stale = xxx 发起端设置， 即使缓存失效(max-age)，但在 max-stale 仍在在时间内，依然使用。浏览器端一般不用
+
+  - 重新验证
+
+    - must-revalidate 浏览器重新发送请求到服务器
+    - proxy-revalidate
+
+  - 其他
+  - no-store 不能存缓存， 每次重新拿
+  - no-transform 禁止对内容做修改
+
+  **资源验证**
+
+  - Last-Modified 上次修改时间
+
+    配合 If-Modified-Since 或者 If-Unmodified-Since 使用， 通过对比上次修改时间以验证资源是否更新
+
+    服务器返回带有 Last-Modified 的头部，收到带 Last-Modified 这个头，下次浏览器发送 request 就会带上 If-Modified-Since 或者 If-Unmodified-Since，服务器收到这个 request 的 If-Modified-Since 后，通过读取它的值对比资源存在的地方的 Last-Modified，服务器就告诉浏览器是否可以使用缓存
+
+  - Etag 数据签名
+
+    根据文件的内容生成 Etag（数据签名，最常用做法是对资源内容进行哈希计算），收到带 Etag 这个头，下次浏览器发送 request 就会带上 If-Match 或者 If-Non-Match，服务器收到这个 request 的上 If-Match 或者 If-Non-Match 后，通过读取它的值对比资源存在的地方的 Etag，服务器就告诉浏览器是否可以使用缓存。
+    :::
 
 <Image  src="/other/performance/images/cache.png" />
 

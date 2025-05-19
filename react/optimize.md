@@ -9,3 +9,12 @@ ui = render(data)
 - PureComponent React.memo
 
 ### 生命周期优化
+
+
+
+
+## 资料引用：
+
+<a href="https://nwy3y7fy8w5.feishu.cn/docx/MOScdYEQNojGCqxioSkciDtGn0W" target="_blank"  style="display: block">react 性能优化</a>
+
+

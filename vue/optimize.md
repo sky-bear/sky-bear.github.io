@@ -31,11 +31,53 @@ function updateBlock(id: string, newBlock: BlockInfo) {
   }
 }
 ```
+下面这种方式，把数据提到上层，， 当任意一个子组件的数据发生变化时，另一个子组件也会发生更新
+```vue
+  <script setup lang="ts">
+  import HelloWorld from './components/HelloWorld.vue'
+  import  Demo1 from "./components/demo1/index.vue"
+  import  Demo2 from "./components/demo2/index.vue"
+  import { ref, reactive }  from "vue"
+
+  const formData = reactive({
+    value1:"",
+    value2:""
+  })
+
+
+  </script>
+
+  <template>
+    <div>
+      <Demo1 :value ="formData.value1"  @change="value => formData.value1 = value"/>
+      <Demo2 :value ="formData.value2"  @change="value => formData.value2 = value" />
+    </div>
+
+  </template>
+```
+
+
 
 ## 打包构建优化
 
-- vite - vite.config.ts - Rollup- output- manualChunks(旧的) ， 新版要用 optimizeDeps
-- 组件异步加载
+- vite - vite.config.ts - Rollup- rollupOptions.output.manualChunks
+
+  ```js
+  export default defineConfig({
+    plugins: [vue()],
+    build: {
+      rollupOptions:{
+        output:{
+          manualChunks: {
+            vue: ['vue'] // 会单独打出一个包， 可以用于后期缓存， 优化加载速度
+          }
+        }
+      }
+    }
+  })
+  ```
+- 组件异步加载 `defineAsyncComponent`
+  
 
 ## vue 常见分析思路
 

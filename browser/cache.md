@@ -1,7 +1,7 @@
 # http 缓存和本地缓存
 
 <script setup>
-import Image from "../../components/Image/index.vue"
+import Image from "../components/Image/index.vue"
 </script>
 
 ## 资源缓存
@@ -70,7 +70,7 @@ res.setHeader("Expires", new Date(Date.now() + 100 * 1000).toGMTString());
 Cache-Control 的优先级比 Expires 高！
 :::
 
-<Image  src="/other/performance/images/cache-1.png" />
+<Image  src="/browser/images/cache-1.png" />
 
 ### 协商缓存
 
@@ -105,7 +105,7 @@ Last-Modified 由上一次请求的响应头返回，且该值会在本次请求
 ETag 的优先级比 Last-Modified 更高！
 :::
 
-<Image  src="/other/performance/images/cache-2.png" />
+<Image  src="/browser/images/cache-2.png" />
 
 #### 状态码
 
