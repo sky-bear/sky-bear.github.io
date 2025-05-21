@@ -1,66 +1,282 @@
 # Node
 
+<script setup>
+import Image from "../components/Image/index.vue"
+</script>
+
 ## 基础
 
-Node.js 就是一个可以运行 javascrip 的环境，它使得 javascript 可以脱离浏览器运行
+Node.js 是异步事件驱动的单线程模型。
+由于 Node.js 异步非阻塞的特性，因此适用于 I/O 密集型的应用场景。Node.js 是单线程模型，需要避免 CPU 的耗时操作。
 
-## 脚手架
+### 版本管理
 
-- 全局命令行工具
-- 创建项目初始化代码文件及目录
-- 命令行交互能力
-  - 命令行接受参数处理
+NVM
 
-## 创建过程
-
-- 先创建 bin 目录，里面放一个可执行的文件
-- 根目录下执`npm init`
-  ```json
-  // package.json
-  {
-    "name": "test-cli",
-    "version": "1.0.0",
-    "description": "",
-    "main": "index.js",
-    "bin": {
-      "test-cli": "cli.js"
-    },
-    "scripts": {
-      "test": "echo \"Error: no test specified\" && exit 1"
-    },
-    "author": "",
-    "license": "ISC"
-  }
-  ```
-- npm link
-  这里要注意要手动修改 bin 的路径，否则会报错
-
-  ```json
-  {
-    "name": "test-cli",
-    "version": "1.0.0",
-    "main": "index.js",
-    "bin": {
-      "test-cli": "/bin/cli.js"
-    },
-    "scripts": {
-      "test": "echo \"Error: no test specified\" && exit 1"
-    },
-    "author": "",
-    "license": "ISC"
-  }
-  ```
-
-- cli.js 编写
-
-```js
-// 当前脚本执行调用当前系统环境下的node
-#! /usr/bin/env node
-
-console.log("Hello World");
+```md
+https://nvm.uihtm.com/#google_vignette
 ```
 
-此时执行`test-cli`命令， 控制台就会打印出`Hello World`
+## 事件循环
 
+### 循环图
 
-bet
+<Image  src="/other/node/images/event.png" />
+<Image  src="/other/node/images/event-1.png" />
+
+### 主线程
+
+- 启动入口文件， 运行主函数
+- eventLoop: 检查是否需要进入事件循环
+- 检查其他线程里是否还有待处理事项
+- 检查其他任务是否还在进行中（比如计时器、文件读取操作等任务是否完成）
+- 有以上情况，进入事件循环，运行其他任务
+  事件循环的过程：沿着从 timers 到 close callbacks 这个流程，走一圈。到 event loop 看是否结束，没结束再走一圈。
+- over：所有的事情都完毕，结束
+
+### 事件循环
+
+- **timers: 执行 setTimeout() 和 setInterval()中到期的 callback**
+- pending callbacks: 执行延迟到下一个循环迭代的 I/O 回调
+- idle, prepare: 仅系统内部使用
+- **poll: 检索新的 I/O 事件;执行与 I/O 相关的回调（几乎所有情况下，除了 close 事件的 callback，那些关闭的回调会被 close callbacks 阶段执行）**
+- **check: 执行 setImmediate()的 callback**
+- close callbacks: 执行 close 事件的 callback，例如 socket.on('close')这种
+
+### 核心周期
+
+<Image  src="/other/node/images/event-2.png" />
+
+## commonjs 解析
+
+文件内的内容被包装成一个函数，并传入五个参数，exports, require, module, **filename, **dirname
+
+```js
+// 包装文件内容并返回可执行的函数：
+/*
+        (function (exports, require, module, __filename, __dirname) {
+            file content...
+        })
+    */
+```
+
+- 模块导出的数据存放在 module.exports 对象中。
+- exports 是 module.exports 的别名。
+- 模块加载过一次后会进行缓存，第二次加载时直接返回上一次的缓存结果。
+- Node.js 会检测出当前代码是否存在循环引用，并做相应的处理。
+
+## 常用 API
+
+### commonjs 模块对象
+
+使用 CommonJS 规范的文件模块对象。
+
+#### 特性
+
+1. require：加载文件模块导出的对象。
+2. module.exports：存储文件模块导出的对象。
+3. \_\_dirname: 当前模块的文件夹路径。
+4. \_\_filename: 当前模块的文件路径。
+5. exports：模块导出对象，是 module.exports 的别名。
+6. require.cache：存储已加载的模块的缓存对象。
+7. require.main：主入口文件模块对象。
+8. require.resolve：返回模块解析后的文件路径。
+
+### ESM 模块
+
+生效规则
+
+1. 如果文件扩展名为.js。只有最近的 package.json 文件的 type 属性值为 module 时，Node.js 才会认为文件使用的是 ESM 规范的模块，其它情况都会认为采用的是 CommonJS 规范的模块。
+2. 无论 type 字段的值如何，.mjs 文件始终被视为 ES 模块，.cjs 文件总是被视为 CommonJS 模块。
+
+引用时不能省略扩展名
+
+#### 特性
+
+1. 直接在内置的模块中导出 API
+
+```js
+import { readFile } from "node:fs";
+import { URL } from "node:url";
+readFile(
+  new URL("./foo.txt", import.meta.url),
+  { encoding: "utf8" },
+  (err, source) => {
+    if (err) {
+      console.error(err);
+    } else {
+      console.log(source);
+    }
+  }
+);
+```
+
+2. import.meta
+   包含 url 和 resolve 属性的对象。
+3. import.meta.url
+   返回当前文件的 url 路径，以 file://协议开头。
+
+```js
+// file:///app/index.mjs
+console.log(import.meta.url);
+```
+
+4. import.meta.resolve
+
+总结：ESM 和 CommonJS 的区别
+
+1. ESM 没有 require、exports、module.exports。
+2. ESM 没有**filename、**dirname。
+3. ESM 没有 require.resolve，不过可以使用 import.meta.resolve。
+4. ESM 没有 require.cache。
+
+### Modules:node:module API
+
+1. module.builtinModules
+   Node.js 提供的所有模块的名称列表。可用于验证模块是否由第三方维护。
+
+```js
+const builtin = require("node:module").builtinModules;
+```
+
+2. module.createRequire(filename)
+   创建 require 函数。filename 参数必须是 URL 对象、URL 字符串，或者是绝对路径。
+
+```js
+// sibling-module.js
+module.exports = {
+  name: "sibling-module",
+};
+// index.mjs
+import { createRequire } from "node:module";
+const require = createRequire(import.meta.url);
+
+const siblingModule = require("./sibling-module");
+console.log(siblingModule);
+```
+
+3. module.isBuiltin(moduleName)
+   检测模块是否是内置模块。
+
+```js
+const isBuiltin = require("node:module").isBuiltin;
+console.log(isBuiltin("node:path")); // true
+console.log(isBuiltin("path")); // true
+console.log(isBuiltin("wss")); // false
+```
+
+### URL 模块
+
+URL 模块提供了一些非常实用的用于解析 URL 的方法
+
+### Query 模块
+
+Query String 模块提供了一些非常实用的用于解析查询字符串的方法。
+
+### path 模块
+
+Path 模块提供了用于处理文件和目录路径的实用程序
+
+path.join()和 path.resolve()的区别
+path.join 是用来连接路径片段，并返回规范化后的路径；而 path.resolve 将路径片段解析为绝对路径。
+
+```js
+// 例子1
+// /bar/foo
+console.log(path.join("/bar", "/foo"));
+// /foo
+console.log(path.resolve("/bar", "/foo"));
+
+// 例子2：假如当前命令执行的目录是/home/myself/node（和代码文件所在的目录没有关系）
+// bar/foo/
+console.log(path.join("bar/", "foo/"));
+// /home/myself/node/bar/foo
+console.log(path.resolve("bar/", "foo/"));
+```
+
+### OS 模块
+
+### File System 模块
+
+### process 模块
+
+### Events 模块
+
+### Stream 模块
+
+### HTTP 模块
+
+## 网络详解
+
+### OSI & TCP/IP 模型设计
+
+#### OSI 七层模型
+
+osi 七层模型是国际标准化组织（ISO）制定的一个用于计算机或通信系统间互联的标准体系。它将网络通信过程分为七个层次，每一层都有特定的功能和协议。OSI 模型的设计目的是为了提供一个通用的网络通信框架，使得不同厂商和不同技术的网络设备可以相互通信。
+
+##### 应用层
+
+- 功能是直接向用户提供服务，完成用户希望在网络上完成的各种工作
+- 文件服务、目录服务、文件传输服务（FTP）、远程登录服务（Telnet）、电子邮件服务（E-mail）、打印服务、安全服务、网络管理服务、数据库服务、DNS 服务 etc
+- 在应用层交互的数据单元称为报文
+- 主要能力
+  - 用户接口：应用层是用户与网络，以及应用程序与网络间的直接接口，使得用户能够与网络进行交互式联系
+  - 实现各种服务：该层具有的各种应用程序可以完成和实现用户请求的各种服务
+
+##### 表示层
+
+- 对来自应用层的命令和数据进行解释，对各种语法赋予相应的含义，并按照一定的格式传送给会话层。其主要功能是“处理用户信息的表示问题，如编码、数据格式转换和加密解密”
+- 主要能力
+  - 数据格式处理：协商和建立数据交换的格式，解决各应用程序之间在数据格式表示上的差异
+  - 数据的编码：处理字符集和数字的转换。例如由于用户程序中的数据类型（整型或实型、有符号或无符号等）、用户标识等都可以有不同的表示方式，因此，在设备之间需要具有在不同字符集或格式之间转换的功能
+  - 压缩和解压缩：为了减少数据的传输量，这一层还负责数据的压缩与恢复
+  - 数据的加密和解密：可以提高网络的安全性
+
+##### 会话层
+
+- 向两个实体的表示层提供建立和使用连接的方法。将不同实体之间的表示层的连接称为会话。因此会话层的任务就是组织和协调两个会话进程之间的通信，并对数据交换进行管理
+- 主要能力
+  - 会话管理：允许用户在两个实体设备之间建立、维持和终止会话，并支持它们之间的数据交换。
+  - 会话流量控制：提供会话流量控制和交叉会话功能
+  - 寻址：使用远程地址建立会话连接。
+  - 出错控制：从逻辑上讲会话层主要负责数据交换的建立、保持和终止，但实际的工作却是接收来自传输层的数据，并负责纠正错误。会话控制和远程过程调用均属于这一层的功能。但应注意，此层检查的错误不是通信介质的错误，而是磁盘空间、打印机缺纸等类型的高级错误。
+
+##### 传输层
+
+- 以下三层：数据通信，以上三层：数据处理，是通信子网和资源子网的接口和桥梁，起到承上启下的作用
+- 向用户提供可靠的端到端的差错和流量控制，保证报文的正确传输，向高层屏蔽下层数据通信的细节，即向用户透明地传送报文，常见的协议：TCP、UDP
+- 主要能力
+  - 传输连接管理，在网络层的基础上为高层提供“面向连接”和“面向无接连”的两种服务
+  - 处理传输差错。提供可靠的“面向连接”和不太可靠的“面向无连接”的数据传输服务、差错控制和流量控制。在提供“面向连接”服务时，通过这一层传输的数据将由目标设备确认，如果在指定的时间内未收到确认信息，数据将被重发
+  - 监控服务质量
+
+##### 网络层
+
+- 通过路由选择算法，为报文或分组通过通信子网选择最适当的路径
+- 数据链路层的数据在这一层被转换为数据包，然后通过路径选择、分段组合、顺序、进/出路由等控制，将信息从一个网络设备传送到另一个网络设备
+- 主要能力
+  - 寻址：数据链路层中使用的物理地址（如 MAC 地址）仅解决网络内部的寻址问题。在不同子网之间通信时，为了识别和找到网络中的设备，每一子网中的设备都会被分配一个唯一的地址。由于各子网使用的物理技术可能不同，因此这个地址应当是逻辑地址（如 IP 地址）
+  - 交换：规定不同的信息交换方式。常见的交换技术有：线路交换技术和存储转发技术，后者又包括报文交换技术和分组交换技术
+  - 路由算法：当源节点和目的节点之间存在多条路径时，本层可以根据路由算法，通过网络为数据分组选择最佳路径，并将信息从最合适的路径由发送端传送到接收端
+  - 连接服务：与数据链路层流量控制不同的是，前者控制的是网络相邻节点间的流量，后者控制的是从源节点到目的节点间的流量。其目的在于防止阻塞，并进行差错检测。
+
+##### 数据链路层
+
+数据链路层：（Data Link Layer）
+
+- 负责建立和管理节点间的链路
+- 通过各种控制协议，将有差错的物理信道变为无差错的、能可靠传输数据帧的数据链路
+- 接受物理层的数据，封装成帧传给上层，接受上层数据解析成比特数据换发给物理层
+
+##### 物理层
+
+- 实现计算机节点之间比特流的透明传送
+- 物理层的主要任务描述为确定与传输媒体的接口的一些特性，提供用于建立、保持和断开物理连接的机械的、电气的、功能的和过程的条件，也就是说物理层提供有关同步和比特流在物理媒体上的传输手段。
+- 是物理硬件上的底层能力，比如光缆、电缆等设备连接形成组网
+- 包括信号的调制及信道复用等
+
+## 引用
+
+<a href="https://nwy3y7fy8w5.feishu.cn/docx/DAfudQaMDoDo0FxN70gcdZAan5P" target="_blank"  style="display: block">node 基础</a>
+
+<a href="https://nwy3y7fy8w5.feishu.cn/docx/ECrNdLVbvop7ITxyvTlctaGJnuc" target="_blank"  style="display: block">网络详解</a>
