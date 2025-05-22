@@ -24,6 +24,7 @@ export default defineConfig({
       { text: "vue", link: "/vue/index" },
       { text: "react", link: "/react/index" },
       { text: "数据结构和算法", link: "/algorithms/algorithms" },
+      { text: "node", link: "/node/node" },
       { text: "浏览器", items:[
         { text: "浏览器相关内容", link: "/browser/index" },
         { text: "缓存", link: "/browser/cache" },
@@ -33,7 +34,8 @@ export default defineConfig({
           { text: "性能优化", link: "/other/performance/performance" },
           { text: "手写代码汇总", link: "/other/handwriting/handwriting" },
           { text: "工程化", link: "/other/specification/specification" },
-          { text: "前端性能监控", link: "/other/monitor/monitor" }
+          { text: "前端性能监控", link: "/other/monitor/monitor" },
+          
         ]
       },
     ],
