@@ -163,7 +163,7 @@ import Image from "../components/Image/index.vue"
   ```js
   function createBook(obj) {
     // 通过原型继承方式创建新对象
-    var o = new inheritobject(obj);
+    var o = inheritobject(obj);
     // 拓展新对象
     o.getName = function () {
       console.log(name);
