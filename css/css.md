@@ -614,7 +614,7 @@ flex 布局就是弹性布局， 用来为盒模型提供最大的灵活性
 
 - `flex` 是`flex-grow`, `flex-shrink` 和 `flex-basis`的简写，默认值为`0 1 auto`。后两个属性可选。
 
-  该属性有两个快捷值：`auto` (`1 1 auto`) 和 none (`0 0 auto`)。
+  该属性有两个快捷值：`auto` (`1 1 auto`) 和 none (`0 0 auto`)。 flex: 1; /* 等同于 flex: 1 1 0%; */
 
 - `align-self`属性允许单个项目有与其他项目不一样的对齐方式，可覆盖`align-items`属性。默认值为`auto`，表示继承父元素的`align-items`属性，如果没有父元素，则等同于`stretch`。
 

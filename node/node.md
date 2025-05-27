@@ -596,8 +596,37 @@ Http协议是一个无状态的协议，服务器不会知道到底是哪一台�
 ##### session
 session 是会话的意思，浏览器第一次访问服务端，服务端就会创建一次会话，在会话中保存标识该浏览器的信息。它与 cookie 的区别就是 session 是缓存在服务端的，cookie 则是缓存在客户端，他们都由服务端生成，为了弥补 Http 协议无状态的缺陷。
 
+##### cookie -session 认证
 
 
+#### token 验证
+token 是一个令牌，浏览器第一次访问服务端时会签发一张令牌，之后浏览器每次携带这张令牌访问服务端就会认证该令牌是否有效，只要服务端可以解密该令牌，就说明请求是合法的，令牌中包含的用户信息还可以区分不同身份的用户
+
+
+#### JWT
+服务器认证以后，生成一个 JSON 对象，这个 JSON 对象肯定不能裸传给用户，那谁都可以篡改这个对象发送请求。因此这个 JSON 对象会被服务器端签名加密后返回给用户，返回的内容就是一张令牌，以后用户每次访问服务器端就带着这张令牌。
+
+
+## node 框架
+
+
+### express
+### koa
+
+### 区别
+- 架构风格
+  - Express： 功能丰富型框架
+  - Koa： 轻量级框架
+- 异步处理方式
+  - Express： 回调函数
+  - Koa： Generator + co
+  - Koa2： async/await
+- 中间件机制
+  - Express： 中间件函数
+  - Koa： 中间件类
+- 路由机制
+  - Express： 内置路由
+  - Koa： koa-router
 
 ## 引用
 
@@ -606,5 +635,7 @@ session 是会话的意思，浏览器第一次访问服务端，服务端就会
 <a href="https://nwy3y7fy8w5.feishu.cn/docx/ECrNdLVbvop7ITxyvTlctaGJnuc" target="_blank"  style="display: block">网络详解</a>
 
 <a href="https://nwy3y7fy8w5.feishu.cn/docx/EG8idTDoqo1cgExeovwcC3Y5n0c" target="_blank"  style="display: block">Node 缓存 安全 鉴权</a>
+
+<a href="https://x1mnl9knbjp.feishu.cn/docx/UKaldhN5loKq5LxRm3lcSAuTnze" target="_blank"  style="display: block">Express&Koa</a>
 
 
