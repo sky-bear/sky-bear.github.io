@@ -97,6 +97,10 @@ export default defineConfig({
               text: "AST",
               link: "/javascript/ast/ast",
             },
+            {
+              text: "ES5",
+              link: "/javascript/es5/es5",
+            },
           ],
         },
       ],

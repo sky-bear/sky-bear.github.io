@@ -18,6 +18,7 @@ ui = render (data) -> 单向数据流
   - 虚拟 dom
   - 组件化
   - 专注于视图
+  - 声明式编程范式
 - 不同点
   - vue 是双向数据绑定,采用 MVVM，react 是单向数据绑定
   - vue 的组件使用的是选项式 API，react 使用的是函数式 API
@@ -182,7 +183,25 @@ function withHOC(WrappedComponent) {
 }
 ```
 
+- 样式增强
+
+```js
+function withBackgroundColor(WrappedComponent) {
+  return class extends React.Component {
+    render() {
+      return (
+        <div style={{ backgroundColor: "#ccc" }}>
+          <WrappedComponent {...this.props} {...newProps} />
+        </div>
+      );
+    }
+  };
+}
+```
+
 #### 反向继承
+
+使用一个函数接受一个组件作为参数传入，并返回一个继承了该传入组件的类组件，且在返回组件的 render() 方法中返回 super.render() 方法， 主要针对类组件
 
 - 生命周期
 
@@ -291,6 +310,11 @@ function HOC(WrappedComponent) {
 }
 ```
 
+#### 对比
+
+1. 属性代理：从“组合”角度出发，有利于从外部操作 wrappedComp，可以操作 props，或者在 wrappedComp 外加一些拦截器（如条件渲染等）；
+2. 反向继承：从“继承”角度出发，从内部操作 wrappedComp，可以操作组件内部的 state，生命周期和 render 等，功能能加强大；
+
 #### 使用场景
 
 - 计算组件渲染时间
@@ -323,6 +347,10 @@ function withHOC(WrappedComponent) {
 }
 ```
 
+- 权限控制
+- 页面复用
+- 主题 样式切换 国际化 等等共有的东西可以抽象到 HOC
+
 :::warning
 
 - mixins:混入一些共有的方法和数据
@@ -331,7 +359,22 @@ function withHOC(WrappedComponent) {
 
 ## Hooks
 
+react 16.8 后新增的功能
+
 - useState
+
+  :::warning
+  初始化时采用惰性初始化
+
+  ```js
+  // 好的 ，这种只在初始化时执行一次
+  const [state, setState] = useState(() => fn());
+  // 差的， 每次都会执行
+  const [state, setState] = useState(fn());
+  ```
+
+  :::
+
 - useEffect: 先 DON 更新, 再执行 useEffect 中的 cb => 闪动
 - useLayoutEffect: 先执行 useLayoutEffect 中的 cb, 再 DOM 更新 => 卡顿
 - useRef
@@ -340,9 +383,68 @@ function withHOC(WrappedComponent) {
     - 变更不会触发页面渲染
     - 可以在重新渲染之间 存储信息（普通对象存储的值每次渲染都会重置）。
 - useContext
+  - 如果采用 props 传递 ， 中间不需要消费的组件也会更新
 - useReducer
 - useMemo: 缓存结果
-- useCallback: 缓存函数
+
+  - 避免重复计算
+  - 避免不必要的渲染
+
+    ```js
+    // 避免props 更新重新渲染
+    const ChildComponent = React.memo((props) => {
+      return (
+        <div>
+          <p>Name:{props.value.name}</p>
+          <p>Age:{props.value.age}</p>
+        </div>
+      );
+    });
+
+    // 避免重新创建引用
+    const memoizedValue = useMemo(() => {
+      return {
+        name: 2,
+        age: 10,
+      };
+    });
+
+    return <ChildComponent value={memoizedValue} />;
+    ```
+
+- useCallback: 缓存函数， 避免重复创建函数 避免子组件不必要的渲染
+
+  ```js
+  // handleClick引用没变， MemoizedButton就不会重新渲染
+  import React, { useState, useCallback } from 'react'
+
+    function Button(props) {
+      const { handleClick, children } = props;
+      console.log('Button -> render');
+      return (
+          <button onClick={handleClick}>{children}</button>
+      )
+    }
+
+    const MemoizedButton = React.memo(Button);
+
+    export default function Index() {
+      const [clickCount, increaseCount] = useState(0);
+      // 这里使用了`useCallback`
+      const handleClick = useCallback(() => {
+          console.log('handleClick');
+          increaseCount(clickCount + 1);
+      }, [])
+
+      return (
+          <div>
+              <p>{clickCount}</p>
+              <MemoizedButton handleClick={handleClick}>Click</MemoizedButton>
+          </div>
+      )
+    }
+  ```
+
 - 自定义 Hooks
 
 ```jsx
@@ -375,6 +477,137 @@ function App() {
   const update = useUpdate();
   return <div onClick={update}>App</div>;
 }
+```
+
+### Hooks VS HOC
+
+1. Hook 最典型的就是取代掉生命周期中大多数的功能，可以把更相关的逻辑放在一起，而非零散在各个生命周期方法中；
+2. 高阶组件可以将外部的属性功能到一个基础 Component 中，更多作为扩展能力的插件（如 react-swipeable-views 中的 autoPlay 高阶组件，通过注入状态化的 props 的方式对组件进行功能扩展，而不是直接将代码写在主库中）；
+3. Hook 的写法可以让代码更加紧凑，更适合做 Controller 或者需要内聚的相关逻辑，一般与目标组件内强依赖，HOC 更强调对原先组件能力的扩展；
+4. 目前 Hook 还处于相对早期阶段（React 16.8.0 才正式发布 Hook 稳定版本），一些第三方的库可能还暂时无法兼容 Hook；
+
+## 异步组件
+
+React16.6 中，引入了 React.lazy 和 React.Suspense 两个 API，再配合动态 import() 语法就可以实现组件代码打包分割和异步加载。
+传统模式：渲染组件-> 请求数据 -> 再渲染组件
+异步模式：请求数据-> 渲染组件
+
+```js
+// demo
+import React, { lazy, Suspense } from "react";
+// lazy 和 Suspense 配套使用，react原生支持代码分割
+const About = lazy(() => import(/* webpackChunkName: "about" */ "./About"));
+class App extends React.Component {
+  render() {
+    return (
+      <div className="App">
+        <h1>App</h1>
+        <Suspense fallback={<div>loading</div>}>
+          <About />
+        </Suspense>
+      </div>
+    );
+  }
+}
+export default App;
+```
+
+### 异步组件实现
+
+Suspense 组件需要等待异步组件加载完成再渲染异步组件的内容。
+
+1. lazy wrapper 住异步组件，React 第一次加载组件的时候，异步组件会发起请求，并且抛出异常，终止渲染；
+2. Suspense 里有 componentDidCatch 生命周期函数，异步组件抛出异常会触发这个函数，然后改变状态使其渲染 fallback 参数传入的组件；
+3. 异步组件的请求成功返回之后，Suspense 组件再次改变状态使其渲染正常子组件（即异步组件）；
+
+```js
+// comp About
+const About = lazy(() => new Promise(resolve => {
+  setTimeout(() => {
+    resolve({
+      default: <div>component content</div>
+    })
+  }, 1000)
+}))
+
+// comp Suspense
+import React from 'react'
+class Suspense extends React.PureComponent {
+  /**
+   * isRender 异步组件是否就绪，可以渲染
+   /
+  state = {
+    isRender: true
+  }
+  componentDidCatch(e) {
+    this.setState({ isRender: false })
+    e.promise.then(() => {
+      / 数据请求后，渲染真实组件 */
+      this.setState({ isRender: true })
+    })
+  }
+  render() {
+    const { fallback, children } = this.props
+    const { isRender } = this.state
+    return isRender ? children : fallback
+  }
+}
+
+export default Suspense
+
+// comp lazy
+import React, { useEffect } from 'react'
+export function lazy(fn) {
+  const fetcher = {
+    status: 'pending',
+    result: null,
+    promise: null,
+  }
+  return function MyComponent() {
+    const getDataPromise = fn()
+    fetcher.promise = getDataPromise
+    getDataPromise.then(res => {
+      fetcher.status = 'resolved'
+      fetcher.result = res.default
+    })
+    useEffect(() => {
+      if (fetcher.status === 'pending') {
+          throw fetcher
+      }
+    }, [])
+    if (fetcher.status === 'resolved') {
+      return fetcher.result
+    }
+    return null
+  }
+}
+
+// 实现的效果与React支持内容保持一致
+import React, {Suspese, lazy} from 'react'
+
+const About= lazy(() => { import('../About') });
+
+class App extends React.Component {
+  render() {
+    /**
+     * 1. 使用 React.Lazy 和 import() 来引入组件
+     * 2. 使用<React.Suspense></React.Suspense>来做异步组件的父组件，并使用 fallback 来实现组件未加载完成时展示信息
+     * 3. fallback 可以传入html，也可以自行封装一个统一的提示组件
+     */
+    return (
+      <div>
+        <Suspense
+          fallback={
+            <Loading />
+          }
+        >
+          <About />
+        </Suspense>
+      </div>
+    )
+  }
+}
+export default ReactComp;
 ```
 
 ## 源码解析
@@ -450,6 +683,8 @@ hooks 在 fiber 是链表结构，这里用数组来模拟
 <a href="https://react.docschina.org/" target="_blank"  style="display: block">react 官网</a>
 
 <a href="https://nwy3y7fy8w5.feishu.cn/docx/P4osdzJsHoFXhLxB17xcJElanTP" target="_blank"  style="display: block">react 基础</a>
+<a href="https://vgbixa7nr9.feishu.cn/docx/RqpmdJVSNooTrvxhHYScWWkqnUb" target="_blank"  style="display: block">react 高级用法</a>
+
 <a href="https://nwy3y7fy8w5.feishu.cn/docx/KiLQdRbFCoFpOLxuv2Acc2FpnFe" target="_blank"  style="display: block">react 源码 上</a>
 <a href="https://nwy3y7fy8w5.feishu.cn/docx/TWPadLxd0odw1HxsP5UcJW26nlc" target="_blank"  style="display: block">react 源码 下</a>
 <a href="https://react.iamkasong.com/me.html" target="_blank"  style="display: block">react 技术揭秘</a>
@@ -457,4 +692,6 @@ hooks 在 fiber 是链表结构，这里用数组来模拟
 
 <a href="https://nwy3y7fy8w5.feishu.cn/docx/V2y4d9zEJobo7XxErDMcM436nA9" target="_blank"  style="display: block">hooks2</a>
 <a href="https://nwy3y7fy8w5.feishu.cn/docx/LpaZdo2q8ozsI2x09vNcyFkznrg" target="_blank"  style="display: block">hooks3</a>
-<a href="https://nwy3y7fy8w5.feishu.cn/docx/V7BadFHrooGtJmxdH5EcsoMznje" target="_blank"  style="display: block">hooks4</a>s
+<a href="https://nwy3y7fy8w5.feishu.cn/docx/V7BadFHrooGtJmxdH5EcsoMznje" target="_blank"  style="display: block">hooks4</a>
+
+<a href="https://vgbixa7nr9.feishu.cn/docx/IOmJdkSFyo8byCxnkgQcxmUWn9d" target="_blank"  style="display: block">面试题</a>
