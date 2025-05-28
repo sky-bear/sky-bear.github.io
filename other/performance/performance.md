@@ -72,13 +72,58 @@ import Image from "../../components/Image/index.vue"
 
 ## 渲染阶段
 
+### 运行时概念
+
+- 解析 HTML，构建 DOM 树
+  - 根据当前 html 的内容，构建 DOM 树(深度遍历)
+  - 构建 DOM 树的过程中，如果遇到 js，会停止构建 DOM 树，先执行 js 代码，然后再继续构建 DOM 树
+- 解析 CSS，构建 CSSOM 树
+  - 解析 css 形成 css 规则树， 解析 css 规则树时，js 执行暂停，直到 css 规则树就绪（js 可能操作 css）
+  - **css 规则树生成前，页面不会渲染**
+- 合并 DOM 树和 CSSOM 树，构建渲染树
+- 布局渲染树，计算每个节点的位置和大小
+  - 布局： 通过渲染树中渲染对象的信息， 计算出渲染对象的位置和尺寸
+  - 重排(回流)： 当渲染树中的一部分（或全部）因为元素的规模尺寸，布局，隐藏等改变而需要重新构建
+- 绘制渲染树，根据计算好的信息，将每个节点绘制到屏幕上
+  - 绘制阶段， 系统会遍历渲染树，并调用渲染器的 paint()方法，将每个节点绘制出来
+  - 重绘： 当页面中元素样式的改变并不影响它在文档流中的位置时（例如：修改了字体颜色），浏览器会将新样式赋予给元素并重新绘制它，这个过程称为重绘。 他不影响布局属性
+  - 回流：某个元素尺寸发生变化，则需要计算它对周围元素的影响，浏览器需要重新渲染页面，这个过程称为回流。 它会影响布局属性
+    - 首次渲染
+    - 浏览器窗口大小发生变化
+    - 元素尺寸或位置发生变化
+    - 内容变化（文字数量）
+    - 添加或者删除 Dom 元素
+    - 激活 css 伪类（如：hover）
+    - 查询某些属性或者调用某些方法
+      - offsetTop、offsetLeft、offsetWidth、offsetHeight
+      - scrollTop、scrollLeft、scrollWidth、scrollHeight
+      - clientTop、clientLeft、clientWidth、clientHeight
+      - width、height
+      - getComputedStyle()
+      - getBoundingClientRect()【只有布局定义为脏的时候才会触发重排】
+- js 加载
+  浏览器开始加载 html 页面， 遇到`script`标签， 会根据标签的属性（sync defer）来决定如何处理脚本
+- 浏览器引擎执行 JS
+
+  - 编译
+    - 词法分析
+    - 语法分析
+    - 代码生成
+  - 执行
+    - 执行上下文和作用域
+      - js 引擎会创建执行上下文，包含变量对象、作用域链、this 等
+      - js 事件循环
+
+- 页面渲染
+  当所有资源都加载和执行完后，页面显示给用户
+
 ## 汇总
 
 ### URL 和 URI 的区别 {#performance1}
 
 URL(统一资源定位符)
 
-- scheme：协议，例如 http、https、ftp 等
+- scheme(protocol)：协议，例如 http、https、ftp 等
 - host：主机名， 例如`www`就是一个主机名
 - domain：域名，例如`www.baidu.com`就是一个域名
 - port：端口号，http 默认 80
@@ -125,12 +170,51 @@ DNS（域名系统）解析是将域名转换为 IP 地址的过程， DNS 通�
 <link rel="preconnect" href="https://example.com" crossorigin />
 ```
 
-- CDN
- - 通过将内容复制到全球各地的服务器节点上来减少用户访问延迟，并提高内容传输的速度和可靠性
+- CDN(解决文件根据地理位置的加载速度问题)
+- 通过将内容复制到全球各地的服务器节点上来减少用户访问延迟，并提高内容传输的速度和可靠性
 
-
-### 什么是https {#performance3}
+### 什么是 https {#performance3}
 
 <Image  src="/other/performance/images/https.png" />
 
-HTTPS并⾮是⼀个新的协议，通常HTTP直接和TCP通信，HTTPS则先和安全层通信，然后安全层再和TCP层通信
+HTTPS 并⾮是⼀个新的协议，通常 HTTP 直接和 TCP 通信，HTTPS 则先和安全层通信，然后安全层再和 TCP 层通信
+
+### 为什么 history 模式要配置 nginx 而 hash 不用
+
+- hash 访问不需要配置是因为路径就是直接的资源路径，而 hash 是条件
+- history 模式访问， 服务器不清楚具体的资源路径是哪个，所以需要配置 nginx，配置 nginx 后，nginx 会根据路径返回对应的资源，如果资源不存在，nginx 会返回 index.html，然后前端路由会根据路径进行匹配，然后返回对应的组件
+
+### 文件资源加载有那些方式 怎么优化性能？
+
+- 直接通过外链(同域)进行访问
+- 转义文件
+- 服务端渲染(优化首屏加载白屏)
+
+如何优化加载性能？
+
+- CDN 加速： 优化物理距离问题
+- cookie 动态开关 | 独立域名(只拉取静态资源， 不处理任何其他请求)， 也就是动静分离加载
+- 文件压缩 gzip： 减少传输大小
+- 文件合并： 减少请求次数
+
+写法
+pre | script- defer async
+css 放头部 js 放后面？ 避免 css 阻塞 js
+
+<!-- TCP ip 详解 -->
+
+### JS parse
+
+v8: 把 js 高级语言转换成机器语言 js => 字节码 => 机器码
+js 字节码： 相对于机器码减少了存储空间； 相对于高级语言减少了转义时间
+字节码分流 JIT：把多次执行的代码转成机器码，存储在内存中，下次执行直接从内存中获取
+M&S - mark & sweep: => 触达标记，锁定清空 =》 GC
+
+```JS
+// 内存分配： 生命变量 函数 对象
+// 内存使用： 直接使用， 指针使用
+// 内存释放
+// 书写时： 对象层级：宜平不宜深 | 根据业务深浅拷贝 | 避免循环引用
+// 内存泄露： 尽量不要使用全局变量 | 未清理的定时器 | 合理使用闭包
+//
+```
