@@ -37,13 +37,13 @@ import Image from "../../components/Image/index.vue"
 - 如果没有在缓存中找到资源， 进入网络请求
   - DNS 解析 <a href="#performance2"><Badge type="danger" text="如何加快DNS解析" /></a>
   - 如果是 HTTPS 需要建立 TLS<a href="#performance3"><Badge type="danger" text="什么是https" /></a>
-  - TCP 链接<a href="#performance4"><Badge type="danger" text="怎么加快TCP链接" /></a>
-  - 浏览器端会构建请求⾏、请求头等信息，并把和该域名相关的 Cookie 等数据附加到请求头中，然后向服务器发送构建的请求信息 <a href="#performance5"><Badge type="danger" text="IOS7层模型是啥" /></a>
+  - TCP 链接<a href="/node/node.html#http1-0-http1-1-http2-http3"><Badge type="danger" text="怎么加快TCP链接" /></a>
+  - 浏览器端会构建请求⾏、请求头等信息，并把和该域名相关的 Cookie 等数据附加到请求头中，然后向服务器发送构建的请求信息 <a href="/node/node.html#osi-七层模型"><Badge type="danger" text="IOS7层模型是啥" /></a>
   - 服务器接收到请求信息后，会根据请求信息⽣成响应数据（包括响应⾏、响应头和响应体等信息），并发给⽹络进程，由网络进程开始解析
     - 重定向： 如果状态码返回 301 或者 302 就是重定向
     - 响应数据处理， 针对不同的 Content-Type 进行不同的处理
       - 如果是下载类[application/octet-stream]，交给浏览器下载进程，该 url 导航流程结束
-      - 如果是 HTML, 浏览器继续导航流程<Badge type="danger" text="移动版本+ 桌面版本 同域名怎么区分" />
+      - 如果是 HTML, 浏览器继续导航流程<a href="#performance4"><Badge type="danger" text="移动版本+ 桌面版本 同域名怎么区分资源" /></a>
 
 ## 准备渲染进程
 
@@ -208,7 +208,7 @@ css 放头部 js 放后面？ 避免 css 阻塞 js
 v8: 把 js 高级语言转换成机器语言 js => 字节码 => 机器码
 js 字节码： 相对于机器码减少了存储空间； 相对于高级语言减少了转义时间
 字节码分流 JIT：把多次执行的代码转成机器码，存储在内存中，下次执行直接从内存中获取
-M&S - mark & sweep: => 触达标记，锁定清空 =》 GC
+M&S - mark & sweep: => 触达标记，锁定清空 =》<a href="/javascript/basis/GCAndEventLoop.html"><Badge type="danger" text="GC" /></a>
 
 ```JS
 // 内存分配： 生命变量 函数 对象
@@ -218,3 +218,12 @@ M&S - mark & sweep: => 触达标记，锁定清空 =》 GC
 // 内存泄露： 尽量不要使用全局变量 | 未清理的定时器 | 合理使用闭包
 //
 ```
+
+### 移动版本+ 桌面版本 同域名怎么区分资源 {#performance4}
+反向代理处理的，根据useAgent信息不同，返回不同的资源
+
+代理服务器
+
+- 代理服务器
+- 反向代理：隐藏真正的服务端
+- 正向代理：掩盖真正的请求者

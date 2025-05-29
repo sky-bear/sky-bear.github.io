@@ -527,14 +527,3 @@ https 多次连接问题=》 导致网络请求加载时间延长
 
 <a href="https://web.developers.google.cn/articles/lcp?hl=zh_cn" target="_blank"  style="display: block">web.developers</a>
 
-## web 服务
-
-面试题： 移动版本+ 桌面版本 同域名
-
-反向代理处理的，根据信息不同，返回不同的资源
-
-代理服务器
-
-- 代理服务器
-- 反向代理：隐藏真正的服务端
-- 正向代理：掩盖真正的请求者
