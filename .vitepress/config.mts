@@ -18,24 +18,34 @@ export default defineConfig({
       { text: "Home", link: "/" },
       { text: "Examples", link: "/example/markdown-examples" },
       { text: "Javascript", link: "/javascript/index" },
-      
+
       { text: "css", link: "/css/css" },
       { text: "设计模式", link: "/designPattern/index" },
-      { text: "vue", link: "/vue/index" },
-      { text: "react", link: "/react/index" },
+
       { text: "数据结构和算法", link: "/algorithms/algorithms" },
       { text: "node", link: "/node/node" },
-      { text: "浏览器", items:[
-        { text: "浏览器相关内容", link: "/browser/index" },
-        { text: "缓存", link: "/browser/cache" },
-      ] },
+      { text: "vue", link: "/vue/index" },
+      {
+        text: "react", items: [
+          { text: "react", link: "/react/index" },
+          { text: "SSR", link: "/react/serve/serve" },
+          { text: "性能优化", link: "/react/optimize" },
+        ]
+      },
+      {
+        text: "浏览器", items: [
+          { text: "浏览器相关内容", link: "/browser/index" },
+          { text: "缓存", link: "/browser/cache" },
+        ]
+      },
       {
         text: "其他", items: [
           { text: "性能优化", link: "/other/performance/performance" },
           { text: "手写代码汇总", link: "/other/handwriting/handwriting" },
-          { text: "工程化", link: "/other/specification/specification" },
+          { text: "工程化", link: "/other/specification/spec" },
           { text: "前端性能监控", link: "/other/monitor/monitor" },
-          
+          { text: "webpack", link: "/other/specification/webpack" },
+
         ]
       },
     ],
