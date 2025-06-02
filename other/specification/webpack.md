@@ -69,24 +69,9 @@ webpack 是一个用于现代 JavaScript 应用程序的 静态模块打包工�
   - 多线程打包 (happy-pack) thread-loader
   - 云端构建缓存
 
-
-
 ## 项目具体优化
 
-###  vue-cli 项目优化
-
-#### 启动时长优化:
-优化前： 首次启动： 122s-140s   第二次启动 37s
-
-优化后1：开启多线程加速`thread-loader`： 首次启动： 83s       第二次启动： 39s
-优化后2：开启缓存`cache-loader`+`hard-source-webpack-plugin`： 首次启动： 88s       第二次启动： 21s
-
-
-
-
-
-
-
+### vue-cli 项目优化
 
 ## 引用
 
