@@ -316,3 +316,23 @@ M&S - mark & sweep: => 触达标记，锁定清空 =》<a href="/javascript/basi
 - 减少事件监听， 使用事件代理
 - 减少 DOM 操作， 使用文档片段 DocumentFragment
 - 修改 class 代替 style, 修改 style 就是相当于修改 DOM
+- 虚拟列表
+
+### 框架优化 MVVM
+
+Vue 双向绑定
+
+- 本身：vDOM =》 惰性更新 + 增量更新
+- 补充：
+  - 指令 v-if/v-show
+  - vue-lazyload
+  - keep-alive
+
+React UI = fn(data)
+
+- 本身： vDOM =》 差异更新 + 单项数据流 + 事件集约
+- 补充
+  - shouldComponentUpdate
+  - React.memo
+  - React.lazy
+  - React.Suspense

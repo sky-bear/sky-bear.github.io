@@ -26,11 +26,7 @@ export default defineConfig({
       { text: "node", link: "/node/node" },
       { text: "vue", link: "/vue/index" },
       {
-        text: "react", items: [
-          { text: "react", link: "/react/index" },
-          { text: "SSR", link: "/react/serve/serve" },
-          { text: "性能优化", link: "/react/optimize" },
-        ]
+        text: "react", link: "/react/index"
       },
       {
         text: "浏览器", items: [
@@ -117,6 +113,7 @@ export default defineConfig({
       "/vue/": [
         {
           text: "vue",
+          link: "/vue/index",
           items: [
             {
               text: "vue2",
@@ -135,16 +132,25 @@ export default defineConfig({
                 { text: "vueRouter", link: "/vue/vue3/vueRouter" },
               ],
             },
+            {
+              text: "性能优化",
+              link: "/vue/optimize",
+            },
           ],
         },
       ],
       "/react/": [
         {
           text: "react",
+          link: "/react/index",
           items: [
             {
               text: "同构渲染",
               link: "/react/serve/serve",
+            },
+            {
+              text: "性能优化",
+              link: "/react/optimize",
             },
           ],
         },
