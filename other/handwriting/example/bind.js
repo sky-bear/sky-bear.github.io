@@ -7,7 +7,7 @@ Function.prototype.MyBind = function (context, ...args) {
  const _bind = function(...args2) {
      // 判断当前是否当作构造函数使用
     // 这里的this 指向的是创建的实例
-    return self.apply(this instanceof Fn ? this : context, args.concat(args2))
+    return self.apply(this instanceof Fn ? self : context, args.concat(args2))
  }
  Fn.prototype = this.prototype;
  _bind.prototype = new Fn()

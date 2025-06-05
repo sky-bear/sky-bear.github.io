@@ -152,6 +152,14 @@ export default defineConfig({
               text: "性能优化",
               link: "/react/optimize",
             },
+            {
+              text: "react router",
+              link: "/react/reactRouter/reactRouter",
+            },
+            {
+              text: "React状态管理",
+              link: "/react/redux",
+            },
           ],
         },
       ],

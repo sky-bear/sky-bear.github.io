@@ -19,17 +19,19 @@ function ajax(options) {
 
   if (method.toUpperCase === "GET") {
     xmlHttp.open(method, `${url}?${str}`, true);
+    xmlHttp.send();
   } else {
     xmlHttp.open(method, url, true);
     xmlHttp.setRequestHeader(
       "Content-type",
       "application/x-www-form-urlencoded"
     );
+    xmlHttp.send(str);
   }
 
-  xmlHttp.send();
+  
 
-  xmlHttp.onreadystatechange = function () {
+  xmlHttp.onreadystateChange = function () {
     if (xmlHttp.readyState === 4) {
       if (
         xmlHttp.status >= 200 ||

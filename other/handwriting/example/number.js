@@ -19,3 +19,4 @@ function reverseNumber(num) {
 }
 
 console.log(reverseNumber(123)); // 321
+

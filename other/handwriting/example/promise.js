@@ -117,7 +117,7 @@ class MyPromise {
       for (let i = 0; i < promiseList.length; i++) {
         promiseList[i].then((res) => {
           result[i] = res
-          if(result.length === promiseList.length){
+          if(result.filter(v => v).length === promiseList.length){
             resolve(result)
           }
         }).catch((err) => {
@@ -191,3 +191,8 @@ promise
   .then((res) => {
     console.log("55", res);
   });
+
+
+
+
+

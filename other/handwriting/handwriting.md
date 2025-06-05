@@ -45,6 +45,12 @@ Function.prototype.MyBind = function (context, ...args) {
     );
   }
   const self = this;
+  // 1
+    // const _bind = function(...args1) {
+  //   return self.apply(this instanceof _bind ? this  : context, args.concat(args1))
+  // }
+  // _bind.prototype = Object.create(this.prototype)
+  // 2
   function Fn() {}
   const _bind = function (...args2) {
     // 判断当前是否当作构造函数使用
@@ -336,15 +342,17 @@ function ajax(options) {
 
   if (method.toUpperCase === "GET") {
     xmlHttp.open(method, `${url}?${str}`, true);
+    xmlHttp.send();
   } else {
     xmlHttp.open(method, url, true);
     xmlHttp.setRequestHeader(
       "Content-type",
       "application/x-www-form-urlencoded"
     );
+     xmlHttp.send(str);
   }
 
-  xmlHttp.send();
+  
 
   xmlHttp.onreadystatechange = function () {
     if (xmlHttp.readyState === 4) {
