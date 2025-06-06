@@ -23,7 +23,7 @@ export default defineConfig({
       { text: "设计模式", link: "/designPattern/index" },
 
       { text: "数据结构和算法", link: "/algorithms/algorithms" },
-      { text: "node", link: "/node/node" },
+      { text: "node", link: "/node/base" },
       { text: "vue", link: "/vue/index" },
       {
         text: "react", link: "/react/index"
@@ -41,6 +41,7 @@ export default defineConfig({
           { text: "工程化", link: "/other/specification/spec" },
           { text: "前端性能监控", link: "/other/monitor/monitor" },
           { text: "webpack", link: "/other/specification/webpack" },
+          { text: "git常用命令", link: "/other/git" },
 
         ]
       },
@@ -159,6 +160,21 @@ export default defineConfig({
             {
               text: "React状态管理",
               link: "/react/redux",
+            },
+          ],
+        },
+      ],
+      "/node/": [
+        {
+          text: "node",
+          items: [
+            {
+              text: "基础",
+              link: "/node/base",
+            },
+            {
+              text: "网络详解",
+              link: "/node/network",
             },
           ],
         },

@@ -63,6 +63,7 @@ GIT 是一个分布式版本控制系统，与 SVN 等集中式版本控制系�
   - git checkout -- 1.js: 将工作区的 1.js 恢复
 - git tag: 列出已有标签
 - git fetch: 从远程仓库获取最新提交、分支和标签信息，更新本地的远程跟踪分支
+- git cherry-pick `<commit-hash> `:允许你将任意分支上的某个或某些特定提交（以 commit hash 标识）的更改应用于当前所在分支，而不是进行完整分支的合并
 - .gitignore
 
 ```text
@@ -84,6 +85,29 @@ doc/*.txt
 # 忽略 doc/ 目录及其所有子目录下的 .pdf 文件
 doc/**/*.pdf
 ```
+
+
+## git rebase 与 git merge 的区别
+<Image  src="/other/git/images/rebase-1.jpg" />
+<Image  src="/other/git/images/rebase-2.jpg" />
+上图是使用git merge 和 git rebase 操作的分支
+
+其中： 分支c 采用merge , 分支 a 采用git rebase
+
+a: 待变基分支， 当前分支
+master : 基分支 目标分支
+由此我们可以得出：当执行rebase操作时，git会从两个分支的共同祖先开始提取待变基分支上的修改，然后将待变基分支指向基分支的最新提交，最后将刚才提取的修改应用到基分支的最新提交的后面。
+通俗的讲：变基就是改变当前分支的基底， 会把基分支的最新提交当作是待变基分支分支的基底， 把待变基分支的其他提交追加到后面（这里的提交已经合并过基分支的哈）
+
+
+产生的问题：
+- 无法查询当前分支是从哪个分支拉出来的
+- 合并代码的先后顺序会有问题：
+  ```md
+  master => a => a => a   a先拉取， 后开发完成
+  master => b=> b => b    b后拉取， 先开发完成
+  当b开发完成后，回合到master后， 此时如果a执行git rebase操作， a的基底就会变成b 的最新提交。 实际上a 的提交要早于b 
+  ```
 
 ## 资料引用：
 

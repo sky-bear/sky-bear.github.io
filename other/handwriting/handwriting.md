@@ -417,6 +417,7 @@ function deepClone(obj, map = new WeakMap()) {
   if (typeof obj === "function") {
     return obj;
   }
+  if (typeof obj !== "object") return obj; // 基本数据类型直接返回
   if (map.has(obj)) {
     return map.get(obj);
   }

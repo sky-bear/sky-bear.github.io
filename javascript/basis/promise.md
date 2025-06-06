@@ -365,6 +365,51 @@ console.log(4);
 // success
 ```
 
+### 练习 3
+
+```js
+const urls = [
+    "https://cdn.aidigger.com/general_upload/cloud/org/4938/b5f8f831ec91471f8837c2b96b412759-4e63cd.jpg",
+    "https://cdn.aidigger.com/general_upload/cloud/org/4938/ab46b2dabe2c43e0b15c8c0b7d43fb19-186b93.jpg",
+    "https://cdn.aizao.com/general_upload/cloud/org/4938/3fm5yzm2vo4vr6a5zeb4d2xaqtr4mgu3b3xzivyt3qejbfbx3fgrvoi7pdtpstil/wvz6henggpcq2lr5gzpbtkvmtdd757op-ebcae5.jpg",
+    "https://cdn.aizao.com/general_upload/cloud/org/4938/3fm5yzm2vo4vr6a5zeb4d2xaqtr4mgu3b3xzivyt3qejbfbx3fgrvoi7pdtpstil/bjdtzr2ybx3xuta6v6quogd5mpfloe5w-c399ff.jpg",
+    "https://cdn.aidigger.com/Davinci/design_platform/psd/images/50165050-3822-4e84-8220-73ba8278ea6f.png",
+    "https://cdn.aizao.com/general_upload/cloud/org/4938/3fm5yzm2vo4vr6a5zeb4d2xaqtr4mgu3b3xzivyt3qejbfbx3fgrvoi7pdtpstil/lcn557g7cju4txmrcd3yjrfecgpr4pod-d9e71f.jpg",
+    "https://cdn.aidigger.com/Davinci/design_platform/psd/images/141e2995-3093-4bf5-8f47-9ca8bc256a73.png",
+    "https://cdn.aidigger.com/Davinci/design_platform/psd/images/a7f13fb4-a450-45d6-bc24-1a2acc5508c6.png",
+    "https://cdn.aidigger.com/Davinci/design_platform/psd/images/50cfb2ef-f88f-4c3f-a1ec-e8712e3f6168.png",
+    "https://cdn.aidigger.com/Davinci/design_platform/psd/images/a34025c4-620b-46a5-863d-1c9f42cdf596.png",
+    "https://cdn.aidigger.com/Davinci/design_platform/psd/images/430eda13-6498-40ac-904d-b6f02c860ec7.png",
+    "https://cdn.aidigger.com/Davinci/design_platform/psd/images/515e885c-3427-4a42-8fcd-9bd8809a3db4.png",
+    "https://cdn.aizao.com/general_upload/cloud/org/4938/3fm5yzm2vo4vr6a5zeb4d2xaqtr4mgu3b3xzivyt3qejbfbx3fgrvoi7pdtpstil/nehmvu2rzzzs543aic55slnglgtgmjkd-d74a86.jpg",
+    "https://cdn.aidigger.com/Davinci/design_platform/psd/images/88af7ebb-11a1-414a-8b78-72566c1c6ab2.png",
+    "https://cdn.aizao.com/general_upload/cloud/org/4938/3fm5yzm2vo4vr6a5zeb4d2xaqtr4mgu3b3xzivyt3qejbfbx3fgrvoi7pdtpstil/qpw7vsko5v6pgsq7lesmnevheljs6l77-e703bb.jpg",
+    "https://cdn.aidigger.com/general_upload/Davinci/images/e2777a014e4c44609628057ed17b07bc.png",
+    "https://cdn.aizao.com/general_upload/cloud/org/4938/3fm5yzm2vo4vr6a5zeb4d2xaqtr4mgu3b3xzivyt3qejbfbx3fgrvoi7pdtpstil/47fce6hmuhi2lotuxfhsxoag7veztknj-387207.jpg",
+];
+
+// 此处有一个图片数组，写一个image load的方法，使用Promise
+// 写一个函数，控制同时下载的图片数不超过3个，直到把图片下载完
+```
+
+```js
+const loadImg = (url) => {
+  return new Promise((resolve,reject) => {
+    const img = new Image();
+    img.src= url;
+    img.onload = () => {
+      resolve(img);
+    }
+    img.onerror = () => {
+      reject(new Error(`load ${url} fail`))
+    }
+  })
+}
+
+```
+
+
+
 ## 资料引用：
 
 <a href="https://x1mnl9knbjp.feishu.cn/docx/KOISdGpg1orK7sxQ4CKcnzJYnHg" target="_blank"  style="display: block">九思-前端异步编程规范</a>
