@@ -416,33 +416,31 @@ react 16.8 后新增的功能
 
   ```js
   // handleClick引用没变， MemoizedButton就不会重新渲染
-  import React, { useState, useCallback } from 'react'
+  import React, { useState, useCallback } from "react";
 
-    function Button(props) {
-      const { handleClick, children } = props;
-      console.log('Button -> render');
-      return (
-          <button onClick={handleClick}>{children}</button>
-      )
-    }
+  function Button(props) {
+    const { handleClick, children } = props;
+    console.log("Button -> render");
+    return <button onClick={handleClick}>{children}</button>;
+  }
 
-    const MemoizedButton = React.memo(Button);
+  const MemoizedButton = React.memo(Button);
 
-    export default function Index() {
-      const [clickCount, increaseCount] = useState(0);
-      // 这里使用了`useCallback`
-      const handleClick = useCallback(() => {
-          console.log('handleClick');
-          increaseCount(clickCount + 1);
-      }, [])
+  export default function Index() {
+    const [clickCount, increaseCount] = useState(0);
+    // 这里使用了`useCallback`
+    const handleClick = useCallback(() => {
+      console.log("handleClick");
+      increaseCount(clickCount + 1);
+    }, []);
 
-      return (
-          <div>
-              <p>{clickCount}</p>
-              <MemoizedButton handleClick={handleClick}>Click</MemoizedButton>
-          </div>
-      )
-    }
+    return (
+      <div>
+        <p>{clickCount}</p>
+        <MemoizedButton handleClick={handleClick}>Click</MemoizedButton>
+      </div>
+    );
+  }
   ```
 
 - 自定义 Hooks
@@ -621,25 +619,28 @@ export default ReactComp;
 ### react15
 
 - reconiler: 协调器 diff 找到谁发生变化
-  - update
+  - update: 触发更新
   - component render jsx => virtual dom
   - Vnode 跟上次的 vdom diff
-  - 找到变化的部分
+  - 找到变化的部分， 打上标记，如果有子组件，递归上面操作
   - 通知 renderer 渲染
 - renderer: 渲染器 将变化的组件渲染到视图中
   - ReactDom 跨平台框架
   - ReactNative
 
-同步更新， 递归更新子组件， 不可中断， 用户体验差
+同步更新，其中 reconiler 和 renderer 交替执行， 递归更新子组件， 不可中断， 用户体验差。
 
 ### react16
 
 在以上的基础上增加了 scheduler， 实现了异步可切片， 所谓的异步指的任务， 是打标的过程是可中断的
 
-- reconiler 会根据 scheduler 下发的任务， reconiler 会针对 Vdom 打标，所有的打标都完成后， 才给到 renderer 执行渲染
 - scheduler: 调度器,调度优先级 , 发生数据变化后，通知 reconiler
   - requestIdleCallback 很多浏览器兼容性不好，react 自己实现了一个这样的功能
-- renderer： 是同步的
+- reconiler 会根据 scheduler 下发的任务， reconiler 会针对 Vdom 打标，所有的打标都完成后， 才给到 renderer 执行渲染。 这里是递归可中断的
+
+- renderer：渲染器将变化的组件渲染到页面上，拿着 reconiler 提供的标识，更新所有的，这个过程 是同步的， 不可中断
+
+#### scheduler
 
 ### Fiber
 
@@ -652,6 +653,14 @@ React 内部实现的一套数据结构，支持状态更新， 支持优先级�
   - Fiber 是一个数据结构， 每个 fiber 节点对应一个组件， 通过链表的形式， 将所有 fiber 节点连接起来， 形成一个 fiber 树， fiber 树的结构和 virtual dom 树的结构是一致的。
 - 工作单元
   - 在当前更新过程中，当前节点发生什么变化， 打标
+
+### diff
+
+React 的 diff 会预设三个限制：
+
+1. 只对同级元素进行 diff。如果一个 DOM 节点在前后两次更新中跨越了层级，那么 React 会忽略；
+2. 两个不同类型的元素会产生出不同的树。如果元素由 div 变为 p，React 会销毁 div 及其子孙节点，并新建 p 及其子孙节点；
+3. 开发者可以通过 key prop 来暗示哪些子元素在不同的渲染下能保持稳定
 
 ## hooks
 
@@ -687,6 +696,8 @@ hooks 在 fiber 是链表结构，这里用数组来模拟
 
 <a href="https://nwy3y7fy8w5.feishu.cn/docx/KiLQdRbFCoFpOLxuv2Acc2FpnFe" target="_blank"  style="display: block">react 源码 上</a>
 <a href="https://nwy3y7fy8w5.feishu.cn/docx/TWPadLxd0odw1HxsP5UcJW26nlc" target="_blank"  style="display: block">react 源码 下</a>
+<a href="https://vgbixa7nr9.feishu.cn/docx/CYQHdPQ5wovCODxFHG4cxYQgnMf" target="_blank"  style="display: block">react 源码 下(zw)</a>
+
 <a href="https://react.iamkasong.com/me.html" target="_blank"  style="display: block">react 技术揭秘</a>
 <a href="https://y03l2iufsbl.feishu.cn/docx/AsKMdzcoNojUA2xAh9cc1fzknJh" target="_blank"  style="display: block">状态管理和 CRA</a>
 

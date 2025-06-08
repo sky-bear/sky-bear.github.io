@@ -176,6 +176,10 @@ export default defineConfig({
               text: "网络详解",
               link: "/node/network",
             },
+            {
+              text: "缓存和鉴权",
+              link: "/node/cache&JWT",
+            },
           ],
         },
       ],

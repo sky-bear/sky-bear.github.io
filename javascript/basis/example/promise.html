@@ -8,23 +8,44 @@
   <body>
     <script>
       const urls = [
-        "https://cdn.aidigger.com/general_upload/cloud/org/4938/b5f8f831ec91471f8837c2b96b412759-4e63cd.jpg",
-        "https://cdn.aidigger.com/general_upload/cloud/org/4938/ab46b2dabe2c43e0b15c8c0b7d43fb19-186b93.jpg",
-        "https://cdn.aizao.com/general_upload/cloud/org/4938/3fm5yzm2vo4vr6a5zeb4d2xaqtr4mgu3b3xzivyt3qejbfbx3fgrvoi7pdtpstil/wvz6henggpcq2lr5gzpbtkvmtdd757op-ebcae5.jpg",
-        "https://cdn.aizao.com/general_upload/cloud/org/4938/3fm5yzm2vo4vr6a5zeb4d2xaqtr4mgu3b3xzivyt3qejbfbx3fgrvoi7pdtpstil/bjdtzr2ybx3xuta6v6quogd5mpfloe5w-c399ff.jpg",
-        "https://cdn.aidigger.com/Davinci/design_platform/psd/images/50165050-3822-4e84-8220-73ba8278ea6f.png",
-        "https://cdn.aizao.com/general_upload/cloud/org/4938/3fm5yzm2vo4vr6a5zeb4d2xaqtr4mgu3b3xzivyt3qejbfbx3fgrvoi7pdtpstil/lcn557g7cju4txmrcd3yjrfecgpr4pod-d9e71f.jpg",
-        "https://cdn.aidigger.com/Davinci/design_platform/psd/images/141e2995-3093-4bf5-8f47-9ca8bc256a73.png",
-        "https://cdn.aidigger.com/Davinci/design_platform/psd/images/a7f13fb4-a450-45d6-bc24-1a2acc5508c6.png",
-        "https://cdn.aidigger.com/Davinci/design_platform/psd/images/50cfb2ef-f88f-4c3f-a1ec-e8712e3f6168.png",
-        "https://cdn.aidigger.com/Davinci/design_platform/psd/images/a34025c4-620b-46a5-863d-1c9f42cdf596.png",
-        "https://cdn.aidigger.com/Davinci/design_platform/psd/images/430eda13-6498-40ac-904d-b6f02c860ec7.png",
-        "https://cdn.aidigger.com/Davinci/design_platform/psd/images/515e885c-3427-4a42-8fcd-9bd8809a3db4.png",
-        "https://cdn.aizao.com/general_upload/cloud/org/4938/3fm5yzm2vo4vr6a5zeb4d2xaqtr4mgu3b3xzivyt3qejbfbx3fgrvoi7pdtpstil/nehmvu2rzzzs543aic55slnglgtgmjkd-d74a86.jpg",
-        "https://cdn.aidigger.com/Davinci/design_platform/psd/images/88af7ebb-11a1-414a-8b78-72566c1c6ab2.png",
-        "https://cdn.aizao.com/general_upload/cloud/org/4938/3fm5yzm2vo4vr6a5zeb4d2xaqtr4mgu3b3xzivyt3qejbfbx3fgrvoi7pdtpstil/qpw7vsko5v6pgsq7lesmnevheljs6l77-e703bb.jpg",
-        "https://cdn.aidigger.com/general_upload/Davinci/images/e2777a014e4c44609628057ed17b07bc.png",
-        "https://cdn.aizao.com/general_upload/cloud/org/4938/3fm5yzm2vo4vr6a5zeb4d2xaqtr4mgu3b3xzivyt3qejbfbx3fgrvoi7pdtpstil/47fce6hmuhi2lotuxfhsxoag7veztknj-387207.jpg",
+        "https://img0.baidu.com/it/u=3756224292,36535861&fm=253&fmt=auto&app=120&f=JPEG?w=500&h=1082",
+        "https://img2.baidu.com/it/u=3094057715,1481946993&fm=253&fmt=auto&app=120&f=JPEG?w=500&h=1083",
+        "https://img2.baidu.com/it/u=1321416153,231182642&fm=253&fmt=auto&app=120&f=JPEG?w=500&h=1004",
+        "https://img1.baidu.com/it/u=684770079,849342797&fm=253&fmt=auto&app=120&f=JPEG?w=1422&h=800",
+        "https://img1.baidu.com/it/u=352030092,3355738094&fm=253&fmt=auto&app=120&f=JPEG?w=500&h=1084",
+        "https://img0.baidu.com/it/u=1668347658,2100013824&fm=253&app=53&size=f60,60&n=0&g=0n&f=jpeg&fmt=auto?sec=1751814903&t=c7c9c88935fa4d8663921569b85265f3",
+        "https://img1.baidu.com/it/u=1351641110,252628211&fm=253&app=53&size=f60,60&n=0&g=0n&f=jpeg&fmt=auto?sec=1751814903&t=db40ab420319530f9a8f34525ed8b9fa",
+        "https://emoji.cdn.bcebos.com/yunque/baseimg3.png",
+        "https://img1.baidu.com/it/u=3485128945,4060706854&fm=253&app=53&size=f60,60&n=0&g=0n&f=jpeg&fmt=auto?sec=1751814903&t=519ab96ebe25a5d954227e0edb224851",
+        "https://img0.baidu.com/it/u=1590942076,1831006517&fm=253&app=53&size=f60,60&n=0&g=0n&f=jpeg&fmt=auto?sec=1751814903&t=e59471df26848e2b6d47dea01045b470",
+        "https://img2.baidu.com/it/u=2720883649,3270234402&fm=253&fmt=auto&app=120&f=JPEG?w=500&h=1084",
+        "https://img2.baidu.com/it/u=2537529519,1424541017&fm=253&fmt=auto&app=138&f=JPEG?w=800&h=500",
+        "https://img1.baidu.com/it/u=721037447,4093502876&fm=253&fmt=auto&app=120&f=JPEG?w=500&h=1084",
+        "https://img0.baidu.com/it/u=196744668,1013500348&fm=253&fmt=auto&app=138&f=JPEG?w=800&h=500",
+        "https://img2.baidu.com/it/u=279445256,2042126569&fm=253&fmt=auto&app=120&f=JPEG?w=500&h=1084",
+        "https://img2.baidu.com/it/u=2717084261,2234705995&fm=253&fmt=auto&app=120&f=JPEG?w=500&h=1019",
+        "https://img2.baidu.com/it/u=635983761,3668583097&fm=253&fmt=auto&app=120&f=JPEG?w=500&h=1084",
+        "https://img0.baidu.com/it/u=1378135208,689036720&fm=253&fmt=auto&app=120&f=JPEG?w=500&h=1000",
+        "https://img1.baidu.com/it/u=991888003,2216077540&fm=253&fmt=auto&app=120&f=JPEG?w=500&h=1083",
+        "https://img1.baidu.com/it/u=398438198,3355773313&fm=253&fmt=auto&app=120&f=JPEG?w=500&h=1084",
+        "https://img1.baidu.com/it/u=1354965782,4058078888&fm=253&fmt=auto&app=120&f=JPEG?w=500&h=1120",
+        "https://img0.baidu.com/it/u=600424072,1397159075&fm=253&fmt=auto&app=120&f=JPEG?w=500&h=1086",
+        "https://img0.baidu.com/it/u=3612617620,1249723649&fm=253&fmt=auto&app=120&f=JPEG?w=500&h=1084",
+        "https://img0.baidu.com/it/u=2808413461,1894614148&fm=253&fmt=auto&app=120&f=JPEG?w=1422&h=800",
+        "https://img0.baidu.com/it/u=367155203,895147107&fm=253&fmt=auto&app=120&f=JPEG?w=500&h=1082",
+        "https://img2.baidu.com/it/u=421583916,504923263&fm=253&fmt=auto&app=120&f=JPEG?w=500&h=1083",
+        "https://img0.baidu.com/it/u=1924114380,2842997109&fm=253&fmt=auto&app=120&f=JPEG?w=500&h=1120",
+        "https://img1.baidu.com/it/u=3872518031,2688320355&fm=253&fmt=auto&app=120&f=JPEG?w=500&h=1082",
+        "https://img1.baidu.com/it/u=465639030,1867616369&fm=253&fmt=auto&app=120&f=JPEG?w=500&h=1086",
+        "https://img0.baidu.com/it/u=3101194538,1113022942&fm=253&fmt=auto&app=120&f=JPEG?w=500&h=1083",
+        "https://img0.baidu.com/it/u=3728906971,1333039899&fm=253&fmt=auto&app=120&f=JPEG?w=500&h=1082",
+        "https://img1.baidu.com/it/u=3934704919,1100886880&fm=253&fmt=auto&app=120&f=JPEG?w=500&h=1083",
+        "https://img0.baidu.com/it/u=3218320359,306973715&fm=253&fmt=auto&app=120&f=JPEG?w=500&h=1085",
+        "https://img1.baidu.com/it/u=2751352733,207018849&fm=253&fmt=auto&app=120&f=JPEG?w=1422&h=800",
+        "https://img0.baidu.com/it/u=1013631422,2229674529&fm=253&app=120&f=JPEG?w=1422&h=800",
+        "https://img1.baidu.com/it/u=2886058172,2812256169&fm=253&app=120&f=JPEG?w=1422&h=800",
+        "https://img0.baidu.com/it/u=2039472454,3116468781&fm=253&app=120&f=JPEG?w=1422&h=800",
+        "https://img0.baidu.com/it/u=759064268,3603440700&fm=253&fmt=auto&app=120&f=JPEG?w=500&h=1081",
       ];
 
       const loadImg = (url) => {
@@ -39,15 +60,42 @@
           };
         });
       };
-      
-      const MAX = 3
-      const PromiseList = []
-      while(urls.length) {
-        if(PromiseList.length < MAX -1) {
 
+      class ConcurrentLimiter {
+        constructor(limit) {
+          this.limit = limit;
+          this.queue = [];
+          this.activeCount = 0;
+        }
+        enqueue(fn) {
+          return new Promise((resolve, reject) => {
+            this.queue.push(() => {
+              fn()
+                .then(resolve)
+                .catch(reject)
+                .finally(() => {
+                  this.activeCount--;
+                  this.dequeue();
+                });
+            });
+            this.dequeue();
+          });
+        }
+        dequeue() {
+          if (this.activeCount < this.limit && this.queue.length > 0) {
+            this.activeCount++;
+            this.queue.shift()();
+          }
         }
       }
 
+      const concurrentLimiter = new ConcurrentLimiter(3);
+      urls.forEach((img) => {
+        concurrentLimiter.enqueue(() => loadImg(img));
+      });
+    </script>
+  </body>
+</html>
     </script>
   </body>
 </html>

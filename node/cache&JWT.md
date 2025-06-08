@@ -1,18 +1,10 @@
-# Node
-
 <script setup>
 import Image from "../components/Image/index.vue"
 </script>
 
+# 缓存 安全与鉴权
 
-
-
-
-
-
-## 缓存 安全与鉴权
-
-### Cookie
+## Cookie
 
 HTTP Cookie（通常也叫 Web Cookie 或浏览器 Cookie），是服务器发送到用户浏览器并保存在本地的一小块数据，它会在浏览器下次向同一服务器再发起请求时被携带并发送到服务器上。通常，它用于告知服务端两个请求是否来自同一浏览器，如保持用户的登录状态。支持无状态的 HTTP 变为“有状态”
 
@@ -51,18 +43,18 @@ HTTP Cookie（通常也叫 Web Cookie 或浏览器 Cookie），是服务器发�
   <img src="http://bank.example.com/withdraw?account=bob&amount=1000000&for=mallory">
   ```
 
-### Node 缓存
+## Node 缓存
 
-#### 缓存作用
+### 缓存作用
 
 1. 为了提高速度，提高效率；
 2. 减少数据传输，节省网费；
 3. 减少服务器的负担，提高网站性能；
 4. 加快客户端加载网页的速度；
 
-#### 缓存类型
+### 缓存类型
 
-##### 强制缓存
+#### 强制缓存
 
 强制缓存不需要与服务器发生交互。
 
@@ -91,7 +83,7 @@ HTTP Cookie（通常也叫 Web Cookie 或浏览器 Cookie），是服务器发�
   3. public 任何路径的缓存者（本地缓存、代理服务器），可以无条件的缓存改资源，不设置默认为 public；
   4. private 只针对单个用户或者实体（不同用户、窗口）缓存资源；
 
-##### 协商缓存
+#### 协商缓存
 
 当强制缓存失效(超过规定时间)时，就需要使用对比缓存，由服务器决定缓存内容是否失效。对比缓存是可以和强制缓存一起使用。
 
@@ -116,7 +108,7 @@ HTTP Cookie（通常也叫 Web Cookie 或浏览器 Cookie），是服务器发�
 1. 每次请求的时候，服务器都会把文件读取一次，以确认文件有没有修改；
 2. 大文件进行 etag 一般用文件的大小 + 文件的最后修改时间 来组合生成这个 etag；
 
-### 鉴权
+## 鉴权
 
 目前常用的鉴权有四种：
 
@@ -125,13 +117,13 @@ HTTP Cookie（通常也叫 Web Cookie 或浏览器 Cookie），是服务器发�
 - Token 验证
 - OAuth(开放授权)
 
-#### HTTP Basic Authentication
+### HTTP Basic Authentication
 
 这种授权方式是浏览器遵守 http 协议实现的基本授权方式，HTTP 协议进行通信的过程中，HTTP 协议定义了基本认证允许 HTTP 服务器对客户端进行用户身份证的方法
 
-#### session-cookie
+### session-cookie
 
-##### cookie
+#### cookie
 
 Http 协议是一个无状态的协议，服务器不会知道到底是哪一台浏览器访问了它，因此需要一个标识用来让服务器区分不同的浏览器。cookie 就是这个管理服务器与客户端之间状态的标识。
 
@@ -139,49 +131,22 @@ Http 协议是一个无状态的协议，服务器不会知道到底是哪一台
 2. 浏览器客户端收到响应就会设置 cookie 并存储；
 3. 在下一次该浏览器向服务器发送请求时，就会在 request 头部自动带上 Cookie 字段，服务器端收到该 cookie 用以区分不同的浏览器；
 
-##### session
+#### session
 
 session 是会话的意思，浏览器第一次访问服务端，服务端就会创建一次会话，在会话中保存标识该浏览器的信息。它与 cookie 的区别就是 session 是缓存在服务端的，cookie 则是缓存在客户端，他们都由服务端生成，为了弥补 Http 协议无状态的缺陷。
 
-##### cookie -session 认证
+#### cookie -session 认证
 
+### token 验证
 
-#### token 验证
 token 是一个令牌，浏览器第一次访问服务端时会签发一张令牌，之后浏览器每次携带这张令牌访问服务端就会认证该令牌是否有效，只要服务端可以解密该令牌，就说明请求是合法的，令牌中包含的用户信息还可以区分不同身份的用户
 
+### JWT
 
-#### JWT
 服务器认证以后，生成一个 JSON 对象，这个 JSON 对象肯定不能裸传给用户，那谁都可以篡改这个对象发送请求。因此这个 JSON 对象会被服务器端签名加密后返回给用户，返回的内容就是一张令牌，以后用户每次访问服务器端就带着这张令牌。
-
-
-## node 框架
-
-
-### express
-中间件访问时按照注册顺序访问
-### koa
-
-### 区别
-- 架构风格
-  - Express： 功能丰富型框架
-  - Koa： 轻量级框架
-- 异步处理方式
-  - Express： 回调函数
-  - Koa： Generator + co
-  - Koa2： async/await
-- 中间件机制
-  - Express： 中间件函数
-  - Koa： 中间件类
-- 路由机制
-  - Express： 内置路由
-  - Koa： koa-router
-
-
 
 <a href="https://nwy3y7fy8w5.feishu.cn/docx/ECrNdLVbvop7ITxyvTlctaGJnuc" target="_blank"  style="display: block">网络详解</a>
 
 <a href="https://nwy3y7fy8w5.feishu.cn/docx/EG8idTDoqo1cgExeovwcC3Y5n0c" target="_blank"  style="display: block">Node 缓存 安全 鉴权</a>
 
 <a href="https://x1mnl9knbjp.feishu.cn/docx/UKaldhN5loKq5LxRm3lcSAuTnze" target="_blank"  style="display: block">Express&Koa</a>
-
-

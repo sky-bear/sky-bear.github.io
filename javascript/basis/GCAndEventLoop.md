@@ -4,8 +4,15 @@
 import Image from "../../components/Image/index.vue"
 </script>
 
-JavaScript 属于解释型语言，它需要在代码执行时，将代码编译为机器语言。<br />
-ast（abstract struct tree）
+javaScript 是一种带有即时编译（JIT）的解释型语言。
+
+- 源代码阶段：
+  开发者编写 .js 文件，内容为 JavaScript 源码。
+- 解析与编译：
+  现代 JavaScript 引擎（如 V8、SpiderMonkey、JavaScriptCore）会将源代码进行词法分析、语法分析，然后将其转换为字节码或直接编译为机器码。
+- 执行阶段：
+  使用 JIT（即时编译） 技术，在运行时动态优化和编译频繁使用的代码，提高性能。
+
 <Image  src="/javascript/basis/images/engine.png" />
 
 - Interpreter 逐行读取代码并立即执行。
@@ -457,7 +464,6 @@ $outer.addEventListener("click", handler); // 冒泡触发
 当在添加一层冒泡事件监听器后，点击事件会先执行，因为冒泡事件监听器会先于 setTimeout 的回调执行。
 
 总结来说，在大多数情况下，点击事件会比 setTimeout(fn, 0) 更早执行，因为它属于用户交互类的宏任务，而 setTimeout 则是在指定时间延迟后才被加入宏任务队列
-
 
 ::: warning
 我们知道渲染是在微任务之后，宏任务之前进行的， 那为啥 vue.$nextTick 可以通过 promise.then 来执行呢？<br />

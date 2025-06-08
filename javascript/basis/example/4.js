@@ -8,9 +8,6 @@
 //   }
 // }
 
-
-
-
 // function add() {
 //   const arg = [...arguments];
 //   const fn = function (num) {
@@ -20,20 +17,17 @@
 //   fn.toString = function () {
 //     return arg.reduce((a, b) => a + b, 0);
 //   }
-  
+
 //   return fn
 // }
 
 // console.log(add(1)(2)(3)(4)+'');
-
-
 
 // const obj = {a:1}
 // const a = Object.seal(obj)
 // a.b = 2
 // a.a = 2
 // console.log(a)
-
 
 // const obj = {
 //   getA() {
@@ -45,14 +39,17 @@
 
 // obj.getA()()
 
+// const phoneRex =/^1[34578]\d{9}$/g
 
-const phoneRex =/^1[34578]\d{9}$/g
+// const list = [1, 2, 3, 4, 5];
+// list.forEach((item, index) => {
+//   console.log(JSON.stringify(list), index);
+//   list.splice(index, 1);
+// });
 
+const list = Array.from({ length: 100 });
 
-
-
-
-
-
-
+list.forEach((item, index) => {
+  console.log(index + 1);
+});
 
