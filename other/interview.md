@@ -101,3 +101,14 @@ trao2 taro3
 ## 引用
 
 <a href="https://nwy3y7fy8w5.feishu.cn/docx/HoQVdSYr8o7ZpTxRqXMcWawondd" target="_blank"  style="display: block">面试专题</a>
+
+<a href="/other/interview/2025最新前端八股文——webpack、html篇.pdf" target="_blank"  style="display: block">2025 最新前端八股文——webpack、html 篇</a>
+<a href="/other/interview/大厂面试高频100题.pdf" target="_blank"  style="display: block">大厂面试高频 100 题</a>
+
+<a href="/other/interview/前端面试宝典大全.pdf" target="_blank"  style="display: block">前端面试宝典大全</a>
+<a href="/other/interview/前端面试场景题合集.pdf" target="_blank"  style="display: block">前端面试场景题合集</a>
+<a href="/other/interview/前端面试上岸手册（八股文）.pdf" target="_blank"  style="display: block">前端面试上岸手册（八股文）</a>
+<a href="/other/interview/最爱被问到的10个JavaScript闭包问题.pdf" target="_blank"  style="display: block">最爱被问到的 10 个 JavaScript 闭包问题</a>
+<a href="/other/interview/React面试题解析.pdf" target="_blank"  style="display: block">React 面试题解析</a>
+<a href="/other/interview/vue面试题.pdf" target="_blank"  style="display: block">vue 面试题</a>
+<a href="/other/interview/Vue面试题解析.pdf" target="_blank"  style="display: block">Vue 面试题解析</a>
