@@ -239,116 +239,82 @@ function reverseNumber(num) {
 
 console.log(reverseNumber(203));
 
-const PENDING = "pending";
+const PEDDING = "pedding";
 const FULFILLED = "fulfilled";
 const REJECTED = "rejected";
 
 class MyPromise {
   constructor(executor) {
-    this.init();
-    this.resolve.bind(this);
-    this.rejected.bind(this);
+    this.initData();
+    this.initBind();
     try {
-      executor(this.resolve, this.rejected);
+      executor((this.resolve, this.reject))
     } catch (error) {
-      this.rejected(error);
+      this.reject(error)
     }
-  }
+    
 
-  init() {
-    this.status = PENDING;
+  }
+  initData() {
+    this.status = PEDDING;
     this.value = undefined;
-    this.onFulfilledCallbacks = [];
-    this.onRejectedCallbacks = [];
+    this.fulfilledCallbacks = [];
+    this.rejectedCallbacks = [];
+  }
+  initBind() {
+    this.resolve = this.resolve.bind(this);
+    this.reject = this.reject.bind(this);
   }
 
   resolve(value) {
-    if (this.status === PENDING) {
-      this.value = value;
+    if (this.status === PEDDING) {
       this.status = FULFILLED;
-      while (this.onFulfilledCallbacks.length) {
-        this.onFulfilledCallbacks.shift()(this.value);
-      }
-    }
-  }
-
-  rejected(value) {
-    if (this.status === PENDING) {
       this.value = value;
+      this.fulfilledCallbacks.forEach((fn) => fn(this.value));
+    }
+  }
+  reject(value) {
+    if (this.status === PEDDING) {
       this.status = REJECTED;
-      while (onRejectedCallbacks.length) {
-        this.onRejectedCallbacks.shift()(this.value);
-      }
+      this.value = value;
+      this.rejectedCallbacks.forEach((fn) => fn(this.value));
     }
   }
 
-  then(onFulfilled, onRejected) {
-    const executorWithTryCatch = (fn, params, resolve, reject) => {
+  then(resolveFn, rejectFn) {
+    resolveFn = typeof resolveFn === "function" ? resolveFn : (value) => value;
+    rejectFn = typeof rejectFn === "function" ? rejectFn : (value) => {
+      throw value;
+    };  
+
+
+    const executorWidthTryCatch = (fn, params,resolve,reject) => {
       try {
         const result = fn(params);
-        if (result instanceof MyPromise) {
-          result.then(resolve, reject);
-        } else {
-          resolve(result);
+        if(result instanceof MyPromise) {
+          result.then(resolve,reject)
+        }else {
+          resolve(result)
         }
+
       } catch (error) {
-        reject(error);
+        reject(error)
       }
-    };
+    }
 
-    return new MyPromise((resolve, reject) => {
-      onFulfilled =
-        typeof onFulfilled === "function" ? onFulfilled : (value) => value;
-      onRejected =
-        typeof onRejected === "function"
-          ? onRejected
-          : (value) => {
-              throw value;
-            };
-
-      if (this.status === FULFILLED) {
-        executorWithTryCatch(onFulfilled, this.value, resolve, reject);
+    return new MyPromise((resolve,rejected) => {
+      if(this.status === FULFILLED) {
+        executorWidthTryCatch(resolveFn,this.value,resolve,rejected)
       }
-      if (this.status === REJECTED) {
-        executorWithTryCatch(onRejected, this.value, resolve, reject);
+      if(this.status === REJECTED) {
+        executorWidthTryCatch(rejectFn,this.value,resolve,rejected)
       }
-      if (this.status === PENDING) {
-        this.onFulfilledCallbacks.push((params) => {
-          executorWithTryCatch(onFulfilled, params, resolve, reject);
-        });
-        this.onRejectedCallbacks.push((params) => {
-          executorWithTryCatch(onRejected, params, resolve, reject);
-        });
+      if(this.status === PEDDING) {
+        this.fulfilledCallbacks.push((params) => executorWidthTryCatch(resolveFn,params,resolve,rejected))
+        this.rejectedCallbacks.push((params) => executorWidthTryCatch(rejectFn,params,resolve,rejected))
       }
-    });
-  }
-  catch(onRejected) {
-    return this.then(null, onRejected);
-  }
-
-  finally(onFinally) {
-    return this.then(
-      () => {
-        onFinally();
-      },
-      () => {
-        onFinally();
-      }
-    );
-  }
-
-  static resolve(value) {
-    return new MyPromise((resolve,reject) => {
-      resolve(value)
+      
     })
-  }
 
-  static reject(value) {
-    return new MyPromise((resolve,reject) => {
-      reject(value)
-    })
   }
 }
-
-
-
