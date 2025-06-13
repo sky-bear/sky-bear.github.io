@@ -35,3 +35,12 @@ Three.js 是一个基于原生 WebGL 的 JavaScript 3D 库，它提供了一套�
 - 动画（Animation）：Three.js 提供了动画功能，可以通过修改物体的位置、旋转、缩放等属性来实现动画效果。
 - 材质（Material）：材质决定了物体的外观，如颜色、透明度、纹理等。Three.js 提供了多种材质类型，如基础材质（MeshBasicMaterial）、 Lambert 材质（MeshLambertMaterial）等。
 - 渲染器（Renderer）：渲染器负责将场景和相机渲染到屏幕上。Three.js 提供了多种渲染器，如 WebGLRenderer、CanvasRenderer 等。
+
+
+## Antv
+## Echarts
+## D3.js
+svg操作的封装， 矢量的 
+
+## ZRender
+ZRender 是百度开源的一个轻量级 2D 图形渲染库，是 ECharts 的底层渲染引擎
