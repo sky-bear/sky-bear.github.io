@@ -42,6 +42,7 @@ export default defineConfig({
           { text: "前端性能监控", link: "/other/monitor/monitor" },
           { text: "webpack", link: "/other/specification/webpack" },
           { text: "git常用命令", link: "/other/git" },
+          { text: "安全", link: "/other/other/secure.md" },
           { text: "面试", link: "/other/interview" },
         ]
       },

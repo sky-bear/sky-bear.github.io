@@ -376,7 +376,7 @@ function stopPropagation(e) {
 
 > cookie，localStorage，sessionStorage，indexDB
 
-| 特征         | cookie                                     | loaclStorage             | sessionStorage | indexDB                  |
+| 特征         | cookie                                     | loaclStorage             | sessionStorage | IndexedDB                   |
 | ------------ | ------------------------------------------ | ------------------------ | -------------- | ------------------------ |
 | 数据生命周期 | 一般由服务器生成，可以设置过期时间         | 除非被清理，否则一直存在 | 页面关闭就清理 | 除非被清理，否则一直存在 |
 | 存储大小     | 单个 4K                                    | 5M                       | 5M             | 无限                     |
