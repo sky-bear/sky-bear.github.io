@@ -733,6 +733,18 @@ export default function upload(option) {
      Trident 的使⽤已经⼤幅减少，微软也已经放弃对它的维护更新。
   5. 国内⼤多数尝试在过去使⽤的往往是 Trident 内核，⽬前⼤多数尝试都转向了使⽤ Blink 内核
 
+
+
+## 跨域
+同源策略： 协议  域名  端口
+目的： 为了防止恶意网站通过脚本访问其他网站的数据
+解决方式：
+- CORS: 需要后端配置可访问域名 `Access-Control-Allow-Origin: *`
+- 代理服务器：常见的是 `webpack-dev-serve`
+- JSONP :JSONP 利用了 `<script>` 标签不受同源策略限制的特点, 但是只支持get请求
+- Nginx代理
+- postMessage
+
 ## 资料引用：
 
 <a href="https://zh.javascript.info/ui" target="_blank"  style="display: block">浏览器：文档，事件，接口</a>
