@@ -141,7 +141,6 @@ react 是函数化， 将所有逻辑都放到函数中处理
 
 #### vue2 采用的是双端 diff
 
-
 #### vue3 采用的是靶向更新+ 最长递增子序列（快速 diff）
 
 ### 设计理念
@@ -176,3 +175,12 @@ react 是函数化， 将所有逻辑都放到函数中处理
 
 <a href="/vue/vue3/pdf/Vue3 核心模块源码解析.pdf" target="_blank"  style="display: block">Vue3 核心模块源码解析</a>
 
+<a href="https://vgbixa7nr9.feishu.cn/docx/QRWcd7lu0oDzYMxZIM0cKDv0nG4" target="_blank"  style="display: block">vue 源码上</a>
+<a href="https://vgbixa7nr9.feishu.cn/docx/CCVpdwTuZoJFwvxgeJAckQcsnYb" target="_blank"  style="display: block">vue 源码中</a>
+<a href="https://vgbixa7nr9.feishu.cn/file/A0Z4bsFz1oibQAxRtUjcyrrrn4e" target="_blank"  style="display: block">vue 源码下</a>
+<a href="https://vgbixa7nr9.feishu.cn/docx/YICwdpMLFot1bnxiftVcYG1pnZg" target="_blank"  style="display: block">vue3</a>
+
+<a href="https://y03l2iufsbl.feishu.cn/docx/E6J2dV7aLogtQ4xq2Fvc1yCFnjf" target="_blank"  style="display: block">vue2 源码解析</a>
+<a href="" target="_blank"  style="display: block">vue2 源码解析</a>
+<a href="https://nwy3y7fy8w5.feishu.cn/docx/XIz0dT0d8oGmsYxtfQ8c0xG1ntc" target="_blank"  style="display: block">vue3</a>
+<a href="https://nwy3y7fy8w5.feishu.cn/docx/N8UTdwze2o0edwxFWrgcDchUnvh" target="_blank"  style="display: block">vue3 源码</a>
