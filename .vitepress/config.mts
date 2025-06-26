@@ -42,7 +42,8 @@ export default defineConfig({
           { text: "前端性能监控", link: "/other/monitor/monitor" },
           { text: "webpack", link: "/other/specification/webpack" },
           { text: "git常用命令", link: "/other/git" },
-          { text: "面试", link: "/other/interview" },
+          { text: "安全", link: "/other/other/secure.md" },
+          { text: "面试", link: "/other/interview/interview" },
         ]
       },
     ],
@@ -179,6 +180,25 @@ export default defineConfig({
             {
               text: "缓存和鉴权",
               link: "/node/cache&JWT",
+            },
+          ],
+        },
+      ],
+      "/other/interview/": [
+        {
+          text: "面试",
+          items: [
+            {
+              text: "基础",
+              link: "/other/interview/interview",
+            },
+            {
+              text: "html+css",
+              link: "/other/interview/html+css",
+            },
+            {
+              text: "浏览器",
+              link: "/browser/",
             },
           ],
         },

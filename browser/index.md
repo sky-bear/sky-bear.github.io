@@ -376,12 +376,12 @@ function stopPropagation(e) {
 
 > cookie，localStorage，sessionStorage，indexDB
 
-| 特征         | cookie                                     | loaclStorage             | sessionStorage | indexDB                  |
+| 特征         | cookie                                     | loaclStorage             | sessionStorage | IndexedDB                |
 | ------------ | ------------------------------------------ | ------------------------ | -------------- | ------------------------ |
 | 数据生命周期 | 一般由服务器生成，可以设置过期时间         | 除非被清理，否则一直存在 | 页面关闭就清理 | 除非被清理，否则一直存在 |
 | 存储大小     | 单个 4K                                    | 5M                       | 5M             | 无限                     |
 | 与服务端通信 | 每次都会携带在 header 中，对于请求性能影响 | 不参与                   | 不参与         | 不参与                   |
-| 域名         | 只受主域名控制                             | 受域名控制               | 受域名控制     |                          |
+| 域名         | 只受主域名控制                             | 受域名控制               | 受域名控制     | 受域名控制               |
 
 ## 浏览器请求
 
@@ -716,6 +716,34 @@ export default function upload(option) {
   };
 }
 ```
+
+## 浏览器内核是什么？常⻅的浏览器内核有哪些？
+
+我们经常说的浏览器内核指的是浏览器的排版引擎：
+
+- 排版引擎（layout engine），也称为浏览器引擎（browser engine）、⻚⾯渲染引擎（rendering engine）或样版引擎。
+- 也就是⼀个⽹⻚下载下来后，就是由我们的渲染引擎来帮助我们解析的。
+  常⻅的浏览器内核主要包括（从优先级的依次说）：
+  1. Blink：由 Google 开发，是 Chrome 浏览器以及最新版本的微软 Edge 浏览器的内核。Blink 是 WebKit 的⼀个分
+     ⽀。
+  2. WebKit：最初由苹果公司为 Safari 浏览器开发。它是开源的渲染引擎，也被其他⼀些浏览器采⽤，如 iOS 上的
+     所有浏览器。
+  3. Gecko：由 Mozilla 开发，是 Firefox 浏览器的内核。
+  4. Trident：由微软开发，曾经是 Internet Explorer 浏览器的内核。随着新版 Edge 浏览器转向 Blink 内核，
+     Trident 的使⽤已经⼤幅减少，微软也已经放弃对它的维护更新。
+  5. 国内⼤多数尝试在过去使⽤的往往是 Trident 内核，⽬前⼤多数尝试都转向了使⽤ Blink 内核
+
+
+
+## 跨域
+同源策略： 协议  域名  端口
+目的： 为了防止恶意网站通过脚本访问其他网站的数据
+解决方式：
+- CORS: 需要后端配置可访问域名 `Access-Control-Allow-Origin: *`
+- 代理服务器：常见的是 `webpack-dev-serve`
+- JSONP :JSONP 利用了 `<script>` 标签不受同源策略限制的特点, 但是只支持get请求
+- Nginx代理
+- postMessage
 
 ## 资料引用：
 
