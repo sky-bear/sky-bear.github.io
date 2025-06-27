@@ -742,7 +742,7 @@ export default function upload(option) {
 - CORS: 需要后端配置可访问域名 `Access-Control-Allow-Origin: *`
 - 代理服务器：常见的是 `webpack-dev-serve`
 - JSONP :JSONP 利用了 `<script>` 标签不受同源策略限制的特点, 但是只支持get请求
-- Nginx代理
+- Nginx反向代理
 - postMessage
 
 ## 资料引用：
