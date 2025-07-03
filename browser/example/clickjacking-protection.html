@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>点击劫持防护示例</title>
+    <!-- 防护措施1: X-Frame-Options -->
+    <meta http-equiv="X-Frame-Options" content="DENY">
+    
+    <!-- 防护措施2: CSP frame-ancestors -->
+    <meta http-equiv="Content-Security-Policy" content="frame-ancestors 'none'">
+</head>
+<body>
+    <h1>点击劫持防护演示</h1>
+    
+    <p>此页面已配置以下防护措施：</p>
+    <ul>
+        <li>X-Frame-Options: DENY - 禁止任何框架嵌套</li>
+        <li>CSP frame-ancestors: 'none' - 更现代的防护方式</li>
+    </ul>
+    
+    <div style="background:#f0f0f0; padding:20px; margin-top:20px;">
+        <h3>敏感操作区域</h3>
+        <button id="sensitive-btn">执行敏感操作</button>
+    </div>
+    
+    <script>
+        document.getElementById('sensitive-btn').addEventListener('click', () => {
+            alert('敏感操作已执行！');
+        });
+    </script>
+</body>
+</html>

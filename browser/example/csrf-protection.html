@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>CSRF防护示例</title>
+</head>
+<body>
+    <h1>CSRF防护演示</h1>
+    
+    <form id="transfer-form">
+        <input type="hidden" name="csrf_token" value="随机生成的token值">
+        <label>转账金额: <input type="number" name="amount"></label>
+        <button type="submit">提交</button>
+    </form>
+    
+    <script>
+        // 模拟从Cookie中获取CSRF Token
+        function getCookie(name) {
+            const value = `; ${document.cookie}`;
+            const parts = value.split(`; ${name}=`);
+            if (parts.length === 2) return parts.pop().split(';').shift();
+        }
+        
+        document.getElementById('transfer-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const csrfToken = document.querySelector('input[name="csrf_token"]').value;
+            const cookieToken = getCookie('XSRF-TOKEN');
+            
+            // 验证CSRF Token
+            if (csrfToken !== cookieToken) {
+                alert('CSRF Token验证失败！');
+                return;
+            }
+            
+            // 验证通过，执行转账操作
+            alert('转账请求已提交');
+        });
+    </script>
+</body>
+</html>

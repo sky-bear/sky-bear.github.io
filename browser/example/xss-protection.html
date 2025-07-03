@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>XSS防护示例</title>
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'">
+</head>
+<body>
+    <h1>XSS防护演示</h1>
+    
+    <!-- 安全示例 -->
+    <div id="safe-output"></div>
+    
+    <!-- 危险示例 -->
+    <div id="dangerous-output"></div>
+    
+    <script>
+        // 安全输出示例
+        function safeOutput(userInput) {
+            const div = document.getElementById('safe-output');
+            div.textContent = userInput; // 自动转义HTML
+        }
+        
+        // 危险输出示例
+        function dangerousOutput(userInput) {
+            const div = document.getElementById('dangerous-output');
+            div.innerHTML = userInput; // 可能执行恶意脚本
+        }
+        
+        // 测试
+        const userInput = '<script>alert("XSS攻击")</script>';
+        safeOutput(userInput);
+        dangerousOutput(userInput);
+    </script>
+</body>
+</html>

@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>CORS安全配置示例</title>
+</head>
+<body>
+    <h1>CORS安全配置演示</h1>
+    
+    <button id="safe-request">发送安全CORS请求</button>
+    <button id="unsafe-request">发送不安全CORS请求</button>
+    
+    <script>
+        // 安全CORS配置示例
+        document.getElementById('safe-request').addEventListener('click', async () => {
+            try {
+                const response = await fetch('https://api.example.com/data', {
+                    method: 'GET',
+                    credentials: 'same-origin', // 不发送凭据到不同源
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json'
+                    }
+                });
+                console.log('安全响应:', await response.json());
+            } catch (error) {
+                console.error('安全请求错误:', error);
+            }
+        });
+
+        // 不安全CORS示例
+        document.getElementById('unsafe-request').addEventListener('click', async () => {
+            try {
+                const response = await fetch('https://untrusted-site.com/data', {
+                    method: 'POST',
+                    credentials: 'include', // 危险：发送凭据到不同源
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ sensitive: 'data' })
+                });
+                console.log('不安全响应:', await response.json());
+            } catch (error) {
+                console.error('不安全请求错误:', error);
+            }
+        });
+    </script>
+</body>
+</html>
