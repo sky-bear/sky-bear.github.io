@@ -2,7 +2,8 @@
 <html>
 <head>
     <title>XSS防护示例</title>
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'">
+    <!-- 使用nonce的CSP配置 -->
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'nonce-random123'">
 </head>
 <body>
     <h1>XSS防护演示</h1>
@@ -13,7 +14,7 @@
     <!-- 危险示例 -->
     <div id="dangerous-output"></div>
     
-    <script>
+    <script nonce="random123">
         // 安全输出示例
         function safeOutput(userInput) {
             const div = document.getElementById('safe-output');
@@ -27,9 +28,13 @@
         }
         
         // 测试
-        const userInput = '<script>alert("XSS攻击")</script>';
+        const userInput = '<script>alert("XSS攻击")<\/script>';
         safeOutput(userInput);
         dangerousOutput(userInput);
+        
+        // 显示测试代码
+        document.getElementById('safe-output').setAttribute('data-code', '安全输出: ' + userInput);
+        document.getElementById('dangerous-output').setAttribute('data-code', '危险输出: ' + userInput);
     </script>
 </body>
 </html>

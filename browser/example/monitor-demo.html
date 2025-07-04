@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>前端监控SDK演示</title>
+    <script src="monitor-sdk.js"></script>
+</head>
+<body>
+    <h1>前端监控SDK演示</h1>
+    
+    <button id="trigger-error">触发JS错误</button>
+    <button id="trigger-promise-error">触发Promise错误</button>
+    <button id="track-event">记录自定义事件</button>
+    
+    <script>
+        // 初始化监控SDK
+        const monitor = new FrontendMonitor({
+            appId: 'demo-app',
+            reportUrl: 'https://mock-api.example.com/monitor'
+        });
+        
+        // 触发JS错误
+        document.getElementById('trigger-error').addEventListener('click', () => {
+            try {
+                // 故意触发错误
+                undefinedFunction();
+            } catch (error) {
+                console.log('已触发并捕获JS错误:', error);
+            }
+        });
+        
+        // 触发未处理的Promise rejection
+        document.getElementById('trigger-promise-error').addEventListener('click', () => {
+            Promise.reject(new Error('演示用的Promise rejection'));
+        });
+        
+        // 记录自定义事件
+        document.getElementById('track-event').addEventListener('click', () => {
+            monitor.trackEvent('BUTTON_CLICK', {
+                buttonId: 'track-event',
+                page: 'monitor-demo'
+            });
+            alert('已记录自定义事件');
+        });
+    </script>
+</body>
+</html>

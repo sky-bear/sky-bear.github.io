@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Vue错误监控示例</title>
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.6.14/dist/vue.js"></script>
+    <script src="monitor-sdk.js"></script>
+</head>
+<body>
+    <div id="app">
+        <h1>Vue错误监控演示</h1>
+        <error-boundary>
+            <buggy-component></buggy-component>
+        </error-boundary>
+        <button @click="triggerError">触发Vue错误</button>
+    </div>
+
+    <script>
+        // 初始化监控
+        const monitor = new FrontendMonitor({
+            appId: 'vue-demo',
+            reportUrl: 'https://mock-api.example.com/monitor'
+        });
+
+        // 配置Vue错误处理
+        Vue.config.errorHandler = (err, vm, info) => {
+            monitor.report('VUE_ERROR', {
+                error: err.stack,
+                component: vm.$options.name,
+                lifecycleHook: info
+            });
+        };
+
+        // 错误边界组件
+        Vue.component('ErrorBoundary', {
+            template: '<slot></slot>',
+            errorCaptured(err, vm, info) {
+                monitor.report('VUE_ERROR_BOUNDARY', {
+                    error: err.stack,
+                    component: vm.$options.name,
+                    info: info
+                });
+                return false; // 阻止错误继续向上传播
+            }
+        });
+
+        // 有问题的组件
+        Vue.component('BuggyComponent', {
+            template: '<div>{{ undefinedMethod() }}</div>',
+            methods: {
+                undefinedMethod() {
+                    return this.nonExistentData.message;
+                }
+            }
+        });
+
+        // Vue实例
+        new Vue({
+            el: '#app',
+            methods: {
+                triggerError() {
+                    this.$children[0].undefinedMethod();
+                }
+            }
+        });
+    </script>
+</body>
+</html>

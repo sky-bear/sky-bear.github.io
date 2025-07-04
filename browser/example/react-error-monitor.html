@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>React错误监控示例</title>
+    <script src="https://unpkg.com/react@17/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@17/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
+    <script src="monitor-sdk.js"></script>
+</head>
+<body>
+    <div id="root"></div>
+    
+    <script type="text/babel">
+        // 初始化监控
+        const monitor = new FrontendMonitor({
+            appId: 'react-demo',
+            reportUrl: 'https://mock-api.example.com/monitor'
+        });
+
+        // Error Boundary组件
+        class ErrorBoundary extends React.Component {
+            constructor(props) {
+                super(props);
+                this.state = { hasError: false };
+            }
+
+            static getDerivedStateFromError(error) {
+                return { hasError: true };
+            }
+
+            componentDidCatch(error, info) {
+                monitor.report('REACT_ERROR', {
+                    error: error.stack,
+                    componentStack: info.componentStack
+                });
+            }
+
+            render() {
+                if (this.state.hasError) {
+                    return <h1>组件发生错误，请检查控制台</h1>;
+                }
+                return this.props.children;
+            }
+        }
+
+        // 有问题的组件
+        function BuggyComponent() {
+            const [count, setCount] = React.useState(0);
+
+            if (count > 3) {
+                throw new Error('模拟的React组件错误');
+            }
+
+            return (
+                <div>
+                    <button onClick={() => setCount(count + 1)}>
+                        点击触发错误 ({count})
+                    </button>
+                </div>
+            );
+        }
+
+        // 主应用
+        function App() {
+            return (
+                <ErrorBoundary>
+                    <BuggyComponent />
+                </ErrorBoundary>
+            );
+        }
+
+        ReactDOM.render(<App />, document.getElementById('root'));
+    </script>
+</body>
+</html>

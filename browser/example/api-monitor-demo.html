@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>接口监控演示</title>
+    <script src="monitor-sdk.js"></script>
+    <script src="api-monitor.js"></script>
+</head>
+<body>
+    <h1>接口监控演示</h1>
+    
+    <button id="fetch-success">测试成功fetch请求</button>
+    <button id="fetch-error">测试失败fetch请求</button>
+    <button id="xhr-success">测试成功XHR请求</button>
+    <button id="xhr-error">测试失败XHR请求</button>
+
+    <script>
+        // 初始化监控
+        const monitor = new FrontendMonitor({
+            appId: 'api-demo',
+            reportUrl: 'https://mock-api.example.com/monitor'
+        });
+        
+        // 初始化接口监控
+        new APIMonitor(monitor);
+
+        // 测试接口
+        document.getElementById('fetch-success').addEventListener('click', () => {
+            fetch('https://jsonplaceholder.typicode.com/posts/1')
+                .then(response => console.log('Fetch成功:', response));
+        });
+
+        document.getElementById('fetch-error').addEventListener('click', () => {
+            fetch('https://jsonplaceholder.typicode.com/invalid-url')
+                .catch(error => console.log('Fetch失败:', error));
+        });
+
+        document.getElementById('xhr-success').addEventListener('click', () => {
+            const xhr = new XMLHttpRequest();
+            xhr.open('GET', 'https://jsonplaceholder.typicode.com/posts/1');
+            xhr.send();
+        });
+
+        document.getElementById('xhr-error').addEventListener('click', () => {
+            const xhr = new XMLHttpRequest();
+            xhr.open('GET', 'https://jsonplaceholder.typicode.com/invalid-url');
+            xhr.send();
+        });
+    </script>
+</body>
+</html>

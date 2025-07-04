@@ -1108,3 +1108,21 @@ const data1 = "type: 'JavaScript', data: demo1";
 const data = new Function("return ({" + data1 + "})");
 console.log(data());
 ```
+
+### 框架中的常见模式
+- 工厂模式：`React.createElement`， 通过传入不同的参数，返回不同类型的组件
+- 单例模式：
+  - vuex中的store，全局只有一个store实例
+  - 插件安装机制，插件只会被安装一次
+
+- 观察者模式：
+  - redux中的subscribe，发布订阅模式
+  - vue中的$emit和$on，发布订阅模式
+  - vue中的watch，发布订阅模式
+- 代理模式：
+  - vue中的数据劫持，通过Object.defineProperty()方法来劫持对象属性的getter和setter操作
+  - react 高阶组件
+- 装饰器模式：vue中的computed，通过计算属性来装饰数据
+- 策略模式：vue的编译器
+- 模板方法模式：vue中的生命周期钩子，通过模板方法来定义生命周期
+- 组合模式：vue中的组件树，通过组合模式来构建组件树
