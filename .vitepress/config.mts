@@ -200,6 +200,14 @@ export default defineConfig({
               text: "浏览器",
               link: "/browser/",
             },
+            {
+              text: "网络面试题",
+              link: "/面试题/网络面试题",
+            },
+            {
+              text: "前端工具",
+              link: "/面试题/前端工具",
+            },
           ],
         },
       ],
