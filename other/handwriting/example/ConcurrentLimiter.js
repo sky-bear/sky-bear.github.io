@@ -47,7 +47,7 @@ class ConcurrentLimiter {
   }
 
   dequeue() {
-    if(this.dequeue.length && this.activeCount < this.limit) {
+    if(this.queue.length && this.activeCount < this.limit) {
       this.activeCount++;
       this.queue.shift()();
     }

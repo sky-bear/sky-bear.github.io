@@ -1053,7 +1053,7 @@ Widget:(WebWidget 指的是一块可以在任意页面中执行的代码块)Widg
 
 ### MVC
 
-MVC 即模型(model)一视图(view)一控制器(controller),用一种将业务逻辑、数据、数据、视图分离的方式组织架构代码。
+MVC 即模型(model)一视图(view)一控制器(controller),用一种将业务逻辑、数据、视图分离的方式组织架构代码。
 
 > 数据层部分、视图层部分、控制器层
 

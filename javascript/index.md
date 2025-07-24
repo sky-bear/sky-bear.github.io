@@ -1,6 +1,6 @@
 # Javascript
 
-avaScript 是一种带有即时编译（JIT）的解释型语言。
+JavaScript 是一种带有即时编译（JIT）的解释型语言。
 
 - 源代码阶段：
 开发者编写 .js 文件，内容为 JavaScript 源码。

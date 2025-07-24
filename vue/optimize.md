@@ -77,6 +77,13 @@ function updateBlock(id: string, newBlock: BlockInfo) {
   })
   ```
 - 组件异步加载 `defineAsyncComponent`
+- 动态导入
+
+  ```js
+  components: {
+    layoutComponent: () => import("@/layout"),
+  }
+  ```
   
 
 ## vue 常见分析思路
@@ -120,6 +127,10 @@ function updateBlock(id: string, newBlock: BlockInfo) {
   - v-memo
 - 虚拟列表
   - 减少大型不可变数据的响应性开销 vue2 Object.freeze vue3 shallowRef shallowReactive
+
+
+
+
 
 ## 资料引用
 
