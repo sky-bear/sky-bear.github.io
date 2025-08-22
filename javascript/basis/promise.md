@@ -465,3 +465,7 @@ urls.forEach((img) => {
 <a href="https://es6.ruanyifeng.com/#docs/promise" target="_blank"  style="display: block">promise</a>
 <a href="https://es6.ruanyifeng.com/#docs/generator" target="_blank"  style="display: block">generator</a>
 <a href="https://es6.ruanyifeng.com/#docs/async" target="_blank"  style="display: block">async</a>
+
+<a href="https://mp.weixin.qq.com/s/eFzZzfi_Mlkql-tRAwalBA" target="_blank"  style="display: block">async await的魔鬼细节</a>
+
+

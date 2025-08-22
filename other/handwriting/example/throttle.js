@@ -51,22 +51,3 @@ function throttle(fn, time = 100, options = {}) {
   return _throttle;
 }
 
-function throttle(fn, time = 100) {
-  let startTime = new Date().getTime();
-  let timer = null;
-  return function () {
-    if (timer) clearTimeout(timer);
-    const endTime = new Date().getTime();
-    const diffTime = endTime - startTime;
-    if (diffTime >= time) {
-      fn.apply(this, arguments);
-      startTime = new Date().getTime();
-    } else {
-      timer = setTimeout(() => {
-        fn.apply(this, arguments);
-        startTime = new Date().getTime();
-        timer = null;
-      }, time - diffTime);
-    }
-  };
-}

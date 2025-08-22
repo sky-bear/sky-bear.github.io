@@ -1,73 +1,95 @@
-// //
-// function MyNew() {
-//   const Constructor = Array.prototype.shift.call(arguments);
-//   const obj = Object.create(Constructor.prototype)
-//  const result =  Constructor.apply(obj, arguments);
-//  return typeof result === 'object' && result !== null ? result : obj;
+// async function async1 () {
+//     await new Promise((resolve, reject) => {
+//         resolve()
+//     })
+//     console.log('A')
 // }
 
-// function mid1(next){
-//   console.log("next1")
-//   console.log("进入 mid1")
-//   next()
-//   console.log("结束mid1")
+// async1()
+
+// new Promise((resolve) => {
+//     console.log('B')
+//     resolve()
+// }).then(() => {
+//     console.log('C')
+// }).then(() => {
+//     console.log('D')
+// })
+
+
+
+// async function async1 () {
+//     await async2()
+//     console.log('A')
 // }
 
-// function mid2(next){
-//   console.log("nex2")
-//   console.log("进入 mid2")
-//   next()
-//   console.log("结束mmid2")
+// async function async2 () {
+//     return new Promise((resolve, reject) => {
+//         resolve()
+//     })
 // }
 
-//   function mid3(next){
-//   console.log("next3")
-//   console.log("进入 mid3")
-//   next()
-//   console.log("结束mid3")
-//   }
+// async1()
 
-//   const list =  [mid1,mid2,mid3 ]
-
-//   function compose(list) {
-//     return list.reduceRight((a,b) => {
-//       return () => b(() => a())
-//     }, () => {})
-//   }
-
-//   const fn = compose(list)
-//   // console.log(fn())
-
-//   function run(list) {
-//     let i = 0;
-//     function next() {
-//       const mid = list[i++];
-//       if(!mid) return
-//       mid(() => next())
-//     }
-//     next()
-
-//   }
-//   run(list)
-
-var myobject = {
-  foo: "bar",
-  func: function () {
-    var self = this;
-    console.log("outer func:this foo =", this.foo);
-    console.log("outer func:self. foo =", self.foo);
-    (function () {
-      console.log("inner func:this.foo =" + this.foo);
-      console.log("inner func:self. foo =" + self.foo);
-    })();
-  },
-};
-
-// myobject.func();
+// new Promise((resolve) => {
+//     console.log('B')
+//     resolve()
+// }).then(() => {
+//     console.log('C')
+// }).then(() => {
+//     console.log('D')
+// })
 
 
-function fn() {
-  console.log(1);
-  (() => console.log(123))()
+
+// 5  1 3  4 7 11    AAA 8 9 10  6
+
+
+
+// async function testA () {
+//     return 1;
+// }
+// async function testA () {
+//     return {
+//         then (cb) {
+//             cb();
+//         }
+//     };
+// }
+
+
+// function testAA() {
+//   return Promise.then()
+// }
+// function testB() {
+//   return Promise.resolve(11)
+// }
+
+
+// testA().then(() => console.log(1));
+// testB().then(() => console.log(111));
+
+
+
+// Promise.resolve()
+//     .then(() => console.log(2))
+//     .then(() => console.log(3));
+
+
+
+async function test () {
+    console.log(1);
+    await new Promise((resolve, reject) => {
+        resolve()
+    })
+    console.log(2);
 }
-fn()
+
+test();
+console.log(3);
+
+Promise.resolve()
+    .then(() => console.log(4))
+    .then(() => console.log(5))
+    .then(() => console.log(6))
+    .then(() => console.log(7));

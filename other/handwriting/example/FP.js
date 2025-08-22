@@ -14,3 +14,6 @@ function sum() {
 }
 
 console.log(sum(1)(2)(3)().get()); // 6
+
+
+
