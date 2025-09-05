@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Canvas-图片</title>
+  </head>
+  <body>
+    <canvas id="myCanvas2" width="400" height="711"></canvas>
+
+    <script>
+      function draw() {
+        const canvas2 = document.getElementById("myCanvas2");
+        const ctx2 = canvas2.getContext("2d");
+        const img = new Image();
+        img.src = "./a.png";
+        img.onload = function () {
+          // 裁剪图片并绘制到画布上
+          // ctx2.drawImage(img, 100, 100, 200, 200,100,100,100,100);
+          // 灰度处理
+          ctx2.drawImage(img, 0, 0, 400, 711);
+          const imageData = ctx2.getImageData(
+            0,
+            0,
+            canvas2.width,
+            canvas2.height
+          );
+          const data = imageData.data;
+          for (let i = 0; i < data.length; i += 4) {
+            const r = data[i];
+            const g = data[i + 1];
+            const b = data[i + 2];
+            const average = (r + g + b) / 3;
+            data[i] = average;
+            data[i + 1] = average;
+            data[i + 2] = average;
+          }
+          ctx2.putImageData(imageData, 0, 0);
+        };
+      }
+      draw();
+    </script>
+  </body>
+</html>

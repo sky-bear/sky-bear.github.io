@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Canvas-基础</title>
+  </head>
+  <body>
+    <canvas id="myCanvas" width="400" height="400"></canvas>
+    <script>
+      const canvas = document.getElementById("myCanvas");
+      const ctx = canvas.getContext("2d");
+
+      // Draw a rectangle
+      ctx.fillStyle = "blue";
+      ctx.fillRect(50, 50, 100, 100);
+
+      ctx.fillStyle = "red";
+      ctx.fillRect(100, 100, 100, 100);
+      ctx.clearRect(100, 100, 50, 50);
+
+      ctx.beginPath();
+      ctx.lineWidth = 2;
+      ctx.moveTo(0, 0);
+      ctx.lineTo(50, 150);
+      ctx.lineTo(100, 0);
+      ctx.strokeStyle = "green";
+      ctx.closePath();
+      ctx.stroke();
+
+      ctx.beginPath();
+      ctx.strokeStyle = "yellow";
+      ctx.arc(300, 200, 50, 0, Math.PI * 2, true); // Outer circle
+      ctx.moveTo(285, 185);
+      ctx.arc(275, 185, 10, 0, Math.PI * 1, true); // Outer circle
+      ctx.moveTo(335, 185); // Move to the start of the outer circle
+      ctx.arc(325, 185, 10, 0, Math.PI * 1, true); // Out
+      ctx.moveTo(320, 220);
+      ctx.arc(300, 220, 20, 0, Math.PI * 1, false);
+      ctx.closePath();
+      ctx.stroke();
+
+      ctx.beginPath();
+      ctx.strokeStyle = "black";
+      ctx.moveTo(20, 20);
+      ctx.quadraticCurveTo(100, 300, 200, 10);
+      ctx.stroke();
+
+      ctx.font = "30px Arial";
+      ctx.fillText("Hello World", 300, 50);
+    </script>
+   
+  </body>
+</html>

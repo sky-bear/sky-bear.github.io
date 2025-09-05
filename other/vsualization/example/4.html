@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Canvas-动画</title>
+  </head>
+  <body>
+    <canvas id="myCanvas2" width="400" height="400"></canvas>
+    <canvas id="myCanvas1" width="400" height="400"></canvas>
+
+    <script>
+      function draw1() {
+        const canvas2 = document.getElementById("myCanvas2");
+        const ctx = canvas2.getContext("2d");
+
+        let positionX = 0;
+        const speed = 2; // 每次移动的像素数
+
+        function animate() {
+          ctx.clearRect(0, 0, canvas2.width, canvas2.height); // 清除画布
+          ctx.fillStyle = "red";
+          ctx.fillRect(positionX, 20, 20, 20);
+          // 更新位置
+          positionX += speed;
+          // 如果超出画布宽度，则重置位置
+          if (positionX > canvas2.width) {
+            positionX = 0;
+          }
+          // 帧动画
+          requestAnimationFrame(animate); // 使用 requestAnimationFrame 实现平滑动画效果
+        }
+        animate();
+      }
+      draw1();
+
+      // 粒子动画
+      function draw2() {
+        const canvas2 = document.getElementById("myCanvas1");
+        const ctx = canvas2.getContext("2d");
+
+        const particles = []; // 粒子数组
+
+        for (let i = 0; i < 100; i++) {
+          particles.push({
+            // x: Math.random() * canvas2.width,
+            // y: Math.random() * canvas2.height,
+            x: canvas2.width / 2, // 粒子初始位置在画布中心
+            y: canvas2.height / 2,
+            vx: (Math.random() - 0.5) * 2, // 水平速度  运动方向随机，介于-1到1之间
+            vy: (Math.random() - 0.5) * 2, // 垂直速度
+            size: Math.random() * 3 + 1, // 粒子大小
+            color: `rgb(${Math.floor(Math.random() * 255)}, ${Math.floor(
+              Math.random() * 255
+            )}, ${Math.floor(Math.random() * 255)}, 0.7)`, // 随机颜色
+          });
+        }
+
+        function animate() {
+          ctx.clearRect(0, 0, canvas2.width, canvas2.height); // 清除画布
+          for (let i = 0; i < particles.length; i++) {
+            particles[i].x += particles[i].vx; // 更新粒子位置
+            particles[i].y += particles[i].vy;
+            // 重置粒子位置
+            // 碰撞检测
+            if (particles[i].x > canvas2.width || particles[i].x < 0) {
+              // particles[i].vx = -particles[i].vx;
+              particles[i].x = canvas2.width / 2;
+            }
+            if (particles[i].y > canvas2.height || particles[i].y < 0) {
+              // particles[i].vy = -particles[i].vy;
+              particles[i].y = canvas2.height / 2;
+            }
+
+            // 绘制粒子
+
+            ctx.beginPath();
+            ctx.arc(
+              particles[i].x,
+              particles[i].y,
+              particles[i].size,
+              0,
+              Math.PI * 2
+            );
+            ctx.fillStyle = particles[i].color;
+            ctx.fill();
+          }
+
+          // 帧动画
+          requestAnimationFrame(animate); // 使用 requestAnimationFrame 实现平滑动画效果
+        }
+        animate();
+      }
+      draw2();
+    </script>
+  </body>
+</html>
