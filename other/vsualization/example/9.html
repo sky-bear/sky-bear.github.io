@@ -7,8 +7,32 @@
   <script src="https://cdn.jsdelivr.net/npm/d3@7"></script>
 </head>
 <body>
+  <p></p>
+  <p></p>
+  <div>
+    <ul>
+      <li></li>
+      <li></li>
+      <li></li>
+    </ul>
+  </div>
   <script>
-    console.log(d3 )
+   const body = d3.select("body");
+   const p = body.selectAll("p")
+     .data([4, 8, 15, 16, 23, 42])
+     .text(d => `I am number ${d}`);
+    body.append("p")
+     .text("New paragraph!").style("color", "red");
+
+
+
+    const ul = body.select("div").select("ul");
+    const li = ul.selectAll("li")
+      .data(["A", "B", "C","D"])
+      .text(d => `Item ${d}`)
+      .enter()
+      .append("li").text(d => `动态创建的 ${d}`);
   </script>
+  
 </body>
 </html>

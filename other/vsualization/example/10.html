@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>D3-柱状图</title>
+    <script src="https://cdn.jsdelivr.net/npm/d3@7"></script>
+    <style>
+      svg {
+        border: 1px solid #000;
+      }
+    </style>
+  </head>
+  <body>
+    <svg width="500" height="500">
+      <!-- X轴的定义 -->
+      <g transform="translate(50,350)" id="xAxis"></g>
+      <!-- Y轴的定义 -->
+      <g transform="translate(50,50)" id="yAxis"></g>
+    </svg>
+    <script>
+      // 实例数据
+      const data = [10, 25, 15, 30, 20];
+      // 创建x轴
+      const xScale = d3
+        .scaleBand()
+        .domain(data.map((d, i) => i))
+        .range([0, 400])
+        .padding(0.1);
+      // 创建y轴
+      const yScale = d3
+        .scaleLinear()
+        .domain([0, d3.max(data)])
+        .range([300, 0]);
+
+      const svg = d3.select("svg");
+      // 绘制
+
+      // 添加柱状图
+      const barSvg = svg
+        .selectAll(".bar")
+        .data(data)
+        .enter()
+        .append("rect")
+        .attr("class", "bar")
+        .attr("x", (d, i) => xScale(i) + 50)
+        // .attr("y", (d) => yScale(d) + 50)
+        .attr("y", 350)
+        .attr("width", xScale.bandwidth())
+        // .attr("height", (d) => 300 - yScale(d))
+        .attr("height", 0)
+        .style("fill", "steelblue");
+
+      barSvg
+        .transition() // 开始过渡
+        .duration(1000) // 过渡持续时间（毫秒）
+        .ease(d3.easeBounce) // 使用弹跳缓动函数
+        .attr("y", (d) => yScale(d) + 50) // 最终y坐标
+        .attr("height", (d) => 300 - yScale(d)); // 最终高度
+
+      // 创建x轴
+      const xAxis = d3.axisBottom(xScale);
+      // 将x轴添加到SVG上
+      svg.select("#xAxis").call(xAxis);
+
+      // 创建y轴
+      const yAxis = d3.axisLeft(yScale);
+      // 将y轴添加到SVG上
+      svg.select("#yAxis").call(yAxis).attr("transform", "translate(50,50)"); // 根据x轴的位置调整Y轴的位置
+
+
+      // 添加鼠标悬停事件
+      svg.selectAll(".bar")
+        .on("mouseover", function (event, d) {
+          d3.select(this).transition().duration(200).style("fill", "orange");
+          d3.select(this).attr("cursor", "pointer");
+          // 显示数据值
+          svg
+            .append("text")
+            .attr("id", "tooltip")
+            .attr("x", parseFloat(d3.select(this).attr("x")) + xScale.bandwidth() / 2)
+            .attr("y", parseFloat(d3.select(this).attr("y")) - 10)
+            .attr("text-anchor", "middle")
+            .text(d);
+        })
+        .on("mouseout", function () {
+          
+          d3.select(this).transition().duration(200).style("fill", "steelblue");
+          // 移除数据值
+          d3.select("#tooltip").remove();
+        });
+    </script>
+  </body>
+</html>
