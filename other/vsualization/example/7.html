@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>zrender</title>
+    <style>
+      html {
+        background: black;
+      }
+      #main {
+        width: 900px;
+        height: 300px;
+        margin: 0 auto;
+        border: 1px solid #333;
+      }
+    </style>
+    <script src="./zrender.js"></script>
+  </head>
+  <body>
+    <div id="main"></div>
+    <script>
+      var zr = zrender.init(document.getElementById("main"));
+      const w = zr.getWidth();
+      const h = zr.getHeight();
+      const text1 = new zrender.Text({
+        style: {
+          text: "ZRender",
+          textAlign: "center",
+          fontSize: 200,
+          fontFamily: "Lato",
+          fontWeight: "bolder",
+          fill: "#f0f",
+          blend: "lighten",
+        },
+        x: 5,
+        // y: h / 2 - 50,
+      });
+      zr.add(text1);
+      const text2 = new zrender.Text({
+        style: {
+          text: "ZRender",
+          textAlign: "center",
+          textVerticalAlign: "middle",
+          fontSize: 200,
+          fontFamily: "Lato",
+          fontWeight: "bolder",
+          fill: "#fff",
+          textStroke: "#000",
+          blend: "lighten",
+        },
+        x: 0,
+        // y: h / 2 - 50,
+      });
+
+      zr.add(text2);
+
+      // 随机生成线条
+      const lines = [];
+      for (let i = 0; i < 16; i++) {
+        const y = Math.random() * h;
+        const line = new zrender.Line({
+          shape: {
+            x1: Math.random() * w,
+            y1: y,
+            x2: Math.random() * w,
+            y2: y,
+          },
+          style: {
+            stroke: ["#ff0", "#0ff", "#0f0", "#00f"][
+              Math.floor(Math.random() * 4)
+            ],
+            blend: "lighten",
+            lineWidth: Math.random() * 10 + 3,
+            opacity: 0,
+          },
+        });
+        zr.add(line);
+        lines.push(line);
+      }
+
+      // 控制线条的显示和隐藏
+      const toggle = () => {
+        if (Math.random() > 0.2) {
+          text2.attr("x", Math.random() * 30);
+          for (let i = 0; i < lines.length; i++) {
+            const line = lines[i];
+            line.attr("style", {
+              opacity: 1,
+            });
+            const y = Math.random() * h;
+            line.attr("shape", {
+              x1: Math.random() * w,
+              y1: y,
+              x2: Math.random() * w,
+              y2: y,
+            });
+          }
+        }
+        setTimeout(() => {
+          text2.attr("x", 0);
+          for (let i = 0; i < lines.length; i++) {
+            const line = lines[i];
+            line.attr("style", {
+              opacity: 0,
+            });
+          }
+        });
+      };
+      setInterval(toggle, 300);
+    </script>
+  </body>
+</html>

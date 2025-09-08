@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>zrender</title>
+    <style>
+      #main {
+        width: 600px;
+        height: 400px;
+      }
+    </style>
+    <script src="./zrender.js"></script>
+  </head>
+  <body>
+    <div id="main"></div>
+    <script>
+      var zr = zrender.init(document.getElementById("main"));
+      var circle = new zrender.Circle({
+        shape: {
+          cx: 150,
+          cy: 50,
+          r: 40,
+        },
+        style: {
+          fill: "none",
+          stroke: "#F00",
+        },
+      });
+      zr.add(circle);
+      circle.attr("shape", {
+        r: 50, // 只更新 r。cx、cy 将保持不变。
+      });
+      circle.animate("shape", true).when(10000,{cx:800}).during(() =>{}).start()
+
+    </script>
+  </body>
+</html>

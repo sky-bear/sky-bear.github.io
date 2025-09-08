@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Bounding Box</title>
+    <style>
+      #main {
+        width: 1000px;
+        height: 800px;
+        margin: 0 auto;
+        border: 1px solid #333;
+      }
+    </style>
+    <script src="./zrender.js"></script>
+  </head>
+  <body>
+    <div id="main"></div>
+    <script>
+      const zr = zrender.init(document.getElementById("main"));
+      const w = zr.getWidth();
+      const h = zr.getHeight();
+      let isMouseDown = false;
+      zr.on("mousedown", function (e) {
+        isMouseDown = true;
+      });
+      zr.on("mouseup", function (e) {
+        isMouseDown = false;
+      });
+
+      const group = new zrender.Group();
+      // 创建大小各异的圆形
+      for (let i = 0; i < 10; i++) {
+        const r = 50 * Math.random() + 20;
+        const circle = new zrender.Circle({
+          shape: {
+            // cx: Math.random() * w,
+            // cy: Math.random() * h,
+            r,
+          },
+          style: {
+            stroke: "#ddd",
+            fill: "red",
+          },
+          x: (w * 0.6 - r * 2) * Math.random() + r + w * 0.2,
+          y: (w * 0.6 - r * 2) * Math.random() + r + h * 0.2,
+          draggable: true,
+        });
+        circle.on("mousemove", function () {
+          const rect = group.getBoundingRect();
+          boundingRect.setShape({
+            x: rect.x,
+            y: rect.y,
+            width: rect.width,
+            height: rect.height,
+          });
+        });
+        group.add(circle);
+      }
+      zr.add(group);
+      // 边界和尺寸相关信息
+      const rect = group.getBoundingRect();
+      const boundingRect = new zrender.Rect({
+        shape: {
+          x: rect.x,
+          y: rect.y,
+          width: rect.width,
+          height: rect.height,
+        },
+        style: {
+          fill: "none",
+          stroke: "red",
+        },
+      });
+      zr.add(boundingRect);
+    </script>
+  </body>
+</html>
