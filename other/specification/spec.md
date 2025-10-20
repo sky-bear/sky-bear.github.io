@@ -37,6 +37,8 @@
 - Git 工作流规范。
 - Code Review。
 - 请求接口规范。
+- husky, lint-staged
+
 
 ### 自动化
 

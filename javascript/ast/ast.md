@@ -91,7 +91,21 @@ AST 转换为新语言的 AST；
 - @babel/types：用于检验、构建和改变 AST 树的节点
 - @babel/core: Babel 的编译器，核心 API 都在这里面，比如常见的 transform、parse，并实现了插件功能
 
+
+## babel 不能做的
+API 默认不转换， Promise、Generator 等，需要手动转换。
+
+- Polyfill【旧方案】: 兼容性处理 @bable/polyfill ，比如 Promise、Generator 等
+- Core-js【现在】: 兼容性处理 @babel/preset-env，比如 Promise、Generator 等, `usage`: 按需根据源代码自动引入
+
+## 常用插件
+- @babel/parser: 解析代码生成 AST
+- @babel/traverse: 遍历 AST
+- @babel/generator: 将 AST 转换为代码
+- @babel/types: 用于检验、构建和改变 AST 树的节点
+- @babel/core: Babel 的编译器(包含以上所有)，核心 API 都在这里面，比如常见的 transform、parse，并实现了插件功能
+
 ## 相关网站
 
 <a href="https://astexplorer.net/" target="_blank"  style="display: block">AST </a>
-<a href="https://nwy3y7fy8w5.feishu.cn/docx/Fn7xdVZJKopjEexYYCucTn0znub" target="_blank"  style="display: block">前端 AST </a>
+<a href="https://vgbixa7nr9.feishu.cn/docx/Cj3IdAHaVohShhxRv2mcdDFvn3c" target="_blank"  style="display: block">前端 AST </a>

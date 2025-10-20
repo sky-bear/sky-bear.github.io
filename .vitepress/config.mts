@@ -6,7 +6,7 @@ export default defineConfig({
   description: "sky bear 的学习历程",
   head: [["link", { rel: "icon", href: "/icon.png" }]],
   markdown: {
-    lineNumbers: true
+    lineNumbers: true,
   },
   themeConfig: {
     outline: "deep",
@@ -17,34 +17,60 @@ export default defineConfig({
     nav: [
       { text: "Home", link: "/" },
       { text: "Examples", link: "/example/markdown-examples" },
-      { text: "Javascript", link: "/javascript/index" },
-
-      { text: "css", link: "/css/css" },
-      { text: "设计模式", link: "/designPattern/index" },
-
-      { text: "数据结构和算法", link: "/algorithms/algorithms" },
-      { text: "node", link: "/node/base" },
-      { text: "vue", link: "/vue/index" },
       {
-        text: "react", link: "/react/index"
+        text: "通用技能",
+        items: [
+          { text: "设计模式", link: "/designPattern/index" },
+          { text: "数据结构和算法", link: "/algorithms/algorithms" },
+          { text: "git常用命令", link: "/other/git" },
+          { text: "安全", link: "/other/other/secure.md" },
+        ],
       },
       {
-        text: "浏览器", items: [
-          { text: "浏览器相关内容", link: "/browser/index" },
-          { text: "缓存", link: "/browser/cache" },
-        ]
+        text: "前端前端基础",
+        items: [
+          { text: "Javascript", link: "/javascript/index" },
+          { text: "css", link: "/css/css" },
+
+          {
+            text: "浏览器",
+            items: [
+              { text: "浏览器相关内容", link: "/browser/index" },
+              { text: "缓存", link: "/browser/cache" },
+            ],
+          },
+          {
+            text: "前端进阶",
+            items: [
+              { text: "vue", link: "/vue/index" },
+              {
+                text: "react",
+                link: "/react/index",
+              },
+            ],
+          },
+        ],
       },
       {
-        text: "其他", items: [
+        text: "前端进阶",
+        items: [
+          { text: "vue", link: "/vue/index" },
+          {
+            text: "react",
+            link: "/react/index",
+          },
           { text: "性能优化", link: "/other/performance/performance" },
           { text: "手写代码汇总", link: "/other/handwriting/handwriting" },
           { text: "工程化", link: "/other/specification/spec" },
           { text: "前端性能监控", link: "/other/monitor/monitor" },
           { text: "webpack", link: "/other/specification/webpack" },
-          { text: "git常用命令", link: "/other/git" },
-          { text: "安全", link: "/other/other/secure.md" },
+
           { text: "面试", link: "/other/interview/interview" },
-        ]
+        ],
+      },
+      {
+        text: "node",
+        items: [{ text: "node", link: "/node/base" }],
       },
     ],
 
@@ -129,7 +155,6 @@ export default defineConfig({
               text: "vue3",
               link: "/vue/vue3/vue3",
               items: [
-                // { text: "vue2的高级用法", link: "/vue/vue2/advancedUsage" },
                 { text: "vuex", link: "/vue/vue3/vuex" },
                 { text: "vueRouter", link: "/vue/vue3/vueRouter" },
               ],
